@@ -8,8 +8,15 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "bluebird": "^3.0.5",
+    "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "mongodb": "^2.0.48"
+  },
+  "devDependencies": {
+    "eslint": "^1.9.0",
+    "eslint-config-simplifield": "^1.1.0",
+    "eslint-plugin-mongodb": "^0.2.3"
   }
 }
