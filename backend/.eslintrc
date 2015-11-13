@@ -1,0 +1,46 @@
+{
+  "extends": "eslint-config-simplifield",
+  "plugins": [
+    "mongodb"
+  ],
+  "settings": {
+    "mongodb": {
+      "callPatterns": {
+        "query": [
+          "^([a-z\\.]+)(Collection|\\.?db?\\.collection\\([^\\)]+\\))\\.(find|findOne)$",
+        ],
+        "update": [
+          "^([a-z\\.]+)(Collection|\\.?db?\\.collection\\([^\\)]+\\))\\.(findOneAndUpdate|updateOne|updateMany)$",
+        ],
+        "insert": [
+          "^([a-z\\.]+)(Collection|\\.?db?\\.collection\\([^\\)]+\\))\\.(insertOne|insertMany)$",
+        ],
+        "remove": [
+          "^([a-z\\.]+)(Collection|\\.?db?\\.collection\\([^\\)]+\\))\\.(findOneAndDelete|deleteOne|deleteMany)$",
+        ],
+        "deprecated": [
+          "^([a-z\\.]+)(Collection|\\.?db?\\.collection\\([^\\)]+\\))\\.(remove|update|findAndModify|ensureIndex|findAndRemove|insert|dropAllIndexes)$",
+        ]
+      }
+    }
+  },
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "require": false,
+    "describe": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "before": false,
+    "after": false,
+    "it": false,
+    "sinon": false,
+    "module": false
+  },
+  "rules": {
+    "strict": [2, "global"],
+    "mongodb/check-deprecated-calls": 2
+  }
+}

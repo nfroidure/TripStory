@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/nfroidure/hackthemobility/issues"
   },
-  "homepage": "https://github.com/nfroidure/hackthemobility#readme"
+  "homepage": "https://github.com/nfroidure/hackthemobility#readme",
+  "devDependencies": {
+    "eslint": "^1.9.0",
+    "eslint-config-simplifield": "^1.1.0",
+    "eslint-plugin-mongodb": "^0.2.3"
+  }
 }
