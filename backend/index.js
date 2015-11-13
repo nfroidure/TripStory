@@ -34,7 +34,7 @@ Promise.all([
       context.host = context.server.address().address;
       context.port = context.server.address().port;
 
-      console.log('Example app listening at http://%s:%s', context.host, context.port);
+      console.log('Patrick is here -> http://%s:%s', context.host, context.port);
       resolve();
     });
   });
