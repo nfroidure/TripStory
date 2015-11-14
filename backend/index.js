@@ -32,18 +32,18 @@ Promise.all([
   context.app.use(express.static('www'));
   context.app.use(bodyParser.json());
   context.app.use(cookieParser());
+  context.host = 'localhost';
+  context.port = 3000;
 
   // Routes
   initRoutes(context);
 
   // Starting the server
   return new Promise(function handleServerPromise(resolve, reject) {
-    context.server = context.app.listen(3000, function handleServerCb(err) {
+    context.server = context.app.listen(context.port, function handleServerCb(err) {
       if(err) {
         return reject(err);
       }
-      context.host = context.server.address().address;
-      context.port = context.server.address().port;
 
       console.log('Patrick is here -> http://%s:%s', context.host, context.port);
       resolve();

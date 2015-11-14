@@ -3,6 +3,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BasicStrategy = require('passport-http').BasicStrategy;
+var FacebookStrategy = require('passport-facebook');
 
 module.exports = initAuthenticationController;
 
@@ -19,6 +20,13 @@ function initAuthenticationController(context) {
   // Local login
   passport.use('local', new LocalStrategy(localLoginLogic));
   passport.use(new BasicStrategy(localLoginLogic));
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_ID,
+    clientSecret: process.env.FACEBOOK_SECRET,
+    callbackURL: 'http://' + context.host + ':' + context.port +
+      '/auth/facebook/callback',
+    enableProof: false,
+  }, facebookLoginLogic));
 
   function localLoginLogic(username, password, done) {
     console.log('Authentication attempt:', username, password);
@@ -34,6 +42,29 @@ function initAuthenticationController(context) {
       }
       console.log('Authenticated:', user);
       done(null, user);
+    });
+  }
+
+  function facebookLoginLogic(accessToken, refreshToken, profile, done) {
+    var upsertId = context.createObjectId();
+
+    context.db.collection('users').findOneAndUpdate({
+      'auth.facebook': profile.id,
+    }, {
+      $set: {
+        contents: {
+          name: profile.name,
+          email: profile.email,
+        },
+      },
+      $setOnInsert: {
+        _id: upsertId,
+      },
+    }, {
+      upsert: true,
+      returnOriginal: false,
+    }, function facebookLoginHandler(err, result) {
+      return done(err, result.value);
     });
   }
 

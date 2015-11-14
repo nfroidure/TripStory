@@ -40,6 +40,14 @@ function initAuthenticationRoutes(context) {
     res.sendStatus(204);
   });
 
+  context.app.get('/auth/facebook', passport.authenticate('facebook'));
+  context.app.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook', { failureRedirect: '/me' }),
+    function(req, res) {
+      res.redirect('/api/v0/profile');
+    }
+  );
 
   context.app.get(
     '/api/v0/profile',
