@@ -20,6 +20,13 @@ Promise.all([
   context.app = express();
   context.createObjectId = ObjectId;
   context.castToObjectId = ObjectId;
+  context.checkAuth = function isLoggedIn(req, res, next) {
+    console.log('isLoggedIn', req.isAuthenticated(), req.user);
+    if(req.user || req.isAuthenticated()) {
+      return next();
+    }
+    res.sendStatus(401);
+  };
 
   // Middlewares
   context.app.use(express.static('www'));

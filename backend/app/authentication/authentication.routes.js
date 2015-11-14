@@ -35,12 +35,29 @@ function initAuthenticationRoutes(context) {
     })(req, res, next);
   });
 
-  context.app.use(function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()) {
-      return next();
-    }
-
-    // if they aren't redirect them to the home page
-    res.sendStatus(401);
+  context.app.post('/api/v0/logout', context.checkAuth, function authLogout(req, res) {
+    req.logout();
+    res.sendStatus(204);
   });
+
+
+  context.app.get(
+    '/api/v0/profile',
+    context.checkAuth,
+    authRedirectToProfile
+  );
+
+  context.app.get(
+    '/api/v0/me',
+    passport.authenticate('basic', { session: false }),
+    authRedirectToProfile
+  );
+
+  function authRedirectToProfile(req, res, next) {
+    if(!req.user) {
+      return res.send(401);
+    }
+    res.setHeader('Location', '/api/v0/users/' + req.user._id.toString());
+    res.sendStatus(301);
+  }
 }
