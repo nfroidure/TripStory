@@ -7,14 +7,20 @@ module.exports = initAuthenticationController;
 
 function initAuthenticationController(context) {
 
+  // Serialization
+  passport.serializeUser(function(user, done) {
+    done(null, user._id);
+  });
+  passport.deserializeUser(function(id, done) {
+    done(null, { _id: id });
+  });
+
   // Local login
-  passport.use(new LocalStrategy(
+  passport.use('local', new LocalStrategy(
     function(username, password, done) {
-      console.log('sfsdfsdfdsf'); 
       context.db.collection('users').findOne({
         'contents.email': username,
       }, function (err, user) {
-        console.log(username, password, user)
         if (err) { return done(err); }
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });

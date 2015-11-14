@@ -9,6 +9,7 @@ module.exports = usersTransforms;
 
 function usersTransformsFromCollection(src) {
   var dest = {
+    _id: src._id,
     contents: src.contents,
   };
 
