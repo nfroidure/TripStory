@@ -37,6 +37,7 @@ function initEventsController(context) {
         contents: req.body.contents || {},
       },
     }, {
+      upsert: true,
       returnOriginal: false,
     })
     .then(function(result) {
@@ -48,8 +49,8 @@ function initEventsController(context) {
     context.db.collection('events').findOneAndDelete({
       _id: context.castToObjectId(req.params.event_id),
     })
-    .then(function(entry) {
-      res.status(204).send(entry);
+    .then(function(result) {
+      res.status(410).send(result.value || {});
     }).catch(next);
   }
 }

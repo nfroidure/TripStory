@@ -6,6 +6,8 @@ var express = require('express');
 var initRoutes = require('./app/routes');
 var Promise = require('bluebird');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+
 
 // Preparing services
 Promise.all([
@@ -20,7 +22,9 @@ Promise.all([
   context.castToObjectId = ObjectId;
 
   // Middlewares
+  context.app.use(express.static('www'));
   context.app.use(bodyParser.json());
+  context.app.use(cookieParser());
 
   // Routes
   initRoutes(context);
