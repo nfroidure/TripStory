@@ -1,6 +1,10 @@
-/* Empty. Add your own CSS if you like */
+/* MENU */
+.btn-add{
+  background-color: #1abc9c;
+  color: #2c3e50;
+}
 
-
+/* TripPage */
 .headerPage{
   color: white;
   text-align: center;

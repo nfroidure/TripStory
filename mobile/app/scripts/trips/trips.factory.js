@@ -5,52 +5,25 @@
     .module('app.trips')
     .factory('tripsFactory', tripsFactory);
 
-  tripsFactory.$inject = [];
+  tripsFactory.$inject = ['$http'];
   /* @ngInject */
-  function tripsFactory() {
-      // will be repaced by the backend
-      var data = [
-        {
-          id: 1,
-          label: 'Andalousie',
-          description: 'La description du trip en Andalousie',
-          coverPicture: 'https://placekitten.com/g/500/299',
-          members: [
-            { id: 1, name: 'Nicolas', avatarPicture: 'https://placekitten.com/g/40/41' },
-            { id: 2, name: 'Remy', avatarPicture: 'https://placekitten.com/g/40/39' },
-            { id: 3, name: 'Xavier', avatarPicture: 'https://placekitten.com/g/39/40' },
-          ],
-        },
-        {
-          id: 2,
-          label: 'Autriche',
-          description: 'La description du trip en Autriche',
-          coverPicture: 'https://placekitten.com/g/500/300',
-          members: [{ id: 4, name: 'Marc', avatarPicture: 'https://placekitten.com/g/40/40' }],
-        },
-        {
-          id: 3,
-          label: 'Bruxelles',
-          description: 'La description du trip à Bruxelles',
-          coverPicture: 'https://placekitten.com/g/500/301',
-          members: [
-            { id: 5, name: 'Sebastien', avatarPicture: 'https://placekitten.com/g/40/42' },
-            { id: 2, name: 'Remy', avatarPicture: 'https://placekitten.com/g/40/39' },
-          ],
-        },
-      ];
+  function tripsFactory($http) {
       var service = {
         get: get,
+        post: post,
       };
 
       return service;
       ////////////////
       function get(id) {
-        if(id){
-          return data
-            .filter(function(trip){ return trip.id === id; })[0];
-        }
-        return data;
+        var debug = 'abbacacaabbacacaabbacaca';
+        return $http.get('localhost:3000/api/v0/trips/' + id || debug)
+          .then(function(values){
+            console.log(values);
+          });
+      }
+      function post(trip) {
+        return $http.post('localhost:3000/api/v0/trips/abbacacaabbacacaabbacaca', trip)
       }
   }
 
