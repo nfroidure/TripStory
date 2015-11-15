@@ -15,21 +15,16 @@
       ];
       var service = {
         get: get,
-        getOne: getOne,
-        setOne: setOne,
       };
 
       return service;
       ////////////////
-      function get() {
+      function get(id) {
+        if(id){
+          return data
+            .filter(function(trip){ return trip.id === id; })[0];
+        }
         return data;
-      }
-      function getOne(id) {
-        return data
-          .filter(function(trip){ return trip.id === id; });
-      }
-      function setOne() {
-        console.log('hello');
       }
   }
 

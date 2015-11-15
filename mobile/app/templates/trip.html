@@ -1,5 +1,9 @@
-<ion-view view-title="Trip">
+<ion-view view-title="{{ trip.label }}">
   <ion-content>
-    <h1>trip : {{ idTrip }}</h1>
+    <pre>
+      debug : $scope.trip
+      {{ trip }}
+    </pre>
+    <h1>trip : {{ trip.label }}</h1>
   </ion-content>
 </ion-view>
