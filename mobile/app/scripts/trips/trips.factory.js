@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('starter')
+    .module('app.trips')
     .factory('tripsFactory', tripsFactory);
 
   tripsFactory.$inject = [];
