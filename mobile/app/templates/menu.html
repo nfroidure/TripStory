@@ -14,33 +14,37 @@
 
   <ion-side-menu side="left" expose-aside-when="large">
     <ion-header-bar class="bar-stable">
-      <h1 class="title">Left</h1>
+      <h1 class="title">Menu</h1>
+
+      <!-- <div class="item-input-wrapper">
+        <i class="icon ion-ios7-search placeholder-icon"></i>
+        <input type="search" placeholder="Search Trip" ng-model="search.label" autofocus>
+        <button class="button button-icon ion-ios7-close-empty input-button"></button>
+      </div> -->
     </ion-header-bar>
+    <ion-header-bar class="bar bar-subheader item-input-inset">
+      <div class="item-input-wrapper">
+        <input type="search" autofocus placeholder="Search Trip" ng-model="search.label"/>
+      </div>
+    </ion-header-bar>
+
     <ion-content>
       <ion-list>
-
-        <label class="item item-input">
-          <input type="text" placeholder="Search Trip" ng-model="search.label">
-        </label>
-
-        <ion-item menu-close ng-click="login()">
-          Login
-        </ion-item>
         <ion-item menu-close
           ng-repeat="trip in trips| filter:search:strict"
           ng-click="goToTrip(trip)">
           {{ trip.label }}
         </ion-item>
-        <ion-item menu-close ng-if="toto.length === 0">
-          no trips
-        </ion-item>
-        <!-- <ion-item menu-close href="#/app/search">
-          Search
-        </ion-item>
-        <ion-item menu-close href="#/app/browse">
-          Browse
-        </ion-item> -->
       </ion-list>
     </ion-content>
+
+    <ion-footer-bar class="bar-stable"
+      style="bottom: 10px">
+        <!-- very nasty kack -->
+        <ion-item nav-clear menu-close ng-click="login()"
+          style="left:0;right:0;margin:0;top:0; width: 100%;position: fixed;">
+          Login
+        </ion-item>
+    </ion-footer-bar>
   </ion-side-menu>
 </ion-side-menus>
