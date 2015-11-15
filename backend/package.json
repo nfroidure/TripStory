@@ -4,6 +4,7 @@
   "description": "Our backend!",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -30,6 +31,7 @@
     "eslint": "^1.9.0",
     "eslint-config-simplifield": "^1.1.0",
     "eslint-plugin-mongodb": "^0.2.3",
-    "passport-http": "^0.3.0"
+    "passport-http": "^0.3.0",
+    "passport-twitter": "^1.0.3"
   }
 }
