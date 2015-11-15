@@ -2,6 +2,6 @@
   'use strict';
 
   angular
-    .module('app', ['ionic', 'app.trips', 'app.members']);
+    .module('app', ['ionic', 'app.trips', 'app.members', 'app.utils']);
 
 }());

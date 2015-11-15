@@ -5,9 +5,9 @@
     .module('app.trips')
     .factory('tripsFactory', tripsFactory);
 
-  tripsFactory.$inject = ['$http'];
+  tripsFactory.$inject = ['$http', 'createObjectId'];
   /* @ngInject */
-  function tripsFactory($http) {
+  function tripsFactory($http, createObjectId) {
       var service = {
         get: get,
         post: post,
@@ -23,7 +23,7 @@
           });
       }
       function post(trip) {
-        return $http.post('localhost:3000/api/v0/trips/abbacacaabbacacaabbacaca', trip)
+        return $http.post('localhost:3000/api/v0/trips/' + createObjectId(), trip)
       }
   }
 
