@@ -3,7 +3,7 @@
 
   angular
     .module('starter.controllers', [])
-    .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout) {
+    .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, tripsFactory) {
 
       // With the new view caching in Ionic, Controllers are only called
       // when they are recreated or on app start, instead of every page change.
@@ -14,11 +14,7 @@
 
       // Form data for the login modal
       $scope.loginData = {};
-      $scope.trips = [
-        { id: 1, label: 'Andalousie' },
-        { id: 2, label: 'Autriche' },
-        { id: 3, label: 'Bruxelles' },
-      ];
+      $scope.trips = [];
       // methods
       $scope.closeLogin = closeLogin;
       $scope.login = login;
@@ -33,6 +29,12 @@
       });
 
 
+      activate();
+
+
+      function activate() {
+        $scope.trips = tripsFactory.get();
+      }
       // Triggered in the login modal to close it
       function closeLogin() {
         $scope.modal.hide();

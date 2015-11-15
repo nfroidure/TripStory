@@ -17,7 +17,7 @@
         }
       });
     })
-  .config(function($stateProvider, $urlRouterProvider) {
+    .config(function($stateProvider, $urlRouterProvider) {
       $stateProvider
         .state('app', {
           url: '/app',
