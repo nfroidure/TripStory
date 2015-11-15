@@ -4,6 +4,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BasicStrategy = require('passport-http').BasicStrategy;
 var FacebookStrategy = require('passport-facebook');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 module.exports = initAuthenticationController;
 
@@ -30,6 +31,12 @@ function initAuthenticationController(context) {
       '/auth/facebook/callback',
     enableProof: false,
   }, facebookLoginLogic));
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_ID,
+    clientSecret: process.env.GOOGLE_SECRET,
+    callbackURL: 'http://' + context.host + ':' + context.port +
+      '/auth/google/callback',
+  }, googleLoginLogic));
 
   function localLoginLogic(username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);
@@ -109,7 +116,6 @@ function initAuthenticationController(context) {
       upsert: true,
       returnOriginal: false,
     }, function facebookLoginHandler(err, result) {
-      context.logger.debug('Facebook upsert result', JSON.stringify(result));
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           '@nfroidure: Facebook signup:', profile.displayName,
@@ -124,6 +130,53 @@ function initAuthenticationController(context) {
       } else {
         context.bus.trigger({
           exchange: 'A_FB_LOGIN',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
+      }
+      return done(err, result.value);
+    });
+  }
+
+  function googleLoginLogic(accessToken, refreshToken, profile, done) {
+    var upsertId = context.createObjectId();
+
+    context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
+    context.db.collection('users').findOneAndUpdate({
+      'auth.google.id': profile.id,
+    }, {
+      $set: {
+        contents: {
+          name: profile.displayName,
+          email: profile.emails[0].value,
+        },
+        'auth.facebook': {
+          id: profile.id,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        },
+      },
+      $setOnInsert: {
+        _id: upsertId,
+      },
+    }, {
+      upsert: true,
+      returnOriginal: false,
+    }, function googleLoginHandler(err, result) {
+      if(!result.lastErrorObject.updatedExisting) {
+        context.logger.info(
+          '@nfroidure: Google signup:', profile.displayName
+        );
+        context.bus.trigger({
+          exchange: 'A_GG_SIGNUP',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
+      } else {
+        context.bus.trigger({
+          exchange: 'A_GG_LOGIN',
           contents: {
             user_id: result.value._id,
           },

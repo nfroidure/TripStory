@@ -72,6 +72,19 @@ function initAuthenticationRoutes(context) {
   );
 
   context.app.get(
+    '/auth/google',
+    passport.authenticate('google',
+    { scope: ['profile', 'email'] }
+  ));
+  context.app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/me' }),
+    function(req, res) {
+      res.redirect('/api/v0/profile');
+    }
+  );
+
+  context.app.get(
     '/api/v0/profile',
     context.checkAuth,
     authRedirectToProfile
