@@ -35,11 +35,11 @@ function initTripsController(context) {
   function tripControllerGet(req, res, next) {
     context.db.collection('events').aggregate([{
       $match: {
-        _id: context.castToObjectId(req.params.trip_id),
+        'contents.trip_id': context.castToObjectId(req.params.trip_id),
       },
     }, {
       $project: {
-        _id: 'contents.trip_id',
+        _id: '$contents.trip_id',
         contents: '$trip',
       },
     }, {
@@ -67,7 +67,6 @@ function initTripsController(context) {
             trip_id: context.castToObjectId(req.params.trip_id),
             type: 'trip-start',
             date: (new Date()).toISOString(),
-            date: (new Date()).toISOString(),
           },
           trip: req.body.contents || {},
         },
@@ -81,7 +80,7 @@ function initTripsController(context) {
       }, {
         $set: {
           trip: req.body.contents || {},
-        }
+        },
       }),
     ])
     .spread(function(result) {
