@@ -6,9 +6,15 @@
         'background-size': 'cover',
       }">
 
-      <div class="headerPage__text">
+      <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.label }}</h1>
         <em class="headerPage__description">{{ trip.description }}</em>
+        <div class="headerPage__members">
+          <div class="member"
+            ng-repeat="member in trip.members">
+            <img class="member__picture" ng-src="{{ member.avatarPicture }}" alt="Profile photo of {{ member.name }}">
+          </div>
+        </div>
       </div>
     </div>
 

@@ -10,7 +10,7 @@
   justify-content: center;
 }
 
-.headerPage__text{
+.headerPage__infos{
   background-color: rgba(0,0,0,0.2);
   padding: 25px;
 }
@@ -19,4 +19,21 @@
 }
 .headerPage__coverPicture{
   width: 100%;
+}
+.headerPage__members{
+  display: flex;
+  justify-content: center;
+}
+
+
+.member{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.member__picture{
+
 }
