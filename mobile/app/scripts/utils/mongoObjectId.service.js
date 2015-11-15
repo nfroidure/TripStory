@@ -1,3 +1,5 @@
+/* jshint eqeqeq: false */
+
 (function() {
   'use strict';
 

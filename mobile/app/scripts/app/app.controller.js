@@ -5,9 +5,9 @@
     .module('app')
     .controller('AppCtrl', AppCtrl);
 
-  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'tripsFactory'];
+  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'tripsFactory', 'AuthService'];
   /* @ngInject */
-  function AppCtrl($scope, $state, $ionicModal, $timeout, tripsFactory) {
+  function AppCtrl($scope, $state, $ionicModal, $timeout, tripsFactory, AuthService) {
 
     $scope.loginData = {};
     $scope.tripToAdd = { contents: {} };
@@ -48,12 +48,15 @@
     }
     // Perform the login action when the user submits the login form
     function doLogin() {
-      console.log('Doing login', $scope.loginData);
-      // Simulate a login delay. Remove this and replace with your login
-      // code if using a login system
-      $timeout(function() {
-        $scope.closeLogin();
-      }, 1000);
+      console.log('Doing login with: ', $scope.loginData);
+      AuthService.log($scope.loginData)
+        .then(function(status) {
+          if (status.status === 200) {
+            $scope.closeLogin();
+            console.log(status.data);
+            $scope.me = status.data;
+          }
+        });
     }
     // go to related page
     function goToTrip(trip) {
@@ -61,10 +64,10 @@
     }
     // add trip
     function addTrip() {
+      console.log("submit")
       $scope.addTripModal.show();
     }
     function submitTrip() {
-      console.log("submit")
       tripsFactory.post($scope.tripToAdd);
     }
   }
