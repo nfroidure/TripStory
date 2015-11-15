@@ -1,6 +1,12 @@
 ## API
 
 
+Running the back:
+
+```sh
+node backend/index.js
+```
+
 ### Auth:
 - Facebook: GET localhost:3000/auth/facebook
 - Login: POST username, password localhost:3000/api/v0/login
