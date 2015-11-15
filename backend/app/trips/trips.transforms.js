@@ -10,7 +10,7 @@ module.exports = tripsTransforms;
 function tripsTransformsFromCollection(src) {
   var dest = {
     _id: src._id,
-    contents: src.trip,
+    contents: src.contents,
   };
 
   return dest;
