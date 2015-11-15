@@ -24,16 +24,16 @@
     </ion-header-bar>
     <ion-header-bar class="bar bar-subheader item-input-inset">
       <div class="item-input-wrapper">
-        <input type="search" autofocus placeholder="Search Trip" ng-model="search.label"/>
+        <input type="search" autofocus placeholder="Search Trip" ng-model="search.contents.title"/>
       </div>
     </ion-header-bar>
 
     <ion-content>
       <ion-list>
         <ion-item menu-close
-          ng-repeat="trip in trips| filter:search:strict"
+          ng-repeat="trip in trips | filter:search:strict"
           ng-click="goToTrip(trip)">
-          {{ trip.label }}
+          {{ trip.contents.title }}
         </ion-item>
 
         <ion-item menu-close

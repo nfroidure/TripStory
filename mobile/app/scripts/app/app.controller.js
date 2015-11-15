@@ -36,7 +36,8 @@
 
     //
     function activate() {
-      //$scope.trips = tripsFactory.get();
+      tripsFactory.get()
+        .then(function(values){ $scope.trips = values.data; });
     }
     // Triggered in the login modal to close it
     function closeLogin() {
@@ -56,17 +57,11 @@
             $scope.me = status.data;
           }
         })
-        .then(function() {
-          $scope.trips = tripsFactory.get()
-            .then(function(val){
-              console.log(val);
-            });
-        })
         .catch(function(err){ $scope.fail = err; });
     }
     // go to related page
     function goToTrip(trip) {
-      $state.go('app.trip', { tripId: trip.id });
+      $state.go('app.trip', { tripId: trip._id });
     }
     // add trip
     function addTrip() {
