@@ -1,6 +1,7 @@
 'use strict';
 
 var tripsTransforms = require('./trips.transforms');
+var eventsTransforms = require('../events/events.transforms');
 var Promise = require('bluebird');
 
 module.exports = initTripsController;
@@ -54,10 +55,14 @@ function initTripsController(context) {
       },
     }]).toArray()
     .then(function(entries) {
+      var payload;
+
       if(!entries.length) {
         return res.sendStatus(404);
       }
-      res.status(200).send(entries[0]);
+      payload = tripsTransforms.fromCollection(entries[0]);
+      payload.events = entries[0].events.map(eventsTransforms.fromCollection);
+      res.status(200).send(payload);
     }).catch(next);
   }
 

@@ -10,7 +10,7 @@ module.exports = eventsTransforms;
 function eventsTransformsFromCollection(src) {
   var dest = {
     _id: src._id,
-    contents: src.event,
+    contents: src.contents,
   };
 
   return dest;
@@ -23,4 +23,3 @@ function eventsTransformsToCollection(src) {
 
   return dest;
 }
-
