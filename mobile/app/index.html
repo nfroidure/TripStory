@@ -35,13 +35,19 @@
 
     <!-- your app's js -->
     <!-- build:js scripts/scripts.js -->
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers.js"></script>
+    <script src="scripts/app/app.module.js"></script>
+    <script src="scripts/trips/trips.module.js"></script>
+    <script src="scripts/app/app.run.js"></script>
+    <script src="scripts/app/app.routes.js"></script>
+    <script src="scripts/app/app.controller.js"></script>
+    <script src="scripts/trips/trips.factory.js"></script>
+    <script src="scripts/trips/trip.controller.js"></script>
+
     <script src="scripts/configuration.js"></script>
     <!-- endbuild -->
   </head>
 
-  <body ng-app="starter">
+  <body ng-app="app">
     <ion-nav-view></ion-nav-view>
   </body>
 </html>
