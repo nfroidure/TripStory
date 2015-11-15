@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var BasicStrategy = require('passport-http').BasicStrategy;
 var FacebookStrategy = require('passport-facebook');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 module.exports = initAuthenticationController;
 
@@ -37,12 +38,18 @@ function initAuthenticationController(context) {
     callbackURL: 'http://' + context.host + ':' + context.port +
       '/auth/google/callback',
   }, googleLoginLogic));
+  passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: 'http://' + context.host + ':' + context.port +
+      '/auth/twitter/callback',
+  }, twitterLoginLogic));
 
   function localLoginLogic(username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);
     context.db.collection('users').findOne({
       'contents.email': username,
-    }, function (err, user) {
+    }, function(err, user) {
       if (err) { return done(err); }
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
@@ -61,7 +68,7 @@ function initAuthenticationController(context) {
     context.logger.debug('Sinup attempt:', req.body.name, upsertId);
     context.db.collection('users').findOne({
       'contents.email': username,
-    }, function (err, user) {
+    }, function(err, user) {
       if (err) { return done(err); }
       if(user) { return done(new Error('E_EXISTS')); }
       if(!req.body.name) {
@@ -84,8 +91,8 @@ function initAuthenticationController(context) {
       }, {
         upsert: true,
         returnOriginal: false,
-      }, function (err, result) {
-        if (err) { return done(err); }
+      }, function(err2, result) {
+        if (err2) { return done(err); }
         done(null, result.value);
       });
     });
@@ -144,17 +151,24 @@ function initAuthenticationController(context) {
 
     context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
     context.db.collection('users').findOneAndUpdate({
-      'auth.google.id': profile.id,
+      $or: [{
+        'auth.google.id': profile.id,
+      }, {
+        'contents.email': { $in: profile.emails.map(function(email) {
+          return email.value;
+        }) },
+      }],
     }, {
       $set: {
         contents: {
           name: profile.displayName,
           email: profile.emails[0].value,
         },
-        'auth.facebook': {
+        'auth.google': {
           id: profile.id,
           accessToken: accessToken,
           refreshToken: refreshToken,
+          emails: profile.emails,
         },
       },
       $setOnInsert: {
@@ -177,6 +191,54 @@ function initAuthenticationController(context) {
       } else {
         context.bus.trigger({
           exchange: 'A_GG_LOGIN',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
+      }
+      return done(err, result.value);
+    });
+  }
+
+  function twitterLoginLogic(accessToken, refreshToken, profile, done) {
+    var upsertId = context.createObjectId();
+
+    context.logger.debug('Twitter auth info:', JSON.stringify(profile, null, 2), accessToken);
+    context.db.collection('users').findOneAndUpdate({
+      'auth.twitter.id': profile.id,
+    }, {
+      $set: {
+        contents: {
+          name: profile.displayName,
+        },
+        'auth.twitter': {
+          id: profile.id,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          emails: profile.emails,
+        },
+      },
+      $setOnInsert: {
+        _id: upsertId,
+      },
+    }, {
+      upsert: true,
+      returnOriginal: false,
+    }, function twitterLoginHandler(err, result) {
+      if(!result.lastErrorObject.updatedExisting) {
+        context.logger.info(
+          '@nfroidure: Twitter signup:', profile.displayName, '- @starring',
+          profile.username
+        );
+        context.bus.trigger({
+          exchange: 'A_TW_SIGNUP',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
+      } else {
+        context.bus.trigger({
+          exchange: 'A_TW_LOGIN',
           contents: {
             user_id: result.value._id,
           },

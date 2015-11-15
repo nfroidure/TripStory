@@ -85,6 +85,19 @@ function initAuthenticationRoutes(context) {
   );
 
   context.app.get(
+    '/auth/twitter',
+    passport.authenticate('twitter',
+    { scope: ['profile', 'email'] }
+  ));
+  context.app.get(
+    '/auth/twitter/callback',
+    passport.authenticate('twitter', { failureRedirect: '/me' }),
+    function(req, res) {
+      res.redirect('/api/v0/profile');
+    }
+  );
+
+  context.app.get(
     '/api/v0/profile',
     context.checkAuth,
     authRedirectToProfile

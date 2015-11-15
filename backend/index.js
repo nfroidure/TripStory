@@ -10,7 +10,6 @@ var cookieParser = require('cookie-parser');
 var winston = require('winston');
 var Twitter = require('twitter');
 var util = require('util');
-var uuid = require('node-uuid');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 

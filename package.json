@@ -36,5 +36,8 @@
   "homepage": "https://github.com/nfroidure/hackthemobility#readme",
   "devDependencies": {
     "pm2": "^0.15.10"
+  },
+  "dependencies": {
+    "passport-twitter": "^1.0.3"
   }
 }

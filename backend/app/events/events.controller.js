@@ -4,7 +4,8 @@ var eventsTransforms = require('./events.transforms');
 module.exports = initEventsController;
 
 function initEventsController(context) {
-  var eventController = { list: eventControllerList,
+  var eventController = {
+    list: eventControllerList,
     get: eventControllerGet,
     put: eventControllerPut,
     delete: eventControllerDelete,
