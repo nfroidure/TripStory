@@ -3,7 +3,7 @@
 
   angular
     .module('starter.controllers', [])
-    .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+    .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout) {
 
       // With the new view caching in Ionic, Controllers are only called
       // when they are recreated or on app start, instead of every page change.
@@ -14,6 +14,16 @@
 
       // Form data for the login modal
       $scope.loginData = {};
+      $scope.trips = [
+        { id: 1, label: 'Andalousie' },
+        { id: 2, label: 'Autriche' },
+        { id: 3, label: 'Bruxelles' },
+      ];
+      // methods
+      $scope.closeLogin = closeLogin;
+      $scope.login = login;
+      $scope.doLogin = doLogin;
+      $scope.goToTrip = goToTrip;
 
       // Create the login modal that we will use later
       $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -22,42 +32,31 @@
         $scope.modal = modal;
       });
 
+
       // Triggered in the login modal to close it
-      $scope.closeLogin = function() {
+      function closeLogin() {
         $scope.modal.hide();
-      };
-
+      }
       // Open the login modal
-      $scope.login = function() {
+      function login() {
         $scope.modal.show();
-      };
-
+      }
       // Perform the login action when the user submits the login form
-      $scope.doLogin = function() {
+      function doLogin() {
         console.log('Doing login', $scope.loginData);
-
         // Simulate a login delay. Remove this and replace with your login
         // code if using a login system
         $timeout(function() {
           $scope.closeLogin();
         }, 1000);
-      };
-
-      $scope.trips = [
-        { id: 1, label: 'Andalousie' },
-        { id: 2, label: 'Autriche' },
-        { id: 3, label: 'Bruxelles' },
-      ];
+      }
+      // go to related page
+      function goToTrip(trip) {
+        $state.go('app.single', { tripId: trip.id });
+      }
     })
-    .controller('PlaylistsCtrl', function($scope) {
-      $scope.playlists = [
-        { title: 'trajet1', id: 1 },
-        { title: 'trajet2', id: 2 },
-        { title: 'trajet3', id: 3 },
-      ];
-    })
-    .controller('PlaylistCtrl', function($scope, $stateParams) {
-      $scope.idPlaylist = $stateParams.playlistId;
+    .controller('TripCtrl', function($scope, $stateParams) {
+      $scope.idTrip = $stateParams.tripId;
     });
 
 }());
