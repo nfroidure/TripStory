@@ -1,1 +1,22 @@
 /* Empty. Add your own CSS if you like */
+
+
+.headerPage{
+  color: white;
+  text-align: center;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerPage__text{
+  background-color: rgba(0,0,0,0.2);
+  padding: 25px;
+}
+.headerPage__label{
+  color: white;
+}
+.headerPage__coverPicture{
+  width: 100%;
+}
