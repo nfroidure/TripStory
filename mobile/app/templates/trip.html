@@ -13,6 +13,7 @@
           <div class="member"
             ng-repeat="member in trip.members">
             <img class="member__picture" ng-src="{{ member.avatarPicture }}" alt="Profile photo of {{ member.name }}">
+            <div class="member__name">{{ member.name }}</div>
           </div>
         </div>
       </div>

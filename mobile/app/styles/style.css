@@ -27,13 +27,13 @@
 
 
 .member{
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
   margin: 0 10px;
 }
 
 .member__picture{
-
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.member__name{
 }
