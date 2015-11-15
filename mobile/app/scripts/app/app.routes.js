@@ -31,6 +31,15 @@
             controller: 'TripCtrl'
           }
         }
+      })
+      .state('app.member', {
+        url: '/member/:memberId',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/member.html',
+            controller: 'MemberCtrl'
+          }
+        }
       });
     $urlRouterProvider.otherwise('/app');
   }

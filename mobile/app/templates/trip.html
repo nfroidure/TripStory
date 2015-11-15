@@ -11,7 +11,8 @@
         <em class="headerPage__description">{{ trip.description }}</em>
         <div class="headerPage__members">
           <div class="member"
-            ng-repeat="member in trip.members">
+            ng-repeat="member in trip.members"
+            ng-click="goToMember(member)">
             <img class="member__picture" ng-src="{{ member.avatarPicture }}" alt="Profile photo of {{ member.name }}">
             <div class="member__name">{{ member.name }}</div>
           </div>
