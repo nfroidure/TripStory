@@ -4,8 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "pm2 startOrRestart package.json --no-daemon",
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
+  "apps": [
+    {
+      "name": "api",
+      "script": "backend/index.js",
+      "watch": true,
+      "ignore_watch": [
+        ".git",
+        "mobile",
+        "node_modules",
+        "test"
+      ],
+      "watch_options": {
+        "followSymlinks": false
+      },
+      "restart_delay": 100
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nfroidure/hackthemobility.git"
