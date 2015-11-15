@@ -4,7 +4,7 @@
 Running the back:
 
 ```sh
-node backend/index.js
+npm start
 ```
 
 ### Auth:
