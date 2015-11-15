@@ -39,5 +39,95 @@
   height: 40px;
   border-radius: 50%;
 }
-.member__name{
+​
+#logout {
+  display: block;
+  margin-top: 15px;
+  margin-left: 12px;
+  color: #788ea5;
+}
+
+#user-panel .scroll-content {
+  background-color: #0c4774;
+}
+​
+#user-panel .item {
+  font-size: 14px;
+  padding-left: 60px;
+  color: white;
+  border-color: #788ea5;
+  background-color: inherit;
+}
+​
+#user-panel #menu-search input {
+  display: inline;
+  margin-bottom: 10px;
+  color: white;
+  background-color: #0c4774;
+}
+​
+#user-panel #menu-search img {
+  width: 25px;
+  margin-left: 35px;
+}
+​
+#user-panel .item.user-name {
+  font-weight: bold;
+  padding: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  text-align: center;
+  border-top: none;
+  border-bottom: none;
+}
+​
+.subdiv {
+  font-weight: normal;
+  display: block;
+  margin-top: 5px;
+  color: #788ea5;
+}
+​
+​
+#user-panel .user-img {
+  position: relative;
+  width: 125px;
+  height: 125px;
+  margin: auto;
+  margin-top: 17.5px;
+  padding: 3.5px;
+  text-align: center;
+  border-radius: 100%;
+  background-color: white;
+}
+​
+#user-panel .user-img .user-photo {
+  position: relative;
+  border-radius: 100%;
+}
+​
+#user-panel div.redButtonBackground {
+  position: absolute;
+  z-index: 10;
+  right: 0.5em;
+  bottom: 0;
+  width: 3.5em;
+  height: 3.5em;
+  text-align: initial;
+  border-radius: 100%;
+  background-color: #dd2a2a;
+}
+#user-panel div.redButtonBackground img {
+  width: 45%;
+  margin: 32.5% auto 32.5% 28.5%;
+}
+​
+#createTrip {
+  display: block;
+  margin-top: 27px;
+  text-align: center;
+}
+​
+#createTrip img {
+  width: 65px;
 }

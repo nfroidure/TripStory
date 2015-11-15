@@ -12,26 +12,36 @@
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
 
-  <ion-side-menu side="left" expose-aside-when="large">
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Menu</h1>
-
-      <!-- <div class="item-input-wrapper">
-        <i class="icon ion-ios7-search placeholder-icon"></i>
-        <input type="search" placeholder="Search Trip" ng-model="search.label" autofocus>
-        <button class="button button-icon ion-ios7-close-empty input-button"></button>
-      </div> -->
-    </ion-header-bar>
-    <ion-header-bar class="bar bar-subheader item-input-inset">
-      <div class="item-input-wrapper">
-        <input type="search" autofocus placeholder="Search Trip" ng-model="search.contents.title"/>
-      </div>
-    </ion-header-bar>
-
+  <ion-side-menu side="left" expose-aside-when="large" id="user-panel">
     <ion-content>
+      <span menu-close id="logout" ui-sref="login">
+        Logout
+      </span>
+​
+      <div class="user-img" ng-click="newUserPicture()">
+        <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user-photo" width="100%"/>
+
+        <div class="redButtonBackground" ng-click="newUserPicture()">
+          <img src="images/camera.png">
+        </div>
+      </div>
+
+      <ion-item class="user-name">
+        REMY THELLIER
+        <!--  {{user.fname}} {{user.lname}} -->
+        <br>
+        <!-- Edit -->
+        <span class="subdiv" menu-close ui-sref="login">Edit my profile</span>
+      </ion-item>
+
       <ion-list>
-        <ion-item menu-close
-          ng-repeat="trip in trips | filter:search:strict"
+        <div id="menu-search">
+          <img src="images/search.png"/>
+          <input type="search" autofocus placeholder="Look for a trip" ng-model="search.contents.title"/>
+        </div>
+
+        <ion-item menu-close class="item-icon-left"
+          ng-repeat="trip in trips| filter:search:strict"
           ng-click="goToTrip(trip)">
           {{ trip.contents.title }}
         </ion-item>
@@ -42,15 +52,11 @@
           Add Trip
         </ion-item>
       </ion-list>
-    </ion-content>
 
-    <ion-footer-bar class="bar-stable"
-      style="bottom: 10px">
-        <!-- very nasty kack -->
-        <ion-item nav-clear menu-close ng-click="login()"
-          style="left:0;right:0;margin:0;top:0; width: 100%;position: fixed;">
-          Login
-        </ion-item>
-    </ion-footer-bar>
+      <div id="createTrip">
+        <img  src="images/add.png"/>
+        <span class="subdiv" menu-close ui-sref="newTrip">Create a new trip</span>
+      </div>
+    </ion-content>
   </ion-side-menu>
 </ion-side-menus>
