@@ -109,12 +109,25 @@ function initAuthenticationController(context) {
       upsert: true,
       returnOriginal: false,
     }, function facebookLoginHandler(err, result) {
-      context.logger.debug('Facebook upsert result', result);
-      if(!result.updatedExisting) {
+      context.logger.debug('Facebook upsert result', JSON.stringify(result));
+      if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           '@nfroidure: Facebook signup:', profile.displayName,
           ' https://facebook.com/' + profile.id
         );
+        context.bus.trigger({
+          exchange: 'A_FB_SIGNUP',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
+      } else {
+        context.bus.trigger({
+          exchange: 'A_FB_LOGIN',
+          contents: {
+            user_id: result.value._id,
+          },
+        });
       }
       return done(err, result.value);
     });

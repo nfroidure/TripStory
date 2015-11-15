@@ -12,6 +12,8 @@ var Twitter = require('twitter');
 var util = require('util');
 var uuid = require('node-uuid');
 
+var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
+
 // Twitter logger transport
 var TwittLog = exports.TwittLog = function TwittLog(options) {
   this.client = new Twitter(options || {});
@@ -29,7 +31,8 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
   msg = '[' + level + ']' + msg.substring(0, 128) + '… #jdmc15';
   this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
     if (error) {
-      context.logger.error(error); // eslint-disable-line no-console
+      console.log('Twitter console', error);
+      //context.logger.error(error); // eslint-disable-line no-console
       // self.emit('error', error); Disable since it crashes the app
     }
   });
@@ -47,6 +50,14 @@ Promise.all([
 
   // Services
   context.db = db;
+  context.bus = {
+    consume: function busConsume(callback) {
+      process.on('bus-event', callback);
+    },
+    trigger: function busTrigger(event) {
+      process.emit('bus-event', event);
+    },
+  };
   context.app = express();
   context.createObjectId = ObjectId;
   context.castToObjectId = ObjectId;
@@ -76,6 +87,9 @@ Promise.all([
   context.app.use(cookieParser());
   context.host = 'localhost';
   context.port = 3000;
+
+  // Workers
+  initFacebookWorker(context);
 
   // Routes
   initRoutes(context);
