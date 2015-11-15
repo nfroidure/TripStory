@@ -1,5 +1,7 @@
 'use strict';
 
+module.exports = initEventsController;
+
 function initEventsController(context) {
   var eventController = {
     list: eventControllerList,
@@ -46,13 +48,11 @@ function initEventsController(context) {
   }
 
   function eventControllerDelete(req, res, next) {
-    context.db.collection('events').findOneAndDelete({
+    context.db.collection('events').deleteOne({
       _id: context.castToObjectId(req.params.event_id),
     })
-    .then(function(result) {
-      res.status(410).send(result.value || {});
+    .then(function() {
+      res.status(410).send();
     }).catch(next);
   }
 }
-
-module.exports = initEventsController;

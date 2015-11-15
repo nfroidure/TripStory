@@ -22,15 +22,15 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
   var self = this; // eslint-disable-line
 
   // Dont log sensible infos
-  if('debug' === level) {
-    callback(null, true);
+  if(-1 === ['debug', 'error'].indexOf(level)) {
+    return callback(null, true);
   }
 
   msg = '[' + level + ']' + msg.substring(0, 128) + '… #jdmc15';
   this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
     if (error) {
-      console.log(error); // eslint-disable-line no-console
-      self.emit('error', error);
+      context.logger.error(error); // eslint-disable-line no-console
+      // self.emit('error', error); Disable since it crashes the app
     }
   });
 
@@ -87,7 +87,7 @@ Promise.all([
         return reject(err);
       }
 
-      context.logger.info(
+      context.logger.debug(
         'Server listening to \\o/ -> http://%s:%s - Pid: %s',
         context.host, context.port, process.pid
       );

@@ -2,6 +2,8 @@
 
 var usersTransforms = require('./users.transforms');
 
+module.exports = initUsersController;
+
 function initUsersController(context) {
   var userController = {
     list: userControllerList,
@@ -27,7 +29,7 @@ function initUsersController(context) {
       if(!entry) {
         return res.sendStatus(404);
       }
-      res.status(200).send(entry);
+      res.status(200).send(usersTransforms.fromCollection(entry));
     }).catch(next);
   }
 
@@ -39,6 +41,7 @@ function initUsersController(context) {
         contents: req.body.contents || {},
       },
       $setOnInsert: {
+        user_id: req.user._id,
         password: req.body.password,
       },
     }, {
@@ -51,13 +54,11 @@ function initUsersController(context) {
   }
 
   function userControllerDelete(req, res, next) {
-    context.db.collection('users').findOneAndDelete({
+    context.db.collection('users').deleteOne({
       _id: context.castToObjectId(req.params.user_id),
     })
-    .then(function(result) {
-      res.status(410).send(result.value ? usersTransforms.fromCollection(result.value) : {});
+    .then(function() {
+      res.status(410).send();
     }).catch(next);
   }
 }
-
-module.exports = initUsersController;
