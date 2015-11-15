@@ -9,8 +9,9 @@ node backend/index.js
 
 ### Auth:
 - Facebook: GET localhost:3000/auth/facebook
-- Login: POST username, password localhost:3000/api/v0/login
-- Logout: POST username, password localhost:3000/api/v0/logout
+- Login: POST username, password to localhost:3000/api/v0/login
+- Logout: POST username, password to localhost:3000/api/v0/logout
+- Signup: POST username, password, name to localhost:3000/api/v0/signup
 - Profile: GET localhost:3000/api/v0/profile - redirection
 
 

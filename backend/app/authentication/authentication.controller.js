@@ -19,6 +19,9 @@ function initAuthenticationController(context) {
 
   // Local login
   passport.use('local', new LocalStrategy(localLoginLogic));
+  passport.use('local-signup', new LocalStrategy({
+    passReqToCallback: true,
+  }, localSignupLogic));
   passport.use(new BasicStrategy(localLoginLogic));
   passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_ID,
@@ -29,7 +32,7 @@ function initAuthenticationController(context) {
   }, facebookLoginLogic));
 
   function localLoginLogic(username, password, done) {
-    console.log('Authentication attempt:', username, password);
+    context.logger.debug('Authentication attempt:', username, password);
     context.db.collection('users').findOne({
       'contents.email': username,
     }, function (err, user) {
@@ -40,26 +43,63 @@ function initAuthenticationController(context) {
       if (!user.password === password) {
         return done(null, false, { message: 'Incorrect password.' });
       }
-      console.log('Authenticated:', user);
+      context.logger.info('Authenticated a user:', user._id, user.name);
       done(null, user);
+    });
+  }
+
+  function localSignupLogic(req, username, password, done) {
+    var upsertId = context.createObjectId();
+
+    context.logger.debug('Sinup attempt:', req.body.name, upsertId);
+    context.db.collection('users').findOne({
+      'contents.email': username,
+    }, function (err, user) {
+      if (err) { return done(err); }
+      if(user) { return done(new Error('E_EXISTS')); }
+      if(!req.body.name) {
+        return done(null, false, { message: 'Incorrect name.' });
+      }
+      context.logger.info('Registered a new user', username);
+      context.db.collection('users').findOneAndUpdate({
+        'contents.email': username,
+      }, {
+        $set: {
+          contents: {
+            name: req.body.name,
+            email: username,
+          },
+        },
+        $setOnInsert: {
+          password: password,
+          _id: upsertId,
+        },
+      }, {
+        upsert: true,
+        returnOriginal: false,
+      }, function (err, result) {
+        if (err) { return done(err); }
+        done(null, result.value);
+      });
     });
   }
 
   function facebookLoginLogic(accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
 
-console.log(JSON.stringify(profile, null, 2), accessToken)
+    context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
     context.db.collection('users').findOneAndUpdate({
-      'auth.facebook': {
-        id: profile.id,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
+      'auth.facebook.id': profile.id,
     }, {
       $set: {
         contents: {
           name: profile.displayName,
           email: profile.email,
+        },
+        'auth.facebook': {
+          id: profile.id,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
         },
       },
       $setOnInsert: {
@@ -69,6 +109,13 @@ console.log(JSON.stringify(profile, null, 2), accessToken)
       upsert: true,
       returnOriginal: false,
     }, function facebookLoginHandler(err, result) {
+      context.logger.debug('Facebook upsert result', result);
+      if(!result.updatedExisting) {
+        context.logger.info(
+          '@nfroidure: Facebook signup:', profile.displayName,
+          ' https://facebook.com/10153768131704201'
+        );
+      }
       return done(err, result.value);
     });
   }

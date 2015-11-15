@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var winston = require('winston');
 var Twitter = require('twitter');
 var util = require('util');
+var uuid = require('node-uuid');
 
 // Twitter logger transport
 var TwittLog = exports.TwittLog = function TwittLog(options) {
@@ -20,7 +21,12 @@ util.inherits(TwittLog, winston.Transport);
 TwittLog.prototype.log = function log(level, msg, meta, callback) {
   var self = this; // eslint-disable-line
 
-  msg = msg.substring(0, 128) + '… #jdmc15';
+  // Dont log sensible infos
+  if('debug' === level) {
+    callback(null, true);
+  }
+
+  msg = '[' + level + ']' + msg.substring(0, 128) + '… #jdmc15';
   this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
     if (error) {
       console.log(error); // eslint-disable-line no-console
@@ -32,12 +38,6 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
 
   callback(null, true);
 };
-winston.add(TwittLog, {
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_TOKEN_SECRET,
-});
 
 // Preparing services
 Promise.all([
@@ -50,9 +50,19 @@ Promise.all([
   context.app = express();
   context.createObjectId = ObjectId;
   context.castToObjectId = ObjectId;
-  context.logger = winston;
+  context.logger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.Console)({ level: 'silly' }),
+      new (TwittLog)({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: process.env.TWITTER_TOKEN_KEY,
+        access_token_secret: process.env.TWITTER_TOKEN_SECRET,
+      }),
+    ],
+  });
   context.checkAuth = function isLoggedIn(req, res, next) {
-    console.log('isLoggedIn', req.isAuthenticated(), req.user);
+    context.logger.debug('isLoggedIn', req.isAuthenticated(), req.user);
     if(req.user || req.isAuthenticated()) {
       return next();
     }
@@ -62,6 +72,7 @@ Promise.all([
   // Middlewares
   context.app.use(express.static('www'));
   context.app.use(bodyParser.json());
+  context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
   context.host = 'localhost';
   context.port = 3000;
@@ -76,7 +87,10 @@ Promise.all([
         return reject(err);
       }
 
-      context.logger.info('Patrick is here \\o/ -> http://%s:%s', context.host, context.port);
+      context.logger.info(
+        'Server listening to \\o/ -> http://%s:%s - Pid: %s',
+        context.host, context.port, process.pid
+      );
       resolve();
     });
   });

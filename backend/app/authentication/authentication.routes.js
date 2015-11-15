@@ -35,6 +35,24 @@ function initAuthenticationRoutes(context) {
     })(req, res, next);
   });
 
+  context.app.post('/api/v0/signup', function(req, res, next) {
+    passport.authenticate('local-signup', function(err, user, info) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.sendStatus(401);
+      }
+
+      req.logIn(user, function(err) {
+        if (err) {
+          return next(err);
+        }
+        res.status(200).send(usersTransforms.fromCollection(user));
+      });
+    })(req, res, next);
+  });
+
   context.app.post('/api/v0/logout', context.checkAuth, function authLogout(req, res) {
     req.logout();
     res.sendStatus(204);
