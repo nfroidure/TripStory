@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var winston = require('winston');
 var Twitter = require('twitter');
 var util = require('util');
+var authUtils = require('http-auth-utils');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 
@@ -85,6 +86,7 @@ Promise.all([
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
+  context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
   context.host = 'localhost';
   context.port = 3000;
 
@@ -124,3 +126,28 @@ function corsFunction(req, res, next) {
   }
   next();
 };
+
+function initBasicAuth(context) {
+  return function(req, res, next) {
+    var data;
+
+    if(!req.headers.authorization) {
+      return next();
+    }
+    console.log(
+      authUtils.parseAuthorizationHeader(req.headers.authorization)
+    );
+    data = authUtils.parseAuthorizationHeader(req.headers.authorization).data;
+
+    context.db.collection('users').findOne({
+      'contents.email': data.username,
+      password: data.password,
+    }).then(function(user) {
+      if(!user) {
+        return res.sendStatus(401);
+      }
+      req.user = user;
+      next();
+    }).catch(next);
+  };
+}

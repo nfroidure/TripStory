@@ -15,6 +15,7 @@
     "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
     "express-session": "^1.12.1",
+    "http-auth-utils": "0.0.2",
     "mongodb": "^2.0.48",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
