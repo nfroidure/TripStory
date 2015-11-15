@@ -1,10 +1,10 @@
 'use strict';
 
+var eventsTransforms = require('./events.transforms');
 module.exports = initEventsController;
 
 function initEventsController(context) {
-  var eventController = {
-    list: eventControllerList,
+  var eventController = { list: eventControllerList,
     get: eventControllerGet,
     put: eventControllerPut,
     delete: eventControllerDelete,
@@ -15,7 +15,7 @@ function initEventsController(context) {
   function eventControllerList(req, res, next) {
     context.db.collection('events').find({}).toArray()
     .then(function(entries) {
-      res.status(200).send(entries);
+      res.status(200).send(entries.map(eventsTransforms.fromCollection));
     }).catch(next);
   }
 
@@ -27,7 +27,7 @@ function initEventsController(context) {
       if(!entry) {
         return res.sendStatus(404);
       }
-      res.status(200).send(entry);
+      res.status(200).send(eventsTransforms.fromCollection(entry));
     }).catch(next);
   }
 
@@ -43,7 +43,7 @@ function initEventsController(context) {
       returnOriginal: false,
     })
     .then(function(result) {
-      res.status(201).send(result.value);
+      res.status(201).send(eventsTransforms.fromCollection(result.value));
     }).catch(next);
   }
 
