@@ -18,13 +18,21 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
+
+        <label class="item item-input">
+          <input type="text" placeholder="Search Trip" ng-model="search.label">
+        </label>
+
         <ion-item menu-close ng-click="login()">
           Login
         </ion-item>
         <ion-item menu-close
-          ng-repeat="trip in trips"
+          ng-repeat="trip in trips| filter:search:strict"
           ng-click="goToTrip(trip)">
           {{ trip.label }}
+        </ion-item>
+        <ion-item menu-close ng-if="toto.length === 0">
+          no trips
         </ion-item>
         <!-- <ion-item menu-close href="#/app/search">
           Search
