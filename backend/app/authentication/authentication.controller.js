@@ -113,7 +113,7 @@ function initAuthenticationController(context) {
       if(!result.updatedExisting) {
         context.logger.info(
           '@nfroidure: Facebook signup:', profile.displayName,
-          ' https://facebook.com/10153768131704201'
+          ' https://facebook.com/' + profile.id
         );
       }
       return done(err, result.value);
