@@ -16,14 +16,12 @@
       return service;
       ////////////////
       function get(id) {
-        var debug = 'abbacacaabbacacaabbacaca';
-        return $http.get('localhost:3000/api/v0/trips/' + id || debug)
-          .then(function(values){
-            console.log(values);
-          });
+        var url = 'http://localhost:3000/api/v0/trips/';
+        url += id ? id : '';
+        return $http.get(url);
       }
       function post(trip) {
-        return $http.post('localhost:3000/api/v0/trips/' + createObjectId(), trip)
+        return $http.post('http://localhost:3000/api/v0/trips/' + createObjectId(), trip);
       }
   }
 

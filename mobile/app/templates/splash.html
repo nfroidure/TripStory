@@ -2,7 +2,17 @@
   <ion-content>
     <h1>Welcome to Roadify</h1>
 
-    <pre>{{me}}</pre>
+      <div ng-if="me">
+        You are not logged !
+        Here is your data
+        <pre>{{me}}</pre>
+      </div>
+
+      <div ng-if="!me">
+        You are not logged;
+      </div>
+
+
   </ion-content>
 </ion-view>
 

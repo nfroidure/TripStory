@@ -36,7 +36,7 @@
 
     //
     function activate() {
-      $scope.trips = tripsFactory.get();
+      //$scope.trips = tripsFactory.get();
     }
     // Triggered in the login modal to close it
     function closeLogin() {
@@ -53,10 +53,10 @@
         .then(function(status) {
           if (status.status === 200) {
             $scope.closeLogin();
-            console.log(status.data);
             $scope.me = status.data;
           }
-        });
+        })
+        .catch(function(err){ $scope.fail = err; });
     }
     // go to related page
     function goToTrip(trip) {
@@ -64,7 +64,6 @@
     }
     // add trip
     function addTrip() {
-      console.log("submit")
       $scope.addTripModal.show();
     }
     function submitTrip() {

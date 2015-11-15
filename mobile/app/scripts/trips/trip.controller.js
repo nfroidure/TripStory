@@ -16,7 +16,7 @@
     activate();
 
     function activate() {
-      $scope.trip = tripsFactory.get();
+      $scope.trip = tripsFactory.get(idTrip);
     }
     function goToMember(member) {
       $state.go('app.member', { memberId: member.id });

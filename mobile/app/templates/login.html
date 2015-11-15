@@ -17,7 +17,9 @@
           <input type="password" ng-model="loginData.password">
         </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
+          <button class="button button-block button-positive"
+            ng-class="{ 'button-assertive': fail }"
+            type="submit">Log {{ fail ? 'again' : 'in' }}</button>
         </label>
       </div>
     </form>
