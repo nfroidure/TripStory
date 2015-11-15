@@ -5,9 +5,10 @@
     .module('app')
     .config(Router);
 
-  Router.$inject = ['$stateProvider', '$urlRouterProvider'];
+  Router.$inject = ['$stateProvider', '$urlRouterProvider', '$httpProvider'];
 
-  function Router($stateProvider, $urlRouterProvider) {
+  function Router($stateProvider, $urlRouterProvider, $httpProvider) {
+    $httpProvider.defaults.withCredentials = true;
     $stateProvider
       .state('app', {
         url: '/app',

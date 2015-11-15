@@ -16,8 +16,8 @@
       return service;
       ////////////////
       function get(id) {
-        var url = 'http://localhost:3000/api/v0/trips/';
-        url += id ? id : '';
+        var url = 'http://localhost:3000/api/v0/trips';
+        url += id ? '/' + id : '';
         return $http.get(url);
       }
       function post(trip) {

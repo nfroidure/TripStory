@@ -56,6 +56,12 @@
             $scope.me = status.data;
           }
         })
+        .then(function() {
+          $scope.trips = tripsFactory.get()
+            .then(function(val){
+              console.log(val);
+            });
+        })
         .catch(function(err){ $scope.fail = err; });
     }
     // go to related page
