@@ -15,6 +15,14 @@
         templateUrl: 'templates/menu.html',
         controller: 'AppCtrl'
       })
+      .state('app.splash', {
+        url: '',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/splash.html',
+          }
+        }
+      })
       .state('app.trip', {
         url: '/trips/:tripId',
         views: {

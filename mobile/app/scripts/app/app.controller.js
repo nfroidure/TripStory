@@ -48,7 +48,7 @@
     }
     // go to related page
     function goToTrip(trip) {
-      $state.go('app.single', { tripId: trip.id });
+      $state.go('app.trip', { tripId: trip.id });
     }
   }
 

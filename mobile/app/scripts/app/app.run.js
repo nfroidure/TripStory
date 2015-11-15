@@ -3,11 +3,11 @@
 
   angular
     .module('app')
-    .run(run);
+    .run(runBlock);
 
-  run.$inject($ionicPlatform);
+  runBlock.$inject = ['$ionicPlatform'];
   /* @ngInject */
-  function run($ionicPlatform) {
+  function runBlock($ionicPlatform) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
