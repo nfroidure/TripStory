@@ -48,12 +48,17 @@ function initAuthenticationController(context) {
   function facebookLoginLogic(accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
 
+console.log(JSON.stringify(profile, null, 2), accessToken)
     context.db.collection('users').findOneAndUpdate({
-      'auth.facebook': profile.id,
+      'auth.facebook': {
+        id: profile.id,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      },
     }, {
       $set: {
         contents: {
-          name: profile.name,
+          name: profile.displayName,
           email: profile.email,
         },
       },
