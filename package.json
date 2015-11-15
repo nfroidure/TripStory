@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nfroidure/hackthemobility/issues"
   },
-  "homepage": "https://github.com/nfroidure/hackthemobility#readme"
+  "homepage": "https://github.com/nfroidure/hackthemobility#readme",
+  "devDependencies": {
+    "pm2": "^0.15.10"
+  }
 }
