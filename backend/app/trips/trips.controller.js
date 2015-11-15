@@ -41,11 +41,16 @@ function initTripsController(context) {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
+        event: {
+          _id: '$_id',
+          contents: '$contents',
+        },
       },
     }, {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
+        events: { $push: '$event' },
       },
     }]).toArray()
     .then(function(entries) {
