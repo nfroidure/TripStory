@@ -278,7 +278,7 @@ function initAuthenticationController(context) {
     }).then(function(profile) {
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
       context.db.collection('users').findOneAndUpdate({
-        'auth.xee.id': profile.id,
+        'auth.xee': profile.id,
       }, {
         $set: {
           contents: {
