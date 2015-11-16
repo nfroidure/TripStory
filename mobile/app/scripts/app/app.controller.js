@@ -9,7 +9,11 @@
   /* @ngInject */
   function AppCtrl($scope, $state, $ionicModal, $timeout, tripsFactory, AuthService) {
 
-    $scope.loginData = {};
+    $scope.user = {
+      fname: "Chuck",
+      lname: "Norris",
+      picture_url: "http://static-files1.modthesims2.com/customavatars/avatar7265094_1.gif"
+    };
     $scope.tripToAdd = { contents: {} };
     $scope.trips = [];
 
