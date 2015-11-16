@@ -8,9 +8,8 @@
   TripCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory'];
   /* @ngInject */
   function TripCtrl($scope, $state, $stateParams, tripsFactory) {
-    var idTrip = parseInt($stateParams.tripId);
+    var idTrip = $stateParams.tripId;
 
-    $scope.trip = {};
     $scope.goToMember = goToMember;
 
     activate();
