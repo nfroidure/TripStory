@@ -13,6 +13,8 @@ var util = require('util');
 var authUtils = require('http-auth-utils');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
+var initXeeWorker = require('./workers/xee/xee.bin.js');
+var initPSAWorker = require('./workers/psa/psa.bin.js');
 
 // Twitter logger transport
 var TwittLog = exports.TwittLog = function TwittLog(options) {
@@ -92,6 +94,8 @@ Promise.all([
 
   // Workers
   initFacebookWorker(context);
+  initXeeWorker(context);
+  initPSAWorker(context);
 
   // Routes
   initRoutes(context);
