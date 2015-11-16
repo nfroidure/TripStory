@@ -49,13 +49,6 @@
   background-color: #0c4774;
 }
 
-.side-panel .logout__link{
-  display: block;
-  margin-top: 15px;
-  margin-left: 12px;
-  color: #788ea5;
-}
-
 .side-panel .user__img {
   position: relative;
   width: 125px;
@@ -120,19 +113,17 @@
   margin-left: 35px;
 }
 
-.subdiv {
-  font-weight: normal;
-  display: block;
-  margin-top: 5px;
-  color: #788ea5;
+.side-panel .create__trip span {
+  display: inline;
+  color: white;
 }
 
-#createTrip {
-  display: block;
-  margin-top: 27px;
+.side-panel .create__trip img {
+  width: 12px;
+}
+
+.side-panel .logout__link{
+  margin-top: 60px;
   text-align: center;
-}
-
-#createTrip img {
-  width: 65px;
+  padding-left: 0px;
 }
