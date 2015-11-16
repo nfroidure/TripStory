@@ -1,11 +1,13 @@
 'use strict';
 
+var request = require('request');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BasicStrategy = require('passport-http').BasicStrategy;
 var FacebookStrategy = require('passport-facebook');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
+var OAuth2Strategy = require('passport-oauth2');
 
 module.exports = initAuthenticationController;
 
@@ -44,6 +46,14 @@ function initAuthenticationController(context) {
     callbackURL: 'http://' + context.host + ':' + context.port +
       '/auth/twitter/callback',
   }, twitterLoginLogic));
+  passport.use('xee', new OAuth2Strategy({
+    authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
+    tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
+    clientID: process.env.XEE_ID,
+    clientSecret: process.env.XEE_SECRET,
+    callbackURL: 'http://localhost:3000/auth/xee/callback',
+    useAuthorizationHeaderForGET: true,
+  }, xeeLoginLogic));
 
   function localLoginLogic(username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);
@@ -87,6 +97,12 @@ function initAuthenticationController(context) {
         $setOnInsert: {
           password: password,
           _id: upsertId,
+          // Setting the PSA test car
+          'auth.psa': {
+            vin: process.env.PSA_VIN,
+            contract: process.env.PSA_CONTRACT,
+            code: process.env.PSA_CODE,
+          },
         },
       }, {
         upsert: true,
@@ -215,7 +231,6 @@ function initAuthenticationController(context) {
           id: profile.id,
           accessToken: accessToken,
           refreshToken: refreshToken,
-          emails: profile.emails,
         },
       },
       $setOnInsert: {
@@ -245,6 +260,64 @@ function initAuthenticationController(context) {
         });
       }
       return done(err, result.value);
+    });
+  }
+
+  function xeeLoginLogic(accessToken, refreshToken, profile, done) {
+    var upsertId = context.createObjectId();
+
+    new Promise(function(resolve, reject) {
+      request.get(
+      'https://cloud.xee.com/v1/user/me.json?access_token=' + accessToken,
+      function(err, httpRes, httpData) {
+        if(err) {
+          return reject(err);
+        }
+        resolve(JSON.parse(httpData));
+      });
+    }).then(function(profile) {
+      context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
+      context.db.collection('users').findOneAndUpdate({
+        'auth.xee.id': profile.id,
+      }, {
+        $set: {
+          contents: {
+            name: profile.firstName + ' ' + profile.name,
+          },
+          'auth.xee.id': {
+            id: profile.id,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          },
+        },
+        $setOnInsert: {
+          _id: upsertId,
+        },
+      }, {
+        upsert: true,
+        returnOriginal: false,
+      }, function xeeLoginHandler(err, result) {
+        if(!result.lastErrorObject.updatedExisting) {
+          context.logger.info(
+            '@nfroidure: Xee signup:', profile.firstName + ' ' + profile.name
+          );
+          context.bus.trigger({
+            exchange: 'A_XEE_SIGNUP',
+            contents: {
+              user_id: result.value._id,
+            },
+          });
+        } else {
+          context.bus.trigger({
+            exchange: 'A_XEE_LOGIN',
+            contents: {
+              user_id: result.value._id,
+            },
+          });
+        }
+        return done(err, result.value);
+      });
+
     });
   }
 

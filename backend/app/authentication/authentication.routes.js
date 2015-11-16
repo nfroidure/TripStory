@@ -98,6 +98,22 @@ function initAuthenticationRoutes(context) {
   );
 
   context.app.get(
+    '/auth/xee',
+    passport.authenticate('xee',
+    { scope: [
+      'user_get', 'email_get', 'car_get', 'data_get',
+      'location_get', 'address_all', 'accelerometer_get',
+    ] }
+  ));
+  context.app.get(
+    '/auth/xee/callback',
+    passport.authenticate('xee', { failureRedirect: '/me' }),
+    function(req, res) {
+      res.redirect('/api/v0/profile');
+    }
+  );
+
+  context.app.get(
     '/api/v0/profile',
     context.checkAuth,
     authRedirectToProfile
