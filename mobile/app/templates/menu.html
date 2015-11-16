@@ -34,7 +34,7 @@
           ng-click="goToTrip(trip)">
           {{ trip.contents.title }}
         </ion-item>
-        <div class="create__trip item">
+        <div class="create__trip item" ng-click="addTrip()">
           <img  src="images/add.png"/>
           <span menu-close ui-sref="newTrip">Create a new trip</span>
         </div>
