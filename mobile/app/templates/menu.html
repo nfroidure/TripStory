@@ -44,15 +44,9 @@
           ng-click="goToTrip(trip)">
           {{ trip.contents.title }}
         </ion-item>
-
-        <ion-item menu-close
-          class="btn-add"
-          ng-click="addTrip()">
-          Add Trip
-        </ion-item>
       </ion-list>
 
-      <div id="createTrip">
+      <div id="createTrip" ng-click="addTrip()">
         <img  src="images/add.png"/>
         <span class="subdiv" menu-close ui-sref="newTrip">Create a new trip</span>
       </div>
