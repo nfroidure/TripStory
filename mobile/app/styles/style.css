@@ -50,14 +50,25 @@
   border: 2px solid white;
 }
 
-/* Splash page */
-.splash{
-  padding: 15px;
-}
-
 /* Side panel */
 .side-panel {
   background-color: #0c4774;
+}
+
+.side-panel a.item-content{
+  background-color: transparent;
+}
+
+.side-panel a.item-content:hover{
+  background-color: transparent;
+}
+
+.side-panel a.item-content:active{
+  background-color: transparent;
+}
+
+.side-panel a.item-content:visited{
+  background-color: transparent;
 }
 
 .side-panel .user__img {
