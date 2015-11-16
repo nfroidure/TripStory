@@ -62,7 +62,9 @@ Resource:
     "to": {
         "address": "72 avenue de Bretagne 59000 Lille",
         "latLng": [0, 0],
-    }
+    },
+    "tag": "yololille", // Pas de #
+    "friends_ids": ['b17eb17eb17eb17eb17eb17e'],
     // anything
   }
 }
