@@ -75,13 +75,13 @@ function initAuthenticationController(context) {
   function localSignupLogic(req, username, password, done) {
     var upsertId = context.createObjectId();
 
-    context.logger.debug('Sinup attempt:', req.body.name, upsertId);
+    context.logger.debug('Sinup attempt:', req.body.username, upsertId);
     context.db.collection('users').findOne({
       'contents.email': username,
     }, function(err, user) {
       if (err) { return done(err); }
       if(user) { return done(new Error('E_EXISTS')); }
-      if(!req.body.name) {
+      if(!req.body.username) {
         return done(null, false, { message: 'Incorrect name.' });
       }
       context.logger.info('Registered a new user', username);
@@ -90,7 +90,7 @@ function initAuthenticationController(context) {
       }, {
         $set: {
           contents: {
-            name: req.body.name,
+            name: req.body.username,
             email: username,
           },
         },

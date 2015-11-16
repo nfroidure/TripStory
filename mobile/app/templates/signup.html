@@ -1,4 +1,4 @@
-<form ng-submit="doLogin()" class="auth-form">
+<form ng-submit="doSignup()">
   <div class="list">
     <label class="item item-input">
       <span class="input-label">Username</span>
@@ -8,11 +8,15 @@
       <span class="input-label">Password</span>
       <input type="password" ng-model="loginData.password">
     </label>
+    <label class="item item-input">
+      <span class="input-label">Password Confirmation</span>
+      <input type="password" ng-model="loginData.passwordConfirmation">
+    </label>
     <div class="padding">
       <button class="button button-block button-positive"
         ng-class="{ 'button-assertive': fail }"
-        type="submit">Log {{ fail ? 'again' : 'in' }}</button>
-      <a class="button button-block" ui-sref="signup">Sign up</a>
-    <div>
+        type="submit">Sign up {{ fail ? 'again' : '' }}</button>
+      <a class="button button-block" ui-sref="login">Log in</a>
+    </div>
   </div>
 </form>

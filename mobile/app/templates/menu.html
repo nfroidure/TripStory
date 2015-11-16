@@ -13,38 +13,49 @@
   </ion-side-menu-content>
 
   <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
-    <ion-content>
-      <div class="user__img" ng-click="newUserPicture()">
-        <!-- <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user__photo" width="100%"/> -->
-        <img ng-src="{{user.picture_url}}" class="user__photo" width="100%"/>
-      </div>
-
-      <ion-item class="user__name">
-        {{user.fname}} {{user.lname}}
-      </ion-item>
-
-      <ion-list>
-        <div class="menu__search">
-          <img src="images/search.png"/>
-          <input type="search" autofocus placeholder="Look for a trip" ng-model="search.contents.title"/>
+    <div ng-if="user._id">
+      <ion-content>
+        <div class="user__img" ng-click="newUserPicture()">
+          <!-- <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user__photo" width="100%"/> -->
+          <img ng-src="{{user.picture_url}}" class="user__photo" width="100%"/>
         </div>
 
-        <ion-item menu-close class="item-icon-left"
-          ng-repeat="trip in trips| filter:search:strict"
-          ng-click="goToTrip(trip)">
-          {{ trip.contents.title }}
+        <ion-item class="user__name">
+          {{user.contents.name}}
         </ion-item>
-        <div class="create__trip item" ng-click="addTrip()">
-          <img  src="images/add.png"/>
-          <span menu-close ui-sref="newTrip">Create a new trip</span>
-        </div>
-      </ion-list>
 
-      <ion-list>
-        <ion-item menu-close class="centered logout__link" ng-click="logout()">
-          Logout
-        </ion-item>
-      </ion-list>
-    </ion-content>
+        <ion-list>
+          <div class="menu__search">
+            <img src="images/search.png"/>
+            <input type="search" autofocus placeholder="Look for a trip" ng-model="search.contents.title"/>
+          </div>
+
+          <ion-item menu-close class="item-icon-left"
+            ng-repeat="trip in trips| filter:search:strict"
+            ng-click="goToTrip(trip)">
+            {{ trip.contents.title }}
+          </ion-item>
+          <div class="create__trip item" ng-click="addTrip()">
+            <img  src="images/add.png"/>
+            <span menu-close ui-sref="newTrip">Create a new trip</span>
+          </div>
+        </ion-list>
+
+        <ion-list>
+          <ion-item menu-close class="centered logout__link" ng-click="doLogout()">
+            Logout
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </div>
+    <div ng-if="!user._id">
+      <ion-content>
+        <ion-list>
+          <ion-item ui-sref="login">
+            Login
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </div>
   </ion-side-menu>
 </ion-side-menus>

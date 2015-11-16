@@ -5,31 +5,19 @@
     .module('app')
     .controller('AppCtrl', AppCtrl);
 
-  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'tripsFactory', 'AuthService'];
+  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory', 'me', 'AuthService'];
   /* @ngInject */
-  function AppCtrl($scope, $state, $ionicModal, $timeout, tripsFactory, AuthService) {
-
-    $scope.user = {
-      fname: "Chuck",
-      lname: "Norris",
-      picture_url: "http://static-files1.modthesims2.com/customavatars/avatar7265094_1.gif"
-    };
+  function AppCtrl($scope, $state, $ionicModal, $timeout, $http, tripsFactory, me, AuthService) {
     $scope.tripToAdd = { contents: {} };
     $scope.trips = [];
 
-    $scope.closeLogin = closeLogin;
-    $scope.login = login;
-    $scope.doLogin = doLogin;
+    $scope.user = me.data;
+
     $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;
     $scope.closeAddTrip = closeAddTrip;
     $scope.submitTrip = submitTrip;
-
-    $ionicModal.fromTemplateUrl('templates/login.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
+    $scope.doLogout = doLogout;
 
     $ionicModal.fromTemplateUrl('templates/addTripModal.html', {
       scope: $scope
@@ -39,31 +27,14 @@
 
     activate();
 
-    //
     function activate() {
-      tripsFactory.get()
-        .then(function(values){ $scope.trips = values.data; });
+      tripsFactory.get().then(
+        function(values){
+          $scope.trips = values.data;
+        }
+      );
     }
-    // Triggered in the login modal to close it
-    function closeLogin() {
-      $scope.modal.hide();
-    }
-    // Open the login modal
-    function login() {
-      $scope.modal.show();
-    }
-    // Perform the login action when the user submits the login form
-    function doLogin() {
-      console.log('Doing login with: ', $scope.loginData);
-      AuthService.log($scope.loginData)
-        .then(function(status) {
-          if (status.status === 200) {
-            $scope.closeLogin();
-            $scope.me = status.data;
-          }
-        })
-        .catch(function(err){ $scope.fail = err; });
-    }
+
     // go to related page
     function goToTrip(trip) {
       $state.go('app.trip', { tripId: trip._id });
@@ -78,6 +49,16 @@
     function submitTrip() {
       tripsFactory.post($scope.tripToAdd);
     }
-  }
 
+    function doLogout() {
+      AuthService.logout()
+        .then(function(status) {
+          if (status.status === 204) {
+            $scope.user = {};
+            $state.go("login");
+          }
+        })
+        .catch(function(err){ $scope.fail = err; });
+    }
+  }
 })();
