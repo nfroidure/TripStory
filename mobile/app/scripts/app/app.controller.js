@@ -18,6 +18,7 @@
     $scope.doLogin = doLogin;
     $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;
+    $scope.closeAddTrip = closeAddTrip;
     $scope.submitTrip = submitTrip;
 
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -66,6 +67,9 @@
     // add trip
     function addTrip() {
       $scope.addTripModal.show();
+    }
+    function closeAddTrip() {
+      $scope.addTripModal.hide();
     }
     function submitTrip() {
       tripsFactory.post($scope.tripToAdd);
