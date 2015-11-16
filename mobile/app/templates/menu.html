@@ -12,30 +12,29 @@
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
 
-  <ion-side-menu side="left" expose-aside-when="large" id="user-panel">
+  <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
     <ion-content>
-      <span menu-close id="logout" ui-sref="login">
+      <span menu-close class="logout__link" ui-sref="login">
         Logout
       </span>
 ​
-      <div class="user-img" ng-click="newUserPicture()">
-        <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user-photo" width="100%"/>
+      <div class="user__img" ng-click="newUserPicture()">
+        <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user__photo" width="100%"/>
 
-        <div class="redButtonBackground" ng-click="newUserPicture()">
+        <div class="camera__button__container" ng-click="newUserPicture()">
           <img src="images/camera.png">
         </div>
       </div>
 
-      <ion-item class="user-name">
-        REMY THELLIER
-        <!--  {{user.fname}} {{user.lname}} -->
+      <ion-item class="user__name">
+        {{user.fname}} {{user.lname}}
         <br>
         <!-- Edit -->
         <span class="subdiv" menu-close ui-sref="login">Edit my profile</span>
       </ion-item>
 
       <ion-list>
-        <div id="menu-search">
+        <div class="menu__search">
           <img src="images/search.png"/>
           <input type="search" autofocus placeholder="Look for a trip" ng-model="search.contents.title"/>
         </div>
