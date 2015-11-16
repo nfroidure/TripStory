@@ -1,17 +1,34 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Add Trip</h1>
+    <h1 class="title">Create a new trip</h1>
     <div class="buttons">
-      <button class="button button-clear" ng-click="closeAddTrip()">Close</button>
+      <button class="button button-clear" ng-click="closeAddTrip()">X</button>
     </div>
   </ion-header-bar>
+  <div class="imageHeader">
+    <img  src="images/standardCover.png"/>
+    <img  src="images/blueCamera.png"/>
+    <span class="iconComment">Add a kickass cover</span>
+  </div>
   <ion-content>
     <form ng-submit="submitTrip()">
       <div class="list">
         <label class="item item-input">
           <span class="input-label">Title</span>
           <input type="text" ng-model="tripToAdd.contents.title">
+       </label>
+      
+       <label class="item item-input item-select">
+          <div class="input-label">
+            Select the car
+          </div>
+          <select>
+            <option>Delorean</option>
+            <option selected>Tesla Model S</option>
+            <option>207</option>
+          </select>
         </label>
+
         <label class="item item-input">
           <span class="input-label">Description</span>
           <input type="text" ng-model="tripToAdd.contents.description">
