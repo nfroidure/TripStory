@@ -10,6 +10,7 @@ function initUsersController(context) {
     get: userControllerGet,
     put: userControllerPut,
     delete: userControllerDelete,
+    listFriends: userControllerListFriends,
   };
 
   return userController;
@@ -65,6 +66,25 @@ function initUsersController(context) {
     })
     .then(function() {
       res.status(410).send();
+    }).catch(next);
+  }
+
+  function userControllerListFriends(req, res, next) {
+    context.db.collection('users').findOne({
+      _id: context.castToObjectId(req.params.user_id),
+    })
+    .then(function(entry) {
+      if(!entry) {
+        return res.sendStatus(404);
+      }
+      return context.db.collection('users').find({
+        _id: {
+          $in: entry.friends_ids || [],
+        },
+      }).toArray()
+      .then(function(entries) {
+        res.status(200).send(entries.map(usersTransforms.fromCollection));
+      });
     }).catch(next);
   }
 }
