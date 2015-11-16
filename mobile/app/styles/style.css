@@ -39,8 +39,12 @@
   border-radius: 50%;
 }
 
-/* Side panel */
+/* Splash page */
+.splash{
+  padding: 15px;
+}
 
+/* Side panel */
 .side-panel {
   background-color: #0c4774;
 }
