@@ -1,5 +1,7 @@
 'use strict';
 
+var transformsUtils = require('../utils/transforms');
+
 var tripsTransforms = {
   fromCollection: tripsTransformsFromCollection,
   toCollection: tripsTransformsToCollection,
@@ -13,7 +15,7 @@ function tripsTransformsFromCollection(src) {
     contents: src.contents,
   };
 
-  return dest;
+  return transformsUtils.mapIds(transformsUtils.toString, dest);
 }
 
 function tripsTransformsToCollection(src) {

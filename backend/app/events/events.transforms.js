@@ -1,5 +1,7 @@
 'use strict';
 
+var transformsUtils = require('../utils/transforms');
+
 var eventsTransforms = {
   fromCollection: eventsTransformsFromCollection,
   toCollection: eventsTransformsToCollection,
@@ -13,7 +15,7 @@ function eventsTransformsFromCollection(src) {
     contents: src.contents,
   };
 
-  return dest;
+  return transformsUtils.mapIds(transformsUtils.toString, dest);
 }
 
 function eventsTransformsToCollection(src) {
