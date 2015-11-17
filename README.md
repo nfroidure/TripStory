@@ -42,10 +42,10 @@ Resource:
 ```
 
 # Trips
-- List: GET localhost:3000/api/v0/trips
-- Details: GET localhost:3000/api/v0/trips/:trip_id
-- Add: PUT localhost:3000/api/v0/trips/:trip_id
-- Delete: DELETE localhost:3000/api/v0/trips/:trip_id
+- List: GET localhost:3000/api/v0/users/:user_id/trips
+- Details: GET localhost:3000/api/v0/users/:user_id/trips/:trip_id
+- Add: PUT localhost:3000/api/v0/users/:user_id/trips/:trip_id
+- Delete: DELETE localhost:3000/api/v0/users/:user_id/trips/:trip_id
 
 Resource:
 ```js
@@ -66,15 +66,16 @@ Resource:
     "tag": "yololille", // Pas de #
     "friends_ids": ['b17eb17eb17eb17eb17eb17e'],
     // anything
-  }
+  },
+  "owner_id": "babababababababababababa", // Id du propriétaire, ajouté par le serveur
 }
 ```
 
 # Events
-- List: GET localhost:3000/api/v0/events
-- Details: GET localhost:3000/api/v0/events/:event_id
-- Add: PUT localhost:3000/api/v0/events/:event_id
-- Delete: DELETE localhost:3000/api/v0/events/:event_id
+- List: GET localhost:3000/api/v0/users/:user_id/events
+- Details: GET localhost:3000/api/v0/users/:user_id/events/:event_id
+- Add: PUT localhost:3000/api/v0/users/:user_id/events/:event_id
+- Delete: DELETE localhost:3000/api/v0/users/:user_id/events/:event_id
 
 Resource:
 ```js
@@ -87,10 +88,11 @@ Resource:
     // anything
   },
   "trip": { // Non nécessaire en écriture de le préciser
-    "_id": 'abba1a1aabba1a1aabba=caca1a1a' // ObjectId stringifié et généré côté client
+    "_id": 'abba1a1aabba1a1aabbacaca1a1a' // ObjectId stringifié et généré côté client
     "name": "Mon trip à SF",
     "description": "",
     // anything
-  }
+  },
+  "owner_id": "babababababababababababa", // Id du propriétaire, ajouté par le serveur
 }
 ```

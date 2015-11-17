@@ -98,7 +98,7 @@ Promise.all([
   initXeeWorker(context);
   initPSAWorker(context);
   initTwitterWorker(context);
-  setInterval(triggerTwitterSync.bind(null, context), 60000);
+  setInterval(triggerTwitterSync.bind(null, context), 240000);
   triggerTwitterSync(context);
 
   // Routes
@@ -142,9 +142,6 @@ function initBasicAuth(context) {
     if(!req.headers.authorization) {
       return next();
     }
-    console.log(
-      authUtils.parseAuthorizationHeader(req.headers.authorization)
-    );
     data = authUtils.parseAuthorizationHeader(req.headers.authorization).data;
 
     context.db.collection('users').findOne({
@@ -152,6 +149,7 @@ function initBasicAuth(context) {
       password: data.password,
     }).then(function(user) {
       if(!user) {
+        context.logger.debug('Bad login attempt:', data);
         return res.sendStatus(401);
       }
       req.user = user;

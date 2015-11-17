@@ -37,13 +37,13 @@ function twitterSyncJob(context, event) {
             if(err) {
               reject(err);
             }
-            context.logger.debug(JSON.stringify(tweets, null, 2));
+            //context.logger.debug(JSON.stringify(tweets, null, 2));
             resolve(Promise.all(tweets.statuses.map(function(status) {
               return context.db.collection('users').findOne({
                 'auth.twitter.id': status.user.id + '',
               }).then(function(author) {
                 if(!author) {
-                  context.logger.debug('No user found for ', status.user)
+                  context.logger.debug('No user found for ', status.user._id)
                   return;
                 }
                 return context.db.collection('events').findOneAndUpdate({
@@ -58,7 +58,7 @@ function twitterSyncJob(context, event) {
                   },
                   $setOnInsert: {
                     'contents.date': new Date(status.created_at),
-                    'contents.trip_id': tripEvent.trip._id,
+                    'contents.trip_id': tripEvent._id,
                     'contents.type': 'twitter-status',
                     trip: tripEvent.trip,
                   },

@@ -18,6 +18,14 @@ function initTripsController(context) {
 
   function tripControllerList(req, res, next) {
     context.db.collection('events').aggregate([{
+      $match: {
+        $or: [{
+          owner_id: context.castToObjectId(req.params.user_id),
+        }, {
+          'trip.friends_ids': context.castToObjectId(req.params.user_id),
+        }],
+      },
+    }, {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
@@ -36,6 +44,11 @@ function initTripsController(context) {
   function tripControllerGet(req, res, next) {
     context.db.collection('events').aggregate([{
       $match: {
+        $or: [{
+          owner_id: context.castToObjectId(req.params.user_id),
+        }, {
+          'trip.friends_ids': context.castToObjectId(req.params.user_id),
+        }],
         'contents.trip_id': context.castToObjectId(req.params.trip_id),
       },
     }, {
@@ -69,6 +82,7 @@ function initTripsController(context) {
   function tripControllerPut(req, res, next) {
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
+        owner_id: context.castToObjectId(req.params.user_id),
         'contents.trip_id': context.castToObjectId(req.params.trip_id),
         'contents.type': 'trip-start',
       }, {
@@ -80,11 +94,16 @@ function initTripsController(context) {
           },
           trip: req.body.contents || {},
         },
+        $setOnInsert: {
+          _id: context.castToObjectId(req.params.trip_id),
+          owner_id: context.castToObjectId(req.params.user_id),
+        },
       }, {
         upsert: true,
         returnOriginal: false,
       }),
       context.db.collection('events').updateMany({
+        owner_id: context.castToObjectId(req.params.user_id),
         'contents.trip_id': context.castToObjectId(req.params.trip_id),
         'contents.type': { $ne: 'trip-start' },
       }, {
@@ -99,11 +118,21 @@ function initTripsController(context) {
   }
 
   function tripControllerDelete(req, res, next) {
-    context.db.collection('events').deleteMany({
-      _id: context.castToObjectId(req.params.trip_id),
-    })
-    .then(function() {
-      res.sendStatus(410);
+    context.db.collection('events').findOne({
+      owner_id: context.castToObjectId(req.params.user_id),
+      'contents.trip_id': context.castToObjectId(req.params.trip_id),
+      'contents.type': 'trip-start',
+    }).then(function(startEvent) {
+      if(!startEvent) {
+        res.sendStatus(410);
+        return Promise.resolve();
+      }
+      return context.db.collection('events').deleteMany({
+        _id: context.castToObjectId(req.params.trip_id),
+      })
+      .then(function() {
+        res.sendStatus(410);
+      });
     }).catch(next);
   }
 }
