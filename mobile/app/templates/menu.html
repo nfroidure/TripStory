@@ -25,23 +25,6 @@
         </ion-item>
 
         <ion-list>
-          <div class="menu__search">
-            <img src="images/search.png"/>
-            <input type="search" autofocus placeholder="Look for a trip" ng-model="search.contents.title"/>
-          </div>
-
-          <ion-item menu-close class="item-icon-left"
-            ng-repeat="trip in trips| filter:search:strict"
-            ng-click="goToTrip(trip)">
-            {{ trip.contents.title }}
-          </ion-item>
-          <div class="create__trip item" ng-click="addTrip()">
-            <img  src="images/add.png"/>
-            <span menu-close ui-sref="newTrip">Create a new trip</span>
-          </div>
-        </ion-list>
-
-        <ion-list>
           <ion-item menu-close class="centered logout__link" ng-click="doLogout()">
             Logout
           </ion-item>
