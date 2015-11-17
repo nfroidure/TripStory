@@ -37,7 +37,12 @@
         views: {
           'menuContent': {
             templateUrl: 'templates/trips.html',
-            controller: 'TripCtrl'
+            controller: 'TripsCtrl'
+          }
+        },
+        resolve: {
+          trips: function(TripResource, profile){
+            return TripResource.query({user_id: profile._id}).$promise;
           }
         }
       })

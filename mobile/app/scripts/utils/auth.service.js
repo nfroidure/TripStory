@@ -18,7 +18,7 @@
     }
 
     function logout(credentials) {
-      return $http.post('http://localhost:3000/api/v0/logout', {});
+      return $http.post('http://localhost:3000/api/v0/logout', credentials);
     }
 
     function signup(credentials) {
