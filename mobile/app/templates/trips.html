@@ -1,5 +1,12 @@
-<ion-view view-title="{{ trip.contents.title }}">
+<ion-view view-title="Your trips">
   <ion-content>
-    <h1>List of trips</h1>
+    <ion-list>
+      <ion-item ng-repeat="trip in trips">
+        <h2>{{trip.contents.title}}</h2>
+        <p>{{trip.contents.description}}</p>
+        <p>Origin: {{trip.contents.from.address}}</p>
+        <p>Destination: {{trip.contents.to.address}}</p>
+      </ion-item>
+    </ion-list>
   </ion-content>
 </ion-view>
