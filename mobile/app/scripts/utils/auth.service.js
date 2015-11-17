@@ -14,15 +14,15 @@
 
     ////////////////
     function log(credentials) {
-      return $http.post('http://localhost:3000/api/v0/login', credentials);
+      return $http.post('https://stripstory.lol/api/v0/login', credentials);
     }
 
     function logout(credentials) {
-      return $http.post('http://localhost:3000/api/v0/logout', credentials);
+      return $http.post('https://stripstory.lol/api/v0/logout', credentials);
     }
 
     function signup(credentials) {
-      return $http.post('http://localhost:3000/api/v0/signup', credentials);
+      return $http.post('https://stripstory.lol/api/v0/signup', credentials);
     }
   }
 

@@ -16,12 +16,12 @@
       return service;
       ////////////////
       function get(id) {
-        var url = 'http://localhost:3000/api/v0/trips';
+        var url = 'https://stripstory.lol/api/v0/trips';
         url += id ? '/' + id : '';
         return $http.get(url);
       }
       function post(trip) {
-        return $http.post('http://localhost:3000/api/v0/trips/' + createObjectId(), trip);
+        return $http.post('https://stripstory.lol/api/v0/trips/' + createObjectId(), trip);
       }
   }
 

@@ -7,7 +7,10 @@
 
   /* @ngInject */
   function ProfileResource($resource, $cacheFactory) {
-    return $resource("http://localhost:3000/api/v0/profile", {});
+    return $resource("https://stripstory.lol/api/v0/profile", {}, {
+      query: { cache: false, method: 'get' }
+    });
   }
 
 })();
+
