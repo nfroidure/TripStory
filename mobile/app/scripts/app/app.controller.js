@@ -27,6 +27,15 @@
       $scope.addTripModal = modal;
     });
 
+    activate();
+
+    function activate() {
+    }
+
+    // go to related page
+    function goToTrip(trip) {
+      $state.go('app.trip', { tripId: trip._id });
+    }
     // add trip
     function addTrip() {
       $scope.addTripModal.show();
