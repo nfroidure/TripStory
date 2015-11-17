@@ -112,8 +112,10 @@ function xeeSyncJob(context, event) {
             ];
 
             context.logger.info(
-              'Got #xee positions: %s',
-              geo.join(' ')
+              'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
+              geo.join(' '),
+              data.location.latitude,
+              data.location.longitude
             );
 
             // Save the coordinates as an event
