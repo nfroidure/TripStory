@@ -112,7 +112,7 @@ Promise.all([
 
   // Starting the server
   return new Promise(function handleServerPromise(resolve, reject) {
-    context.server = context.app.listen(context.host, context.port, function handleServerCb(err) {
+    context.server = context.app.listen(context.port, function handleServerCb(err) {
       if(err) {
         return reject(err);
       }
