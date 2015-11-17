@@ -118,6 +118,25 @@ function xeeSyncJob(context, event) {
               data.location.longitude
             );
 
+            request
+              .get(
+                'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+                data.location.latitude + ',' + 
+                data.location.longitude,
+                function(err, res, body) {
+                  if (err) {
+                    context.logger.error(err);
+                  }
+                  body = JSON.parse(body);
+
+                  context.logger.info(
+                    'Notre #xee est au : %s @hackthemobility',
+                    body.results[0].formatted_address
+                  );
+                }
+              )
+            ;
+
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({
               'contents.type': 'xee-geo',
