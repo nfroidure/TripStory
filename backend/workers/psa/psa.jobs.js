@@ -1,6 +1,7 @@
 'use strict';
 
 var request = require('request');
+var workersUtils = require('../utils');
 
 var SERVER = 'https://api.mpsa.com/bgd/jdmc/1.0';
 var CLIENT_ID = '3636b9ef-0217-4962-b186-f0333117ddcd';
@@ -19,27 +20,11 @@ module.exports = psaJobs;
 // Save the location event with some useful informations
 function psaSyncJob(context, event) {
   // Get every current trips involving psa
-  return context.db.collection('events').aggregate([{
-    $match: {
-      'contents.type': { $in: ['trip-start', 'trip-stop'] },
-      'trip.car_id': { $exists: true },
-    },
-  }, {
-    $sort: { 'contents.date': -1 },
-  }, {
-    $group: {
-      _id: '$contents.trip_id',
-      trip: { $first: '$trip' },
-      contents: { $first: '$contents' },
-      owner_id: { $first: '$owner_id' },
-    },
-  }]).toArray()
+  return workersUtils.getCurrentTrips(context, {
+    carOnly: true,
+  })
   .then(function handlePSATrips(tripsEvents) {
-    //context.logger.debug(JSON.stringify(tripsEvents, null, 2));
     return Promise.all(tripsEvents.map(function(tripEvent) {
-      if('trip-stop' === tripEvent.contents.type) {
-        return Promise.resolve();
-      }
       return context.db.collection('users').findOne({
         _id: tripEvent.owner_id,
         cars: { $elemMatch: {
@@ -47,8 +32,13 @@ function psaSyncJob(context, event) {
         } },
       }).then(function(user) {
         var car = user.cars.filter(function(car) {
-          return tripEvent.trip.car_id.toString() === car._id.toString();
+          return tripEvent.trip.car_id.toString() === car._id.toString() &&
+            'psa' === car.type;
         })[0];
+
+        if(!car) {
+          return Promise.resolve();
+        }
 
         return new Promise(function psaPositionPromise(resolve, reject) {
           request.get(

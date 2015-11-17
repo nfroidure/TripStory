@@ -102,6 +102,8 @@ Promise.all([
   // Periodical signals
   randomRunDelay(triggerPSASync.bind(null, context), 240000);
   triggerPSASync(context);
+  randomRunDelay(triggerXEESync.bind(null, context), 240000);
+  triggerXEESync(context);
   randomRunDelay(triggerTwitterSync.bind(null, context), 960000);
   triggerTwitterSync(context);
 
@@ -172,6 +174,13 @@ function triggerTwitterSync(context) {
 function triggerPSASync(context) {
   context.bus.trigger({
     exchange: 'A_PSA_SYNC',
+    contents: {},
+  });
+}
+
+function triggerXEESync(context) {
+  context.bus.trigger({
+    exchange: 'A_XEE_SYNC',
     contents: {},
   });
 }

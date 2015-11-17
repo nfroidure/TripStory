@@ -280,13 +280,13 @@ function initAuthenticationController(context) {
     }).then(function(profile) {
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
       context.db.collection('users').findOneAndUpdate({
-        'auth.xee': profile.id,
+        'auth.xee.id': profile.id,
       }, {
         $set: {
           contents: {
             name: profile.firstName + ' ' + profile.name,
           },
-          'auth.xee.id': {
+          'auth.xee': {
             id: profile.id,
             accessToken: accessToken,
             refreshToken: refreshToken,
@@ -299,6 +299,9 @@ function initAuthenticationController(context) {
         upsert: true,
         returnOriginal: false,
       }, function xeeLoginHandler(err, result) {
+        if(err) {
+          return done(err);
+        }
         if(!result.lastErrorObject.updatedExisting) {
           context.logger.info(
             '@nfroidure: Xee signup:', profile.firstName + ' ' + profile.name
