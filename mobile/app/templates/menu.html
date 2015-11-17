@@ -15,9 +15,9 @@
   <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
     <div ng-if="user._id">
       <ion-content>
-        <div class="user__img" ng-click="newUserPicture()">
+        <div class="user__img" ng-click="newUserPicture()" ng-if="user.contents.photo">
           <!-- <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user__photo" width="100%"/> -->
-          <img ng-src="{{user.picture_url}}" class="user__photo" width="100%"/>
+          <img ng-src="{{user.contents.photo}}" class="user__photo" width="100%"/>
         </div>
 
         <ion-item class="user__name">

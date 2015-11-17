@@ -124,10 +124,7 @@ function initAuthenticationController(context) {
       'auth.facebook.id': profile.id,
     }, {
       $set: {
-        contents: {
-          name: profile.displayName,
-          email: profile.email,
-        },
+        'contents.name': profile.displayName,
         'auth.facebook': {
           id: profile.id,
           accessToken: accessToken,
@@ -178,10 +175,8 @@ function initAuthenticationController(context) {
       }],
     }, {
       $set: {
-        contents: {
-          name: profile.displayName,
-          email: profile.emails[0].value,
-        },
+        'contents.name': profile.displayName,
+        'email.name': profile.emails[0].value,
         'auth.google': {
           id: profile.id,
           accessToken: accessToken,
@@ -226,9 +221,8 @@ function initAuthenticationController(context) {
       'auth.twitter.id': profile.id,
     }, {
       $set: {
-        contents: {
-          name: profile.displayName,
-        },
+        'contents.name': profile.displayName,
+        'contents.photo': profile.photos[0].value,
         'auth.twitter': {
           id: profile.id,
           accessToken: accessToken,
