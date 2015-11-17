@@ -3,11 +3,11 @@
 
   angular
     .module('app')
-    .controller('AppCtrl', AppCtrl);
+    .controller('MenuCtrl', MenuCtrl);
 
-  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory', 'AuthService', '$ionicHistory', 'profile'];
+  MenuCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory', 'AuthService', 'profile', '$ionicHistory'];
   /* @ngInject */
-  function AppCtrl($scope, $state, $ionicModal, $timeout, $http, tripsFactory, AuthService, $ionicHistory, profile) {
+  function MenuCtrl($scope, $state, $ionicModal, $timeout, $http, tripsFactory, AuthService, profile, $ionicHistory) {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
@@ -15,7 +15,7 @@
     $scope.tripToAdd = { contents: {} };
     $scope.trips = [];
 
-    $scope.user = profile;
+    $scope.user = profile.data;
 
     $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;

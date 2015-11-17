@@ -18,7 +18,6 @@
       AuthService.log($scope.loginData)
         .then(function(status) {
           if (status.status === 200) {
-            $scope.user = status.data;
             $state.go("app.trips");
           }
         })
@@ -29,7 +28,6 @@
       AuthService.signup($scope.loginData)
         .then(function(status) {
           if (status.status === 200) {
-            $scope.user = status.data;
             $state.go("app.trips");
           }
         })

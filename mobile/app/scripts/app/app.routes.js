@@ -22,12 +22,13 @@
       })
       .state('app', {
         url: '/app',
+        cache: 'false',
         abstract: true,
         templateUrl: 'templates/menu.html',
         controller: 'AppCtrl',
         resolve: {
-          me: function($http){
-            return $http({method: 'GET', url: 'http://localhost:3000/api/v0/profile'});
+          profile: function(ProfileResource){
+            return ProfileResource.get().$promise;
           }
         }
       })
@@ -48,17 +49,7 @@
             controller: 'TripCtrl'
           }
         }
-      })
-      .state('app.member', {
-        url: '/member/:memberId',
-        views: {
-          'menuContent': {
-            templateUrl: 'templates/member.html',
-            controller: 'MemberCtrl'
-          }
-        }
       });
     $urlRouterProvider.otherwise('/login');
   }
-
 })();
