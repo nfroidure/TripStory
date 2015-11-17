@@ -22,9 +22,21 @@ var twitterJobs = {
 module.exports = twitterJobs;
 
 function twitterSyncJob(context, event) {
-  return context.db.collection('events').find({
-    'contents.type': 'trip-start',
-  }).toArray()
+  return context.db.collection('events').aggregate([{
+    $match: {
+      'contents.type': { $in: ['trip-start', 'trip-stop'] },
+      'trip.car_id': { $exists: true },
+    },
+  }, {
+    $sort: { 'contents.date': -1 },
+  }, {
+    $group: {
+      _id: '$contents.trip_id',
+      trip: { $first: '$trip' },
+      contents: { $first: '$contents' },
+      owner_id: { $first: '$owner_id' },
+    },
+  }]).toArray()
   .then(function handleTwitterUsers(tripsEvents) {
     return Promise.all(tripsEvents.map(function(tripEvent) {
       return new Promise(function(resolve, reject) {
@@ -55,6 +67,8 @@ function twitterSyncJob(context, event) {
                       text: status.text,
                       geo: status.geo,
                     },
+                    'contents.text': status.text,
+                    'contents.geo': status.geo,
                   },
                   $setOnInsert: {
                     'contents.date': new Date(status.created_at),

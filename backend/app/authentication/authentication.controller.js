@@ -98,11 +98,13 @@ function initAuthenticationController(context) {
           password: password,
           _id: upsertId,
           // Setting the PSA test car
-          'auth.psa': {
+          cars: [{
+            _id: context.createObjectId(),
+            type: 'psa',
             vin: process.env.PSA_VIN,
             contract: process.env.PSA_CONTRACT,
             code: process.env.PSA_CODE,
-          },
+          }],
         },
       }, {
         upsert: true,

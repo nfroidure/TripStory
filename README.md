@@ -37,7 +37,13 @@ Resource:
     "name": "Polo",
     "email": "Lalcolo",
     // + anything
-  }
+  },
+  "cars": [{
+    "_id": "abbacacaabbacacaabbacaca",
+    contents: {
+      // anything
+    },
+  }],
 }
 ```
 

@@ -98,7 +98,11 @@ Promise.all([
   initXeeWorker(context);
   initPSAWorker(context);
   initTwitterWorker(context);
-  setInterval(triggerTwitterSync.bind(null, context), 240000);
+
+  // Periodical signals
+  randomRunDelay(triggerPSASync.bind(null, context), 240000);
+  triggerPSASync(context);
+  randomRunDelay(triggerTwitterSync.bind(null, context), 960000);
   triggerTwitterSync(context);
 
   // Routes
@@ -163,4 +167,18 @@ function triggerTwitterSync(context) {
     exchange: 'A_TWITTER_SYNC',
     contents: {},
   });
+}
+
+function triggerPSASync(context) {
+  context.bus.trigger({
+    exchange: 'A_PSA_SYNC',
+    contents: {},
+  });
+}
+
+function randomRunDelay(fn, delay) {
+  setTimeout(function() {
+    fn();
+    randomRunDelay(fn, delay);
+  }, Math.random() * delay);
 }
