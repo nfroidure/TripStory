@@ -15,6 +15,7 @@ var authUtils = require('http-auth-utils');
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
 var initPSAWorker = require('./workers/psa/psa.bin.js');
+var initTwitterWorker = require('./workers/twitter/twitter.bin.js');
 
 // Twitter logger transport
 var TwittLog = exports.TwittLog = function TwittLog(options) {
@@ -26,11 +27,11 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
   var self = this; // eslint-disable-line
 
   // Dont log sensible infos
-  if(-1 === ['debug', 'error'].indexOf(level)) {
+  if(-1 !== ['debug', 'error'].indexOf(level)) {
     return callback(null, true);
   }
 
-  msg = '[' + level + ']' + msg.substring(0, 128) + '… #jdmc15';
+  msg = '[' + level + '] ' + msg.substring(0, 128) + '… #jdmc15';
   this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
     if (error) {
       console.log('Twitter console', error);
@@ -96,6 +97,9 @@ Promise.all([
   initFacebookWorker(context);
   initXeeWorker(context);
   initPSAWorker(context);
+  initTwitterWorker(context);
+  setInterval(triggerTwitterSync.bind(null, context), 60000);
+  triggerTwitterSync(context);
 
   // Routes
   initRoutes(context);
@@ -154,4 +158,11 @@ function initBasicAuth(context) {
       next();
     }).catch(next);
   };
+}
+
+function triggerTwitterSync(context) {
+  context.bus.trigger({
+    exchange: 'A_TWITTER_SYNC',
+    contents: {},
+  });
 }
