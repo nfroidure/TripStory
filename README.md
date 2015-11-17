@@ -102,3 +102,24 @@ Resource:
   "owner_id": "babababababababababababa", // Id du propriétaire, ajouté par le serveur
 }
 ```
+
+# Cars
+- List: GET localhost:3000/api/v0/users/:user_id/cars
+- Details: GET localhost:3000/api/v0/users/:user_id/cars/:car_id
+- Add: PUT localhost:3000/api/v0/users/:user_id/cars/:car_id (soon)
+- Delete: DELETE localhost:3000/api/v0/users/:user_id/cars/:car_id (soon)
+
+Resource:
+```js
+{
+  "_id": "564b2cabeec81a63aae5f4e8",
+  "contents": {
+    "_id": "564b2cabeec81a63aae5f4e8",
+    "type": "psa",
+    "vin": "XXXXXXXXXX",
+    "contract": "XXXXXXXXXX",
+    "code": "XXXXXXXXXX",
+    "user_id": "XXXXXXXXXX"
+  }
+}
+```
