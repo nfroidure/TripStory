@@ -47,11 +47,16 @@
         }
       })
       .state('app.trip', {
-        url: '/trip',
+        url: '/trip/:trip_id',
         views: {
           'menuContent': {
             templateUrl: 'templates/trip.html',
             controller: 'TripCtrl'
+          }
+        },
+        resolve: {
+          trip: function(TripResource, profile, $stateParams){
+            return TripResource.get({user_id: profile._id, trip_id: $stateParams.trip_id}).$promise;
           }
         }
       });

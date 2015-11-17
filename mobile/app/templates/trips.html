@@ -1,7 +1,7 @@
 <ion-view view-title="Your trips">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="trip in trips">
+      <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip)">
         <h2>{{trip.contents.title}}</h2>
         <p>{{trip.contents.description}}</p>
         <p>Origin: {{trip.contents.from.address}}</p>

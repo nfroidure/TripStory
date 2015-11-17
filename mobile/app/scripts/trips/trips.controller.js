@@ -9,7 +9,10 @@
   /* @ngInject */
   function TripsCtrl($scope, $state, $stateParams, trips) {
     $scope.trips = trips;
-    console.log(trips);
+
+    $scope.goToTrip = function(trip){
+      $state.go("app.trip", {trip_id: trip._id});
+    }
   }
 
 })();

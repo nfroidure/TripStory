@@ -13,11 +13,9 @@
     });
 
     $scope.tripToAdd = { contents: {} };
-    $scope.trips = [];
 
     $scope.user = profile;
 
-    $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;
     $scope.closeAddTrip = closeAddTrip;
     $scope.submitTrip = submitTrip;
@@ -29,20 +27,6 @@
       $scope.addTripModal = modal;
     });
 
-    activate();
-
-    function activate() {
-      tripsFactory.get().then(
-        function(values){
-          $scope.trips = values.data;
-        }
-      );
-    }
-
-    // go to related page
-    function goToTrip(trip) {
-      $state.go('app.trip', { tripId: trip._id });
-    }
     // add trip
     function addTrip() {
       $scope.addTripModal.show();
