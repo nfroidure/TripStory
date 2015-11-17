@@ -113,7 +113,7 @@ function psaSyncJob(context, event) {
               ;
             }
 
-            lastLongitude = data.latitude[bestSecond];
+            lastLongitude = data.longitude[bestSecond];
             lastLatitude = data.latitude[bestSecond];
 
             // Save the coordinates as an event
