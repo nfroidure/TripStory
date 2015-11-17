@@ -11,6 +11,8 @@ var psaJobs = {
   A_PSA_SIGNUP: psaSignupJob,
 };
 var SECONDS = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
+var lastLatitude;
+var lastLongitude;
 
 module.exports = psaJobs;
 
@@ -80,6 +82,39 @@ function psaSyncJob(context, event) {
             ];
 
             context.logger.debug('Got positions:', geo, bestSecond);
+
+            if (data.latitude[bestSecond] !== lastLatitude
+              || data.longitude[bestSecond] !== lastLongitude
+            ) {
+              context.logger.info(
+                'Got positions: %s http://maps.google.com/maps?q=%s,%s',
+                geo.join(' '),
+                data.latitude[bestSecond],
+                data.longitude[bestSecond]
+              );
+
+              request
+                .get(
+                  'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+                  data.latitude[bestSecond] + ',' + 
+                  data.longitude[bestSecond],
+                  function(err, res, body) {
+                    if (err) {
+                      context.logger.error(err);
+                    }
+                    body = JSON.parse(body);
+
+                    context.logger.info(
+                      'Je suis au : %s, attendez moi signé patrick! @hackthemobility',
+                      body.results[0].formatted_address
+                    );
+                  }
+                )
+              ;
+            }
+
+            lastLongitude = data.latitude[bestSecond];
+            lastLatitude = data.latitude[bestSecond];
 
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({
