@@ -7,9 +7,7 @@
 
   /* @ngInject */
   function ProfileResource($resource, $cacheFactory) {
-    return $resource("http://localhost:3000/api/v0/profile", {}, {
-      query: { cache: false, method: 'get' }
-    });
+    return $resource("http://localhost:3000/api/v0/profile", {});
   }
 
 })();
