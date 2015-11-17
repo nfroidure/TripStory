@@ -111,7 +111,7 @@ function xeeSyncJob(context, event) {
               data.location.altitude,
             ];
 
-            context.logger.debug('Got positions:', geo);
+            context.logger.info('Got #xee positions:', geo);
 
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({
