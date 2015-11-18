@@ -44,6 +44,15 @@
             controller: 'TripCtrl',
           },
         },
+      })
+      .state('app.tripMap', {
+        url: '/trip/:trip_id/map',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/map.html',
+            controller: 'MapCtrl',
+          },
+        },
       });
     $urlRouterProvider.otherwise('/login');
   }

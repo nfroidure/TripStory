@@ -15,6 +15,7 @@
     $scope.startEvent = '';
     $scope.goToMember = goToMember;
     $scope.mapClassEvent = mapClassEvent;
+    $scope.goToMap = goToMap;
 
     activate();
 
@@ -29,6 +30,10 @@
     }
     function goToMember(member) {
       $state.go('app.member', { memberId: member.id });
+    }
+    function goToMap() {
+      console.log('$stateParams.trip_id ', $stateParams.trip_id );
+      $state.go('app.tripMap', { trip_id: $stateParams.trip_id});
     }
     function mapClassEvent(type) {
       var classes = {

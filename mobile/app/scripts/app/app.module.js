@@ -7,7 +7,8 @@
       'app.trips',
       'app.members',
       'app.utils',
-      'config'
+      'config',
+      'uiGmapgoogle-maps',
     ]);
 
 }());
