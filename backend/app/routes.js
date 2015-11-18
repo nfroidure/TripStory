@@ -17,4 +17,7 @@ function initRoutes(context) {
   initEventsRoutes(context);
   initCarsRoutes(context);
 
+  context.app.get('/ping', function(req, res) {
+    res.sendStatus(200);
+  });
 }
