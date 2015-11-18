@@ -27,6 +27,15 @@
         templateUrl: 'templates/menu.html',
         controller: 'AppCtrl',
       })
+      .state('app.cars', {
+        url: '/cars',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/cars.html',
+            controller: 'CarsCtrl'
+          }
+        },
+      })
       .state('app.trips', {
         url: '/trips',
         views: {
