@@ -1,0 +1,10 @@
+<ion-view view-title="Your friends">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="friend in friends">
+        <h2>{{friend.contents.name}}</h2>
+        <p ng-if="friend.contents.email">{{friend.contents.email}}</p>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
