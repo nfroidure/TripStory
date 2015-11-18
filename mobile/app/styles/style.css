@@ -123,27 +123,6 @@
   border-bottom: none;
 }
 
-.side-panel .menu__search input {
-  display: inline;
-  margin-bottom: 10px;
-  color: white;
-  background-color: #0c4774;
-}
-
-.side-panel .menu__search img {
-  width: 25px;
-  margin-left: 35px;
-}
-
-.side-panel .create__trip span {
-  display: inline;
-  color: white;
-}
-
-.side-panel .create__trip img {
-  width: 12px;
-}
-
 .side-panel .logout__link{
   margin-top: 60px;
   text-align: center;
