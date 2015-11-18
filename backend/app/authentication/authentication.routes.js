@@ -55,6 +55,7 @@ function initAuthenticationRoutes(context) {
 
   context.app.post('/api/v0/logout', context.checkAuth, function authLogout(req, res) {
     req.logout();
+    req.session.destroy();
     res.sendStatus(204);
   });
 
