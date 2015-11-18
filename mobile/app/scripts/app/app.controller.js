@@ -18,6 +18,9 @@
     $scope.closeAddTrip = closeAddTrip;
     $scope.submitTrip = submitTrip;
     $scope.doLogout = doLogout;
+    $scope.goToCars = goToCars;
+    $scope.goToFriends = goToFriends;
+    $scope.goToTrips = goToTrips;
 
     activate()
 
@@ -55,6 +58,15 @@
           }
         })
         .catch(function(err){ $scope.fail = err; });
+    }
+    function goToCars() {
+      $state.go('app.cars', {});
+    }
+    function goToFriends() {
+      $state.go('app.friends', {});
+    }
+    function goToTrips() {
+      $state.go('app.trips', {});
     }
   }
 })();

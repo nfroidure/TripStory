@@ -28,7 +28,7 @@
         controller: 'AppCtrl',
       })
       .state('app.cars', {
-        url: '/app/cars',
+        url: '/cars',
         views: {
           'menuContent': {
             templateUrl: 'templates/cars.html',
