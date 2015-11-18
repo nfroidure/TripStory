@@ -64,7 +64,6 @@ Promise.all([
   context.app = express();
   context.createObjectId = ObjectId;
   context.castToObjectId = ObjectId;
-  context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
   context.logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({ level: 'silly' }),
@@ -93,6 +92,7 @@ Promise.all([
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
   context.host = 'localhost';
   context.port = 3000;
+  context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
 
   // Workers
   initFacebookWorker(context);
