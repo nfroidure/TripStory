@@ -66,9 +66,7 @@ function initAuthenticationRoutes(context) {
   context.app.get(
     '/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/me' }),
-    function(req, res) {
-      res.redirect('/api/v0/profile');
-    }
+    authRedirectToProfile
   );
 
   context.app.get(
@@ -79,9 +77,7 @@ function initAuthenticationRoutes(context) {
   context.app.get(
     '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/me' }),
-    function(req, res) {
-      res.redirect('/api/v0/profile');
-    }
+    authRedirectToProfile
   );
 
   context.app.get(
@@ -92,9 +88,7 @@ function initAuthenticationRoutes(context) {
   context.app.get(
     '/auth/twitter/callback',
     passport.authenticate('twitter', { failureRedirect: '/me' }),
-    function(req, res) {
-      res.redirect('/api/v0/profile');
-    }
+    authRedirectToProfile
   );
 
   context.app.get(
@@ -108,9 +102,7 @@ function initAuthenticationRoutes(context) {
   context.app.get(
     '/auth/xee/callback',
     passport.authenticate('xee', { failureRedirect: '/me' }),
-    function(req, res) {
-      res.redirect('/api/v0/profile');
-    }
+    authRedirectToProfile
   );
 
   context.app.get(
@@ -129,7 +121,7 @@ function initAuthenticationRoutes(context) {
     if(!req.user) {
       return res.send(401);
     }
-    res.setHeader('Location', '/api/v0/users/' + req.user._id.toString());
+    res.setHeader('Location', 'http://localhost:8100/#/app/trips');
     res.sendStatus(301);
   }
 }
