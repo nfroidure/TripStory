@@ -5,10 +5,10 @@
     .module('app.trips')
     .controller('TripCtrl', TripCtrl);
 
-  TripCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory', 'profile', 'trip'];
+  TripCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory'];
   /* @ngInject */
-  function TripCtrl($scope, $state, $stateParams, tripsFactory, profile, trip) {
-    var idTrip = $stateParams.tripId;
+  function TripCtrl($scope, $state, $stateParams, tripsFactory) {
+    var tripId = $stateParams.trip_id;
     // $scope.trip = trip;
 
     $scope.trip = {};
@@ -19,10 +19,13 @@
     activate();
 
     function activate() {
-      $scope.trip = tripsFactory.get('mock')
-      $scope.startEvent = $scope.trip.events.filter(isPsaGeo)[0];
-      console.log('$scope.startEvent', $scope.startEvent);
-      function isPsaGeo(event){ return event.contents.type === 'psa-geo'; }
+      tripsFactory.get(tripId)
+        .then(function(trip){
+          console.log('trip', trip);
+          $scope.trip = trip.data;
+        })
+      // $scope.startEvent = $scope.trip.events.filter(isPsaGeo)[0];
+      // function isPsaGeo(event){ return event.contents.type === 'psa-geo'; }
     }
     function goToMember(member) {
       $state.go('app.member', { memberId: member.id });

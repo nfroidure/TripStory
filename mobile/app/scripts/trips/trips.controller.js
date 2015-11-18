@@ -21,9 +21,8 @@
         });
     }
 
-
-    $scope.goToTrip = function(trip){
-      $state.go("app.trip", {trip_id: trip._id});
+    $scope.goToTrip = function(tripId){
+      $state.go('app.trip', { trip_id: tripId });
     }
   }
 

@@ -41,14 +41,9 @@
         views: {
           'menuContent': {
             templateUrl: 'templates/trip.html',
-            controller: 'TripCtrl'
-          }
+            controller: 'TripCtrl',
+          },
         },
-        resolve: {
-          trip: function(TripResource, profile, $stateParams){
-            return TripResource.get({user_id: profile._id, trip_id: $stateParams.trip_id}).$promise;
-          }
-        }
       });
     $urlRouterProvider.otherwise('/login');
   }
