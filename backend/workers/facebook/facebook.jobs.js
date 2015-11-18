@@ -27,7 +27,7 @@ function facebookLoginJob(context, event) {
 function pairFacebookFriends(context, user) {
   return new Promise(function pairFriendsPromise(resolve, reject) {
     request.get(
-      SERVER + '10153768131704201/friends?access_token=' +
+      SERVER + user.auth.facebook.id + '/friends?access_token=' +
       user.auth.facebook.accessToken,
       function pairFriendsCallback(err, res, body) {
         if(err) {
