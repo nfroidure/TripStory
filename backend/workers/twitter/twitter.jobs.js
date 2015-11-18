@@ -60,6 +60,7 @@ function twitterSyncJob(context, event) {
                     'contents.geo': status.geo,
                     'contents.profile_image': status.profile_image_url_https,
                     'contents.entities': status.entities,
+                    'contents.raw': status,
                   },
                   $setOnInsert: {
                     'contents.date': new Date(status.created_at),
