@@ -118,21 +118,15 @@ function xeeSyncJob(context, event) {
               data.location.longitude
             );
 
-            request
-              .get(
-                'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-                data.location.latitude + ',' + 
+            require('../../app/utils/location.js')
+              .getFormatedAddress(
+                data.location.latitude,
                 data.location.longitude,
-                function(err, res, body) {
-                  if (err) {
-                    context.logger.error(err);
-                  }
-                  body = JSON.parse(body);
-
+                function(err, address) {
                   context.logger.info(
                     'Notre #xee est au : %s @hackthemobility',
-                    body.results[0].formatted_address
-                  );
+                    address
+                  )
                 }
               )
             ;
