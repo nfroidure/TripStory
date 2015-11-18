@@ -1,4 +1,4 @@
-<ion-view view-title="{{ trip.contents.title }}">
+$<ion-view view-title="{{ trip.contents.title }}">
   <ion-content>
     <div class="headerPage"
       ng-style="{
@@ -8,6 +8,9 @@
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
+        <p class="headerPage__from">{{ trip.contents.from.address }}</p>
+        <p class="headerPage__to">{{ trip.contents.to.address }}</p>
+        First point : {{ startEvent.contents.geo[0]}} - {{ startEvent.contents.geo[1] }}
         <div class="headerPage__members">
           <div class="member"
             ng-repeat="member in trip.contents.members"
@@ -18,5 +21,40 @@
         </div>
       </div>
     </div>
+    <ion-list>
+      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)">
+
+        <div ng-switch-when="trip-start">
+          <h1>Depart</h1>
+          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        </div>
+
+        <div ng-switch-when="twitter-status">
+          <i class="ion-social-twitter"></i> {{event.contents.text}}
+          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        </div>
+
+        <div ng-switch-when="psa-geo">
+          <i class="ion-map"></i>
+          lat: {{ event.contents.geo[0] }}
+          long: {{ event.contents.geo[1]}}
+          alt: {{ event.contents.geo[2] }}
+          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        </div>
+
+        <div ng-switch-when="xee-geo">
+          <i class="ion-map"></i>
+          lat: {{ event.contents.geo[0] }}
+          long: {{ event.contents.geo[1]}}
+          alt: {{ event.contents.geo[2] }}
+          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        </div>
+
+        <div ng-switch-when="trip-stop">
+          <h1>Arrivée</h1>
+          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        </div>
+      </ion-item>
+    </ion-list>
   </ion-content>
 </ion-view>
