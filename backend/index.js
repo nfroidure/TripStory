@@ -11,6 +11,8 @@ var winston = require('winston');
 var Twitter = require('twitter');
 var util = require('util');
 var authUtils = require('http-auth-utils');
+var favicon = require('serve-favicon');
+var path = require('path');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
@@ -91,6 +93,7 @@ Promise.all([
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
+  context.app.use(favicon(path.resolve(__dirname, 'favicon.png')));
   context.host = 'localhost';
   context.port = 3000;
   context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
