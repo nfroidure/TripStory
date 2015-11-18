@@ -116,7 +116,7 @@ function xeeSyncJob(context, event) {
             if (lastLatitude !== data.location.latitude ||
               lastLongitude !== data.location.longitude) {
 
-              context.logger.info(
+              context.logger.debug(
                 'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
                 geo.join(' '),
                 data.location.latitude,
@@ -128,7 +128,7 @@ function xeeSyncJob(context, event) {
                   data.location.latitude,
                   data.location.longitude,
                   function(err, address) {
-                    context.logger.info(
+                    context.logger.debug(
                       'Notre #xee est au : %s @hackthemobility',
                       address
                     )

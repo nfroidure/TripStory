@@ -86,7 +86,7 @@ function psaSyncJob(context, event) {
             if (data.latitude[bestSecond] !== lastLatitude
               || data.longitude[bestSecond] !== lastLongitude
             ) {
-              context.logger.info(
+              context.logger.debug(
                 'Got positions: %s http://maps.google.com/maps?q=%s,%s',
                 geo.join(' '),
                 data.latitude[bestSecond],
@@ -107,7 +107,7 @@ function psaSyncJob(context, event) {
                     body = JSON.parse(body);
                     address = body.results[0].formatted_address;
 
-                    context.logger.info(
+                    context.logger.debug(
                       'Je suis au : %s @hackthemobility',
                       address
                     );
