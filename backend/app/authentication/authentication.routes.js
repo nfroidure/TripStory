@@ -121,7 +121,7 @@ function initAuthenticationRoutes(context) {
     if(!req.user) {
       return res.send(401);
     }
-    res.setHeader('Location', 'http://localhost:8100/#/app/trips');
+    res.setHeader('Location', context.base + '/#/app/trips');
     res.sendStatus(301);
   }
 }

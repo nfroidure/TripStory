@@ -64,6 +64,7 @@ Promise.all([
   context.app = express();
   context.createObjectId = ObjectId;
   context.castToObjectId = ObjectId;
+  context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
   context.logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({ level: 'silly' }),
@@ -84,7 +85,7 @@ Promise.all([
   };
 
   // Middlewares
-  context.app.use(corsFunction);
+  context.app.use(initCors(context));
   context.app.use(express.static('www'));
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
@@ -126,20 +127,22 @@ Promise.all([
   });
 });
 
-function corsFunction(req, res, next) {
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', process.env.cors || 'http://localhost:8100');
-  res.header('Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization, ' +
-    'X-SF-Ionic-Version, Cookies'
-  );
-  res.header('Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  if('OPTIONS' === req.method) {
-    return res.status(200).send();
-  }
-  next();
-};
+function initCors(context) {
+  return function corsFunction(req, res, next) {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', context.base || 'http://localhost:8100');
+    res.header('Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization, ' +
+      'X-SF-Ionic-Version, Cookies'
+    );
+    res.header('Access-Control-Allow-Methods',
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    if('OPTIONS' === req.method) {
+      return res.status(200).send();
+    }
+    next();
+  };
+}
 
 function initBasicAuth(context) {
   return function(req, res, next) {
