@@ -129,7 +129,7 @@ function initAuthenticationRoutes(context) {
     if(!req.user) {
       return res.send(401);
     }
-    res.setHeader('Location', context.base + '/#/app/trips');
+    res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
     res.sendStatus(301);
   }
 }
