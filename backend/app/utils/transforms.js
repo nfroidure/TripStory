@@ -8,7 +8,8 @@ var transformsUtils = {
 module.exports = transformsUtils;
 
 function transformsUtilsToString(id) {
-  return id.toString();
+  console.log('Something wieird here', (new Error()).stack);
+  return id ? id.toString() : {}.undef; // Temp ugly fix
 }
 
 function transformsUtilsMapIds(fn, val) {

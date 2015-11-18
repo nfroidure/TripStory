@@ -2,8 +2,8 @@
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="car in cars">
-        <h2>{{car.contents.title}}</h2>
-        <p>{{car.contents.description}}</p>
+        <h2>{{car.contents.name}}</h2>
+        <p ng-if="car.contents.brand">{{car.contents.brand}} {{car.contents.model}}</p>
       </ion-item>
     </ion-list>
   </ion-content>

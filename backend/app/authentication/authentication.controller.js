@@ -99,6 +99,7 @@ function initAuthenticationController(context) {
           cars: [{
             _id: context.createObjectId(),
             type: 'psa',
+            name: '206 Blanc Blanquise',
             vin: process.env.PSA_VIN,
             contract: process.env.PSA_CONTRACT,
             code: process.env.PSA_CODE,

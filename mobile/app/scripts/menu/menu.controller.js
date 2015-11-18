@@ -23,6 +23,7 @@
     $scope.submitTrip = submitTrip;
     $scope.doLogout = doLogout;
     $scope.goToCars = goToCars;
+    $scope.goToTrips = goToTrips;
 
     $ionicModal.fromTemplateUrl('templates/addTripModal.html', {
       scope: $scope
@@ -44,8 +45,11 @@
     function goToTrip(trip) {
       $state.go('app.trip', { tripId: trip._id });
     }
-    function goToCars(cars) {
-      $state.go('app.cars');
+    function goToCars() {
+      $state.go('app.cars', {});
+    }
+    function goToTrips() {
+      $state.go('app.trips', {});
     }
     // add trip
     function addTrip() {
