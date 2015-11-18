@@ -1,6 +1,6 @@
 <ion-view view-title="{{ trip.contents.title }}">
   <ion-content>
-    <div class="headerPage" ng-click="goToMap()">
+    <div class="headerPage">
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
@@ -12,6 +12,12 @@
             <img class="member__picture" ng-src="{{ member.avatarPicture }}" alt="Profile photo of {{ member.name }}">
             <div class="member__name">{{ member.name }}</div>
           </div>
+        </div>
+        <div class="map__button">
+          <button ng-click="goToMap()" class="button button-light">
+            <i class="ion-map"></i>
+            See on map
+          </button>
         </div>
       </div>
     </div>
