@@ -7,7 +7,6 @@
       'app.trips',
       'app.members',
       'app.utils',
-      'app.resources',
       'config'
     ]);
 

@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app.resources')
+    .module('app')
     .factory('TripResource', TripResource);
 
   /* @ngInject */
