@@ -85,7 +85,7 @@ Promise.all([
 
   // Middlewares
   context.app.use(initCors(context));
-  context.app.use(express.static('../mobile/app'));
+  context.app.use(express.static(process.env.mobile_path || '../mobile/app'));
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
