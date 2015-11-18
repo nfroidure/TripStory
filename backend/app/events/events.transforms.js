@@ -24,5 +24,7 @@ function eventsTransformsToCollection(src) {
     contents: src.contents,
   };
 
+  dest.contents.date = new Date(dest.contents.date);
+
   return transformsUtils.mapIds(castToObjectId, dest);
 }

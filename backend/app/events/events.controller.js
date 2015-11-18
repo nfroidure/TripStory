@@ -46,24 +46,34 @@ function initEventsController(context) {
   }
 
   function eventControllerPut(req, res, next) {
-    context.db.collection('events').findOneAndUpdate({
-      _id: context.castToObjectId(req.params.event_id),
-      owner_id: context.castToObjectId(req.params.user_id),
-    }, {
-      $set: {
-        contents: req.body.contents || {},
-      },
-      $setOnInsert: {
+    context.db.collection('events').findOne({
+      'contents.type': 'trip-start',
+      'contents.trip_id': context.castToObjectId(req.body.contents.trip_id),
+    }).then(function(startEvent) {
+      if(!startEvent) {
+        return res.send(400);
+      }
+      return context.db.collection('events').findOneAndUpdate({
         _id: context.castToObjectId(req.params.event_id),
         owner_id: context.castToObjectId(req.params.user_id),
-      },
-    }, {
-      upsert: true,
-      returnOriginal: false,
+      }, {
+        $set: {
+          contents: eventsTransforms.toCollection(req.body).contents || {},
+        },
+        $setOnInsert: {
+          _id: context.castToObjectId(req.params.event_id),
+          owner_id: context.castToObjectId(req.params.user_id),
+          trip: startEvent.trip,
+        },
+      }, {
+        upsert: true,
+        returnOriginal: false,
+      })
+      .then(function(result) {
+        res.status(201).send(eventsTransforms.fromCollection(result.value));
+      });
     })
-    .then(function(result) {
-      res.status(201).send(eventsTransforms.fromCollection(result.value));
-    }).catch(next);
+    .catch(next);
   }
 
   function eventControllerDelete(req, res, next) {
