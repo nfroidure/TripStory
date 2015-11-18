@@ -67,12 +67,12 @@ Promise.all([
   context.logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({ level: 'silly' }),
-      new (TwittLog)({
+      new (TwittLog)(
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
         consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
         access_token_key: process.env.TWITTER_TOKEN_KEY,
         access_token_secret: process.env.TWITTER_TOKEN_SECRET,
-      }),
+      ),
     ],
   });
   context.checkAuth = function isLoggedIn(req, res, next) {
