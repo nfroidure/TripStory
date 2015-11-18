@@ -24,35 +24,58 @@ $<ion-view view-title="{{ trip.contents.title }}">
     <ion-list>
       <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)">
 
-        <div ng-switch-when="trip-start">
-          <h1>Depart</h1>
-          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        <div ng-switch-when="trip-start" class="event">
+          <div class="event__icon">
+            <i class="ion-flag"></i>
+          </div>
+          <div class="event__text">
+            <h1>Depart</h1>
+            <em>{{ event.contents.date | date:'medium' }}</em>
+          </div>
         </div>
 
-        <div ng-switch-when="twitter-status">
-          <i class="ion-social-twitter"></i> {{event.contents.text}}
-          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        <div ng-switch-when="twitter-status" class="event">
+          <div class="event__icon">
+            <i class="ion-social-twitter"></i>
+          </div>
+          <div class="event__text">
+            {{event.contents.text}}
+            <em>{{ event.contents.date | date:'medium' }}</em>
+          </div>
         </div>
 
-        <div ng-switch-when="psa-geo">
-          <i class="ion-map"></i>
-          lat: {{ event.contents.geo[0] }}
-          long: {{ event.contents.geo[1]}}
-          alt: {{ event.contents.geo[2] }}
-          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        <div ng-switch-when="psa-geo" class="event">
+          <div class="event__icon">
+            <i class="ion-map"></i>
+          </div>
+          <div class="event__text">
+            lat: {{ event.contents.geo[0] }}
+            long: {{ event.contents.geo[1]}}
+            alt: {{ event.contents.geo[2] }}
+            <em>{{ event.contents.date | date:'medium' }}</em>
+          </div>
         </div>
 
-        <div ng-switch-when="xee-geo">
-          <i class="ion-map"></i>
-          lat: {{ event.contents.geo[0] }}
-          long: {{ event.contents.geo[1]}}
-          alt: {{ event.contents.geo[2] }}
-          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        <div ng-switch-when="xee-geo" class="event">
+          <div class="event__icon">
+            <i class="ion-map"></i>
+          </div>
+          <div class="event__text">
+            lat: {{ event.contents.geo[0] }}
+            long: {{ event.contents.geo[1]}}
+            alt: {{ event.contents.geo[2] }}
+            <em>{{ event.contents.date | date:'medium' }}</em>
+          </div>
         </div>
 
-        <div ng-switch-when="trip-stop">
-          <h1>Arrivée</h1>
-          <blockquote>{{ event.contents.date | date:'medium' }}</blockquote>
+        <div ng-switch-when="trip-stop" class="event">
+          <div class="event__icon">
+            <i class="ion-android-star-outline"></i>
+          </div>
+          <div class="event__text">
+            <h1>Arrivée</h1>
+            <em>{{ event.contents.date | date:'medium' }}</em>
+          </div>
         </div>
       </ion-item>
     </ion-list>

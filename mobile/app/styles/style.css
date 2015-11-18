@@ -150,6 +150,17 @@
   padding-left: 0px;
 }
 
+.event__icon{
+  font-size: 2rem;
+}
+.event__text{
+  flex:4;
+}
+.event{
+  border: none;
+  display: flex;
+  justify-content: center;
+}
 .event__start{
   background-color: #2ecc71;
 }
@@ -158,12 +169,13 @@
 }
 .event__psa{
   background-color: #6D6E72;
+  color: #ecf0f1;
 }
 .event__xee{
   background-color: #344B59;
 }
 .event__stop{
-  background-color: ##2ecc71;
+  background-color: #e74c3c;
 }
 
 
