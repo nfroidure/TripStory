@@ -11,6 +11,8 @@ var xeeJobs = {
   A_XEE_SIGNUP: xeeSignupJob,
   A_XEE_LOGIN: xeeSignupJob,
 };
+var lastLatitude;
+var lastLongitude;
 
 module.exports = xeeJobs;
 
@@ -111,25 +113,32 @@ function xeeSyncJob(context, event) {
               data.location.altitude,
             ];
 
-            context.logger.info(
-              'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
-              geo.join(' '),
-              data.location.latitude,
-              data.location.longitude
-            );
+            if (lastLatitude !== data.location.latitude ||
+              lastLongitude !== data.location.longitude) {
 
-            require('../../app/utils/location.js')
-              .getFormatedAddress(
+              context.logger.info(
+                'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
+                geo.join(' '),
                 data.location.latitude,
-                data.location.longitude,
-                function(err, address) {
-                  context.logger.info(
-                    'Notre #xee est au : %s @hackthemobility',
-                    address
-                  )
-                }
-              )
-            ;
+                data.location.longitude
+              );
+
+              require('../../app/utils/location.js')
+                .getFormatedAddress(
+                  data.location.latitude,
+                  data.location.longitude,
+                  function(err, address) {
+                    context.logger.info(
+                      'Notre #xee est au : %s @hackthemobility',
+                      address
+                    )
+                  }
+                )
+              ;
+            }
+
+            lastLatitude = data.location.latitude;
+            lastLongitude = data.location.longitude;
 
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({

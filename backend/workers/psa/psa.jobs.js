@@ -108,7 +108,7 @@ function psaSyncJob(context, event) {
                     address = body.results[0].formatted_address;
 
                     context.logger.info(
-                      'Je suis au : %s, attendez moi signé patrick! @hackthemobility',
+                      'Je suis au : %s @hackthemobility',
                       address
                     );
 
