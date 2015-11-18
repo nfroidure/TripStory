@@ -7,12 +7,14 @@ Running the back:
 npm start
 ```
 
+En local, le serveur tourne sur localhost:1337, en prod, stripstory.lol.
+
 ### Auth:
-- Facebook: GET localhost:3000/auth/facebook
-- Login: POST username, password to localhost:3000/api/v0/login
-- Logout: POST username, password to localhost:3000/api/v0/logout
-- Signup: POST username, password, name to localhost:3000/api/v0/signup
-- Profile: GET localhost:3000/api/v0/profile - redirection
+- Facebook: GET /auth/facebook
+- Login: POST username, password to /api/v0/login
+- Logout: POST username, password to /api/v0/logout
+- Signup: POST username, password, name to /api/v0/signup
+- Profile: GET /api/v0/profile - redirection
 
 
 Resource:
@@ -25,10 +27,10 @@ Resource:
 ```
 
 # Users
-- List: GET localhost:3000/api/v0/users
-- Details: GET localhost:3000/api/v0/users/:user_id
-- Add: PUT localhost:3000/api/v0/users/:user_id
-- Delete: DELETE localhost:3000/api/v0/users/:user_id
+- List: GET /api/v0/users
+- Details: GET /api/v0/users/:user_id
+- Add: PUT /api/v0/users/:user_id
+- Delete: DELETE /api/v0/users/:user_id
 
 Resource:
 ```js
@@ -48,10 +50,10 @@ Resource:
 ```
 
 # Trips
-- List: GET localhost:3000/api/v0/users/:user_id/trips
-- Details: GET localhost:3000/api/v0/users/:user_id/trips/:trip_id
-- Add: PUT localhost:3000/api/v0/users/:user_id/trips/:trip_id
-- Delete: DELETE localhost:3000/api/v0/users/:user_id/trips/:trip_id
+- List: GET /api/v0/users/:user_id/trips
+- Details: GET /api/v0/users/:user_id/trips/:trip_id
+- Add: PUT /api/v0/users/:user_id/trips/:trip_id
+- Delete: DELETE /api/v0/users/:user_id/trips/:trip_id
 
 Resource:
 ```js
@@ -78,10 +80,10 @@ Resource:
 ```
 
 # Events
-- List: GET localhost:3000/api/v0/users/:user_id/events
-- Details: GET localhost:3000/api/v0/users/:user_id/events/:event_id
-- Add: PUT localhost:3000/api/v0/users/:user_id/events/:event_id
-- Delete: DELETE localhost:3000/api/v0/users/:user_id/events/:event_id
+- List: GET /api/v0/users/:user_id/events
+- Details: GET /api/v0/users/:user_id/events/:event_id
+- Add: PUT /api/v0/users/:user_id/events/:event_id
+- Delete: DELETE /api/v0/users/:user_id/events/:event_id
 
 Resource:
 ```js
@@ -104,10 +106,10 @@ Resource:
 ```
 
 # Cars
-- List: GET localhost:3000/api/v0/users/:user_id/cars
-- Details: GET localhost:3000/api/v0/users/:user_id/cars/:car_id
-- Add: PUT localhost:3000/api/v0/users/:user_id/cars/:car_id (soon)
-- Delete: DELETE localhost:3000/api/v0/users/:user_id/cars/:car_id (soon)
+- List: GET /api/v0/users/:user_id/cars
+- Details: GET /api/v0/users/:user_id/cars/:car_id
+- Add: PUT /api/v0/users/:user_id/cars/:car_id (soon)
+- Delete: DELETE /api/v0/users/:user_id/cars/:car_id (soon)
 
 Resource:
 ```js

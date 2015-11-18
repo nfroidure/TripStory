@@ -132,7 +132,7 @@ Promise.all([
 function initCors(context) {
   return function corsFunction(req, res, next) {
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Origin', context.cors || 'http://localhost:8100');
+    res.header('Access-Control-Allow-Origin', context.cors);
     res.header('Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization, ' +
       'X-SF-Ionic-Version, Cookies'
