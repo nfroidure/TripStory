@@ -2,7 +2,7 @@
   <ion-header-bar>
     <h1 class="title">Create a new trip</h1>
     <div class="buttons">
-      <button class="button button-clear" ng-click="closeAddTrip()">X</button>
+      <button class="button button-clear" ng-click="closeCreateTripModal()">Close</button>
     </div>
   </ion-header-bar>
   <div class="imageHeader">
@@ -16,7 +16,7 @@
           <span class="input-label">Title</span>
           <input type="text" ng-model="tripToAdd.contents.title">
        </label>
-      
+
        <label class="item item-input item-select">
           <div class="input-label">
             Select the car

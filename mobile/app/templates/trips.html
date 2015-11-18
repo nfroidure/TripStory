@@ -1,4 +1,10 @@
 <ion-view view-title="Your trips">
+  <ion-nav-buttons side="right">
+    <button class="button" ng-click="showCreateTripModal()">
+      <i class="ion-plus"></i>
+      Create trip
+    </button>
+  </ion-nav-buttons>
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
