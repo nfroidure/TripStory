@@ -11,7 +11,7 @@
       var service = {
         get: get,
         list: list,
-        post: post,
+        put: put,
       };
 
       return service;
@@ -29,8 +29,10 @@
           return $http.get(url);
         });
       }
-      function post(trip) {
-        return $http.post(ENV.apiEndpoint + 'api/v0/trips/' + createObjectId(), trip);
+      function put(trip) {
+        return AuthService.userIdPromise.then(function(userId){
+          return $http.put(ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips/' + createObjectId(), trip);
+        });
       }
   }
 

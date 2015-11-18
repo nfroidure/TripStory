@@ -1,47 +1,27 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Create a new trip</h1>
+    <h1 class="title">Start a new trip</h1>
     <div class="buttons">
       <button class="button button-clear" ng-click="closeCreateTripModal()">Close</button>
     </div>
   </ion-header-bar>
-  <div class="imageHeader">
-    <img  src="images/camera.png"/>
-    <span class="iconComment">Add a kickass cover</span>
-  </div>
   <ion-content>
     <form ng-submit="submitTrip()">
       <div class="list">
         <label class="item item-input">
           <span class="input-label">Title</span>
-          <input type="text" ng-model="tripToAdd.contents.title">
+          <input type="text" ng-model="newTrip.contents.title" required>
        </label>
-
-       <label class="item item-input item-select">
-          <div class="input-label">
-            Select the car
-          </div>
-          <select>
-            <option>Delorean</option>
-            <option selected>Tesla Model S</option>
-            <option>207</option>
-          </select>
-        </label>
-
         <label class="item item-input">
           <span class="input-label">Description</span>
-          <input type="text" ng-model="tripToAdd.contents.description">
+          <input type="text" ng-model="newTrip.contents.description" required>
         </label>
         <label class="item item-input">
-          <span class="input-label">Start</span>
-          <input type="text" ng-model="tripToAdd.contents.from.address">
-        </label>
-        <label class="item item-input">
-          <span class="input-label">End</span>
-          <input type="text" ng-model="tripToAdd.contents.to.address">
+          <span class="input-label">Hashtag</span>
+          <input type="text" ng-model="newTrip.contents.hash" required>
         </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Add Trip</button>
+          <button class="button button-block button-positive" type="submit">Start tracking</button>
         </label>
       </div>
     </form>

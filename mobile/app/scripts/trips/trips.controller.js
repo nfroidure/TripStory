@@ -10,9 +10,12 @@
   function TripsCtrl($scope, $state, $stateParams, tripsFactory, $ionicModal) {
     $scope.trips = [];
 
+    $scope.newTrip = {};
+
     $scope.showCreateTripModal = showCreateTripModal;
     $scope.closeCreateTripModal = closeCreateTripModal;
     $scope.goToTrip = goToTrip;
+    $scope.submitTrip = submitTrip;
 
     $ionicModal.fromTemplateUrl('./templates/addTripModal.html', {
       scope: $scope,
@@ -41,6 +44,13 @@
     function closeCreateTripModal(){
       $scope.modal.hide();
     }
-  }
 
+    function submitTrip(){
+      tripsFactory.put($scope.newTrip)
+        .then(function(values) {
+          activate();
+          $scope.closeCreateTripModal();
+        });
+    }
+  }
 })();
