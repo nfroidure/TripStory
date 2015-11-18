@@ -1,7 +1,6 @@
 'use strict';
 
 var carsTransforms = require('./cars.transforms');
-var Promise = require('bluebird');
 
 module.exports = initCarsController;
 

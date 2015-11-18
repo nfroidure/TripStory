@@ -33,7 +33,7 @@ function initAuthenticationController(context) {
     callbackURL: 'http://' + context.host + ':' + context.port +
       '/auth/facebook/callback',
     enableProof: false,
-    profileFields: ['id', 'displayName', 'photos', 'emails']
+    profileFields: ['id', 'displayName', 'photos', 'emails'],
   }, facebookLoginLogic));
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_ID,

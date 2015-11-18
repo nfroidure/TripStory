@@ -18,7 +18,7 @@ function initAuthenticationRoutes(context) {
   context.app.use(passport.session());
 
   context.app.post('/api/v0/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', function(err, user) {
       if (err) {
         return next(err);
       }
@@ -36,7 +36,7 @@ function initAuthenticationRoutes(context) {
   });
 
   context.app.post('/api/v0/signup', function(req, res, next) {
-    passport.authenticate('local-signup', function(err, user, info) {
+    passport.authenticate('local-signup', function(err, user) {
       if (err) {
         return next(err);
       }
@@ -125,7 +125,7 @@ function initAuthenticationRoutes(context) {
     authRedirectToProfile
   );
 
-  function authRedirectToProfile(req, res, next) {
+  function authRedirectToProfile(req, res) {
     if(!req.user) {
       return res.send(401);
     }

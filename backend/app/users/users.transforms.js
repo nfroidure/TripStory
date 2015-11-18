@@ -1,6 +1,7 @@
 'use strict';
 
 var transformsUtils = require('../utils/transforms');
+var castToObjectId = require('mongodb').ObjectId;
 
 var usersTransforms = {
   fromCollection: usersTransformsFromCollection,
@@ -23,5 +24,5 @@ function usersTransformsToCollection(src) {
     contents: src.contents,
   };
 
-  return dest;
+  return transformsUtils.mapIds(castToObjectId, dest);
 }

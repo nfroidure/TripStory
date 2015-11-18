@@ -34,8 +34,8 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
   msg = '[' + level + '] ' + msg.substring(0, 128) + '… #jdmc15';
   this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
     if (error) {
-      console.log('Twitter console', error);
-      //context.logger.error(error); // eslint-disable-line no-console
+      console.log('Twitter console', error); // eslint-disable-line
+      // context.logger.error(error); // eslint-disable-line no-console
       // self.emit('error', error); Disable since it crashes the app
     }
   });
