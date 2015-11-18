@@ -33,6 +33,7 @@ function initAuthenticationController(context) {
     callbackURL: 'http://' + context.host + ':' + context.port +
       '/auth/facebook/callback',
     enableProof: false,
+    profileFields: ['id', 'displayName', 'photos', 'emails']
   }, facebookLoginLogic));
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_ID,
@@ -120,11 +121,14 @@ function initAuthenticationController(context) {
     var upsertId = context.createObjectId();
 
     context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
+
     context.db.collection('users').findOneAndUpdate({
       'auth.facebook.id': profile.id,
     }, {
       $set: {
         'contents.name': profile.displayName,
+        'contents.email': profile.email,
+        'contents.photo': profile.data ? profile.data.url : '',
         'auth.facebook': {
           id: profile.id,
           accessToken: accessToken,
@@ -177,6 +181,7 @@ function initAuthenticationController(context) {
       $set: {
         'contents.name': profile.displayName,
         'email.name': profile.emails[0].value,
+        'contents.photo': profile.photos[0].value,
         'auth.google': {
           id: profile.id,
           accessToken: accessToken,
