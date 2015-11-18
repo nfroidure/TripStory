@@ -15,7 +15,7 @@ var client = new Twitter({
   access_token_secret: ACCESS_TOKEN_SECRET,
 });
 var twitterJobs = {
-  A_TWITTER_SYNC: twitterSyncJob,
+  // A_TWITTER_SYNC: twitterSyncJob,
   A_TWITTER_SIGNUP: pairTwitterFriends,
   A_TWITTER_LOGIN: pairTwitterFriends,
 };
