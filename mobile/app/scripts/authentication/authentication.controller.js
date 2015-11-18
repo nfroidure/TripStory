@@ -16,18 +16,16 @@
 
     function doLogin() {
       AuthService.log($scope.loginData)
-        .then(function(status) {
-          if (status.status === 200) {
-            $state.go("app.trips");
-          }
+        .then(function(logResponse) {
+          $state.go('app.trips');
         })
         .catch(function(err){ $scope.fail = err; });
     }
 
     function doSignup() {
       AuthService.signup($scope.loginData)
-        .then(function(status) {
-          if (status.status === 200) {
+        .then(function(logResponse) {
+          if (logResponse.status === 200) {
             $state.go("app.trips");
           }
         })

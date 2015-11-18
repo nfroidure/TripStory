@@ -13,15 +13,15 @@
   </ion-side-menu-content>
 
   <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
-    <div ng-if="user._id">
+    <div>
       <ion-content>
-        <div class="user__img" ng-click="newUserPicture()" ng-if="user.contents.photo">
+        <div class="user__img" ng-click="newUserPicture()" ng-if="user.photo">
           <!-- <img ng-src="data:image/jpeg;base64,{{user.picture}}" class="user__photo" width="100%"/> -->
-          <img ng-src="{{user.contents.photo}}" class="user__photo" width="100%"/>
+          <img ng-src="{{user.photo}}" class="user__photo" width="100%"/>
         </div>
 
         <ion-item class="user__name">
-          {{user.contents.name}}
+          {{user.name}}
         </ion-item>
 
         <ion-list>
@@ -31,7 +31,7 @@
         </ion-list>
       </ion-content>
     </div>
-    <div ng-if="!user._id">
+    <!-- <div ng-if="!isLogged">
       <ion-content>
         <ion-list>
           <ion-item ui-sref="login">
@@ -39,6 +39,6 @@
           </ion-item>
         </ion-list>
       </ion-content>
-    </div>
+    </div> -->
   </ion-side-menu>
 </ion-side-menus>

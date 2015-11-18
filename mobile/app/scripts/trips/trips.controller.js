@@ -5,10 +5,22 @@
     .module('app.trips')
     .controller('TripsCtrl', TripsCtrl);
 
-  TripsCtrl.$inject = ['$scope', '$state', '$stateParams', 'trips'];
+  TripsCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory'];
   /* @ngInject */
-  function TripsCtrl($scope, $state, $stateParams, trips) {
-    $scope.trips = trips;
+  function TripsCtrl($scope, $state, $stateParams, tripsFactory) {
+    $scope.trips = [];
+
+
+    activate()
+
+    function activate() {
+      tripsFactory.list()
+        .then(function(values) {
+          $scope.trips = values.data;
+          console.log('$scope.trips', $scope.trips);
+        });
+    }
+
 
     $scope.goToTrip = function(trip){
       $state.go("app.trip", {trip_id: trip._id});

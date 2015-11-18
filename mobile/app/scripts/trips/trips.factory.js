@@ -5,10 +5,9 @@
     .module('app.trips')
     .factory('tripsFactory', tripsFactory);
 
-  tripsFactory.$inject = ['$http', 'createObjectId', 'ProfileResource', '$q', 'ENV'];
+  tripsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'AuthService'];
   /* @ngInject */
-  function tripsFactory($http, createObjectId, ProfileResource, $q, ENV) {
-
+  function tripsFactory($http, createObjectId , $q, ENV, AuthService) {
       var tripMock = {
         '_id': '56489f520c5e9c5a0ac454a4',
         'contents': {
@@ -195,9 +194,9 @@
           },
         ]
       };
-
       var service = {
         get: get,
+        list: list,
         post: post,
       };
 
@@ -206,17 +205,17 @@
 
       function get(idTrip) {
         // Mock for designing
-
-        return tripMock;
-
-        ProfileResource.get().$promise
-          .then(function(profile){
-            var url = ENV.apiEndpoint + 'api/v0/users/' + profile._id + '/trips';
-            if(idTrip){
-              url += idTrip;
-            }
-            return $http.get(url);
-          });
+        // return tripMock;
+        return AuthService.userIdPromise.then(function(userId){
+          var url = ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips' + userId;
+          return $http.get(url);
+        });
+      }
+      function list() {
+        return AuthService.userIdPromise.then(function(userId){
+          var url = ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips';
+          return $http.get(url);
+        });
       }
       function post(trip) {
         return $http.post(ENV.apiEndpoint + 'api/v0/trips/' + createObjectId(), trip);

@@ -26,11 +26,6 @@
         abstract: true,
         templateUrl: 'templates/menu.html',
         controller: 'AppCtrl',
-        resolve: {
-          profile: function(ProfileResource){
-            return ProfileResource.get().$promise;
-          }
-        }
       })
       .state('app.trips', {
         url: '/trips',
@@ -40,11 +35,6 @@
             controller: 'TripsCtrl'
           }
         },
-        resolve: {
-          trips: function(TripResource, profile){
-            return TripResource.query({user_id: profile._id}).$promise;
-          }
-        }
       })
       .state('app.trip', {
         url: '/trip/:trip_id',

@@ -5,32 +5,32 @@
     .module('app')
     .controller('AppCtrl', AppCtrl);
 
-  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory', 'AuthService', '$ionicHistory', 'profile'];
+  AppCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'userService', '$http', 'tripsFactory', 'AuthService', '$ionicHistory'];
   /* @ngInject */
-  function AppCtrl($scope, $state, $ionicModal, $timeout, $http, tripsFactory, AuthService, $ionicHistory, profile) {
+  function AppCtrl($scope, $state, $ionicModal, $timeout, userService, $http, tripsFactory, AuthService, $ionicHistory) {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
-
+    //$scope.isLogged = !!AuthService.getId();
     $scope.tripToAdd = { contents: {} };
-
-    $scope.user = profile;
-
+    $scope.user = {};
     $scope.addTrip = addTrip;
     $scope.closeAddTrip = closeAddTrip;
     $scope.submitTrip = submitTrip;
     $scope.doLogout = doLogout;
+
+    activate()
+
+    function activate() {
+      userService.getUser()
+        .then(function(value) { $scope.user = value.data.contents })
+    }
 
     $ionicModal.fromTemplateUrl('templates/addTripModal.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.addTripModal = modal;
     });
-
-    activate();
-
-    function activate() {
-    }
 
     // go to related page
     function goToTrip(trip) {
@@ -46,7 +46,6 @@
     function submitTrip() {
       tripsFactory.post($scope.tripToAdd);
     }
-
     function doLogout() {
       AuthService.logout()
         .then(function(status) {
