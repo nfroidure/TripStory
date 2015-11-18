@@ -244,14 +244,14 @@ function initAuthenticationController(context) {
           profile.username
         );
         context.bus.trigger({
-          exchange: 'A_TW_SIGNUP',
+          exchange: 'A_TWITTER_SIGNUP',
           contents: {
             user_id: result.value._id,
           },
         });
       } else {
         context.bus.trigger({
-          exchange: 'A_TW_LOGIN',
+          exchange: 'A_TWITTER_LOGIN',
           contents: {
             user_id: result.value._id,
           },

@@ -16,6 +16,8 @@ var client = new Twitter({
 });
 var twitterJobs = {
   A_TWITTER_SYNC: twitterSyncJob,
+  A_TWITTER_SIGNUP: pairTwitterFriends,
+  A_TWITTER_LOGIN: pairTwitterFriends,
 };
 
 // Doc: https://dev.twitter.com/rest/reference/get/search/tweets
@@ -75,5 +77,48 @@ function twitterSyncJob(context, event) {
         );
       });
     }));
+  });
+}
+
+function pairTwitterFriends(context, user) {
+  return new Promise(function pairFriendsPromise(resolve, reject) {
+    return new Promise(function(resolve, reject) {
+      client.get(
+        'friends/ids',
+        {},
+        function twitterSearchHandler(err, tweets, response) {
+          if(err) {
+            reject(err);
+          }
+
+          context.logger.debug('Retrieved twitter friends', tweets);
+
+          Promise.all((tweets.ids || []).map(function syncFriendUsers(id) {
+            // Update friends that are know in the platform
+            return context.db.collection('users').findOneAndUpdate({
+              'auth.twitter.id': id,
+            }, {
+              $addToSet: {
+                friends_ids: user._id,
+              },
+            }).then(function(result) {
+              return result.value._id;
+            });
+          })).then(function syncUserFriends(friendsIds) {
+            friendsIds = friendsIds.filter(function(a) { return a; });
+
+            if(friendsIds.length) {
+              return context.db.collection('users').updateOne({
+                _id: user._id,
+              }, {
+                $addToSet: {
+                  friends_ids: { $each: friendsIds },
+                },
+              });
+            }
+          }).then(resolve).catch(reject);
+        }
+      );
+    });
   });
 }
