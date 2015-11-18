@@ -56,6 +56,8 @@ function twitterSyncJob(context, event) {
                     },
                     'contents.text': status.text,
                     'contents.geo': status.geo,
+                    'contents.profile_image': status.profile_image_url_https,
+                    'contents.entities': status.entities,
                   },
                   $setOnInsert: {
                     'contents.date': new Date(status.created_at),
