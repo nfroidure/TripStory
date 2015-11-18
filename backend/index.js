@@ -85,7 +85,7 @@ Promise.all([
 
   // Middlewares
   context.app.use(initCors(context));
-  context.app.use(express.static('www'));
+  context.app.use(express.static('../mobile/app'));
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
@@ -93,6 +93,7 @@ Promise.all([
   context.host = 'localhost';
   context.port = 3000;
   context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
+  context.logger.debug('Env', process.env);
 
   // Workers
   initFacebookWorker(context);
