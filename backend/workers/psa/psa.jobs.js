@@ -99,15 +99,39 @@ function psaSyncJob(context, event) {
                   data.latitude[bestSecond] + ',' + 
                   data.longitude[bestSecond],
                   function(err, res, body) {
+                    var address;
+
                     if (err) {
                       context.logger.error(err);
                     }
                     body = JSON.parse(body);
+                    address = body.results[0].formatted_address;
 
                     context.logger.info(
                       'Je suis au : %s, attendez moi signé patrick! @hackthemobility',
-                      body.results[0].formatted_address
+                      address,
                     );
+
+                    // Save the coordinates as an event
+                    return context.db.collection('events').findOneAndUpdate({
+                      'contents.type': 'psa-geo',
+                      'contents.trip_id': tripEvent._id,
+                      'contents.date': new Date(transformPSADate(data.lastUpdate)),
+                    }, {
+                      $set: {
+                        'contents.geo': geo,
+                        'contents.address': address,
+                      },
+                      $setOnInsert: {
+                        'contents.date': new Date(transformPSADate(data.lastUpdate)),
+                        'contents.trip_id': tripEvent._id,
+                        'contents.type': 'psa-geo',
+                        trip: tripEvent.trip,
+                      },
+                    }, {
+                      upsert: true,
+                      returnOriginal: false,
+                    });
                   }
                 )
               ;
@@ -116,25 +140,6 @@ function psaSyncJob(context, event) {
             lastLongitude = data.longitude[bestSecond];
             lastLatitude = data.latitude[bestSecond];
 
-            // Save the coordinates as an event
-            return context.db.collection('events').findOneAndUpdate({
-              'contents.type': 'psa-geo',
-              'contents.trip_id': tripEvent._id,
-              'contents.date': new Date(transformPSADate(data.lastUpdate)),
-            }, {
-              $set: {
-                'contents.geo': geo,
-              },
-              $setOnInsert: {
-                'contents.date': new Date(transformPSADate(data.lastUpdate)),
-                'contents.trip_id': tripEvent._id,
-                'contents.type': 'psa-geo',
-                trip: tripEvent.trip,
-              },
-            }, {
-              upsert: true,
-              returnOriginal: false,
-            });
           });
       });
     }));
