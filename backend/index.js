@@ -93,6 +93,7 @@ Promise.all([
   context.host = 'localhost';
   context.port = 3000;
   context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
+  context.cors = process.env.cors || 'http://' + context.host + ':8100';
   context.logger.debug('Env', process.env);
 
   // Workers
@@ -131,7 +132,7 @@ Promise.all([
 function initCors(context) {
   return function corsFunction(req, res, next) {
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Origin', context.base || 'http://localhost:8100');
+    res.header('Access-Control-Allow-Origin', context.cors || 'http://localhost:8100');
     res.header('Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization, ' +
       'X-SF-Ionic-Version, Cookies'
