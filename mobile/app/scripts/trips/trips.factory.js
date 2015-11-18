@@ -5,9 +5,9 @@
     .module('app.trips')
     .factory('tripsFactory', tripsFactory);
 
-  tripsFactory.$inject = ['$http', 'createObjectId', 'ProfileResource', '$q'];
+  tripsFactory.$inject = ['$http', 'createObjectId', 'ProfileResource', '$q', 'ENV'];
   /* @ngInject */
-  function tripsFactory($http, createObjectId, ProfileResource, $q) {
+  function tripsFactory($http, createObjectId, ProfileResource, $q, ENV) {
 
       var tripMock = {
         '_id': '56489f520c5e9c5a0ac454a4',
@@ -206,12 +206,12 @@
 
       function get(idTrip) {
         // Mock for designing
-        if(idTrip){
-          return tripMock;
-        }
+
+        return tripMock;
+
         ProfileResource.get().$promise
           .then(function(profile){
-            var url = 'http://stripstory.lol/api/v0/users/' + profile._id + '/trips';
+            var url = ENV.apiEndpoint + 'api/v0/users/' + profile._id + '/trips';
             if(idTrip){
               url += idTrip;
             }
@@ -219,7 +219,7 @@
           });
       }
       function post(trip) {
-        return $http.post('https://stripstory.lol/api/v0/trips/' + createObjectId(), trip);
+        return $http.post(ENV.apiEndpoint + 'api/v0/trips/' + createObjectId(), trip);
       }
   }
 
