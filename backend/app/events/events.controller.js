@@ -21,7 +21,7 @@ function initEventsController(context) {
       }, {
         'trip.friends_ids': context.castToObjectId(req.params.user_id),
       }],
-    }).toArray()
+    }).sort({ 'contents.date': 1 }).toArray()
     .then(function(entries) {
       context.logger.debug('Sending:', entries);
       res.status(200).send(entries.map(eventsTransforms.fromCollection));
