@@ -26,6 +26,7 @@
     "passport-local": "^1.0.0",
     "passport-oauth2": "git+ssh://git@github.com:nfroidure/passport-oauth2#master",
     "request": "^2.65.0",
+    "serve-favicon": "^2.3.0",
     "twitter": "^1.2.5",
     "winston": "^2.1.0"
   },
