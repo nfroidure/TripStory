@@ -109,7 +109,7 @@ function psaSyncJob(context, event) {
 
                     context.logger.info(
                       'Je suis au : %s, attendez moi signé patrick! @hackthemobility',
-                      address,
+                      address
                     );
 
                     // Save the coordinates as an event
