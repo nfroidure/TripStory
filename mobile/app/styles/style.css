@@ -8,7 +8,7 @@
 .headerPage{
   color: white;
   text-align: center;
-  height: 350px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,54 +150,48 @@
   padding-left: 0px;
 }
 
-.event__icon{
-  font-size: 2rem;
+.card{
+  padding: 0 15px 15px 15px;
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #F1F1F1;
 }
-.event__text{
-  flex:4;
+
+.event__icon{
+  font-size: 1.2em;
+  color: #000000;
+  margin-right: 10px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.event__icon i{
+  display: inline-block;
+  width: 22px;
+}
+
+.ion-social-twitter{
+  color: #3b94d9;
+}
+
+.event__icon em{
+  font-size: 0.8em;
+  color: #707070;
+}
+
+.event .date{
+  float: right;
+  color: #666666;
+  font-size: 0.6em;
 }
 .event{
   border: none;
-  display: flex;
   justify-content: center;
-}
-.event__start{
-  background-color: #2ecc71;
-}
-.event__twitter{
-  background-color: #c0deed;
-}
-.event__psa{
-  background-color: #6D6E72;
-  color: #ecf0f1;
-}
-.event__xee{
-  background-color: #344B59;
-}
-.event__stop{
-  background-color: #e74c3c;
+  border: none;
+  width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.event p{
+  color: #000000;
+  font-size: 1em;
+}

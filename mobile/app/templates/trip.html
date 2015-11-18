@@ -8,9 +8,7 @@ $<ion-view view-title="{{ trip.contents.title }}">
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
-        <p class="headerPage__from">{{ trip.contents.from.address }}</p>
-        <p class="headerPage__to">{{ trip.contents.to.address }}</p>
-        First point : {{ startEvent.contents.geo[0]}} - {{ startEvent.contents.geo[1] }}
+        <em class="headerPage__data">{{trip.contents.createdAt}}</em>
         <div class="headerPage__members">
           <div class="member"
             ng-repeat="member in trip.contents.members"
@@ -22,59 +20,54 @@ $<ion-view view-title="{{ trip.contents.title }}">
       </div>
     </div>
     <ion-list>
-      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)">
+      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)" class="event-list-item card">
 
         <div ng-switch-when="trip-start" class="event">
           <div class="event__icon">
-            <i class="ion-flag"></i>
-          </div>
-          <div class="event__text">
-            <h1>Depart</h1>
-            <em>{{ event.contents.date | date:'medium' }}</em>
+            <i class="ion-location"></i>
+            <em>Depart</em>
+            <span class="date">{{event.contents.date | date:'short'}}</span>
           </div>
         </div>
 
         <div ng-switch-when="twitter-status" class="event">
           <div class="event__icon">
             <i class="ion-social-twitter"></i>
+            <em>Twitter</em>
+            <span class="date">{{event.contents.date | date:'short'}}</span>
           </div>
           <div class="event__text">
-            {{event.contents.text}}
-            <em>{{ event.contents.date | date:'medium' }}</em>
+            <p>{{event.contents.text}}</p>
           </div>
         </div>
 
         <div ng-switch-when="psa-geo" class="event">
           <div class="event__icon">
-            <i class="ion-map"></i>
+            <i class="ion-android-car"></i>
+            <em>PSA</em>
+            <span class="date">{{event.contents.date | date:'short'}}</span>
           </div>
           <div class="event__text">
-            lat: {{ event.contents.geo[0] }}
-            long: {{ event.contents.geo[1]}}
-            alt: {{ event.contents.geo[2] }}
-            <em>{{ event.contents.date | date:'medium' }}</em>
+            <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
           </div>
         </div>
 
         <div ng-switch-when="xee-geo" class="event">
           <div class="event__icon">
             <i class="ion-map"></i>
+            <em>Xee</em>
+            <span class="date">{{event.contents.date | date:'short'}}</span>
           </div>
           <div class="event__text">
-            lat: {{ event.contents.geo[0] }}
-            long: {{ event.contents.geo[1]}}
-            alt: {{ event.contents.geo[2] }}
-            <em>{{ event.contents.date | date:'medium' }}</em>
+            <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
           </div>
         </div>
 
         <div ng-switch-when="trip-stop" class="event">
           <div class="event__icon">
             <i class="ion-android-star-outline"></i>
-          </div>
-          <div class="event__text">
-            <h1>Arrivée</h1>
-            <em>{{ event.contents.date | date:'medium' }}</em>
+            <em>Arrived at destination</em>
+            <span class="date">{{event.contents.date | date:'short'}}</span>
           </div>
         </div>
       </ion-item>

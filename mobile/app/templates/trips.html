@@ -4,8 +4,6 @@
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
         <p>{{trip.contents.description}}</p>
-        <p>Origin: {{trip.contents.from.address}}</p>
-        <p>Destination: {{trip.contents.to.address}}</p>
       </ion-item>
     </ion-list>
   </ion-content>
