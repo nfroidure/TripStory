@@ -1,0 +1,32 @@
+{
+  "name": "api",
+  "script": "backend/index.js",
+  "watch": true,
+  "ignore_watch": [
+    ".git",
+    "mobile",
+    "node_modules",
+    "test"
+  ],
+  "watch_options": {
+    "followSymlinks": false
+  },
+  "restart_delay": 100,
+  "env": {
+    "MONGODB_URL": "",
+    "TWITTER_CONSUMER_KEY": "",
+    "TWITTER_CONSUMER_SECRET": "",
+    "TWITTER_ACCESS_TOKEN": "",
+    "TWITTER_ACCESS_TOKEN_SECRET": "",
+    "FACEBOOK_ID": "",
+    "FACEBOOK_SECRET": "",
+    "GOOGLE_ID": "",
+    "GOOGLE_SECRET": "",
+    "XEE_ID": "",
+    "XEE_SECRET": "",
+    "PSA_VIN": "",
+    "PSA_CONTRACT": "",
+    "PSA_CODE": ""
+  }
+}
+

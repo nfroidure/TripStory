@@ -1,7 +1,11 @@
 ## API
 
+### Configuration
+```sh
+cp app.sample.json app.json && vim app.json
+```
 
-Running the back:
+### Running the back:
 
 ```sh
 npm start
