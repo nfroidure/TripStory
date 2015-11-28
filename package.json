@@ -23,6 +23,7 @@
   "dependencies": {
     "clone": "^1.0.2",
     "http-auth-utils": "0.0.2",
-    "passport-twitter": "^1.0.3"
+    "passport-twitter": "^1.0.3",
+    "sf-token": "^1.0.0"
   }
 }

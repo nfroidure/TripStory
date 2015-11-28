@@ -1,9 +1,12 @@
 'use strict';
 
+var TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
+
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var initAuthenticationController = require('./authentication.controller');
 var usersTransforms = require('../users/users.transforms');
+var clone = require('clone');
 
 module.exports = initAuthenticationRoutes;
 
@@ -61,40 +64,40 @@ function initAuthenticationRoutes(context) {
 
   context.app.get(
     '/auth/facebook',
-    passport.authenticate('facebook',
+    initPassportWithAStateObject('facebook',
     { scope: ['public_profile', 'email', 'user_friends'] }
   ));
   context.app.get(
     '/auth/facebook/callback',
-    passport.authenticate('facebook', { failureRedirect: '/me' }),
+    checkStateObjectAndPassport('facebook', { failureRedirect: '/me' }),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/google',
-    passport.authenticate('google',
+    initPassportWithAStateObject('google',
     { scope: ['profile', 'email'] }
   ));
   context.app.get(
     '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/me' }),
+    checkStateObjectAndPassport('google', { failureRedirect: '/me' }),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/twitter',
-    passport.authenticate('twitter',
+    initPassportWithAStateObject('twitter',
     { scope: ['profile', 'email'] }
   ));
   context.app.get(
     '/auth/twitter/callback',
-    passport.authenticate('twitter', { failureRedirect: '/me' }),
+    checkStateObjectAndPassport('twitter', { failureRedirect: '/me' }),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/xee',
-    passport.authenticate('xee',
+    initPassportWithAStateObject('xee',
     { scope: [
       'user_get', 'email_get', 'car_get', 'data_get',
       'location_get', 'address_all', 'accelerometer_get',
@@ -102,7 +105,7 @@ function initAuthenticationRoutes(context) {
   ));
   context.app.get(
     '/auth/xee/callback',
-    passport.authenticate('xee', { failureRedirect: '/me' }),
+    checkStateObjectAndPassport('xee', { failureRedirect: '/me' }),
     authRedirectToApp
   );
 
@@ -132,5 +135,40 @@ function initAuthenticationRoutes(context) {
     }
     res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
     res.sendStatus(301);
+  }
+
+  function initPassportWithAStateObject(type, params) {
+    return function initPassportWithAStateObjectCb(req, res, next) {
+      var stateContents = {
+        type: type,
+      };
+      var state;
+
+      params = clone(params);
+      if(req.user) {
+        stateContents.user_id = req.user._id.toString();
+      }
+      state = context.tokens.createToken(
+        stateContents,
+        (new Date(context.time() + TOKEN_DURATION)).getTime()
+      );
+      params.state = (new Buffer(JSON.stringify(state))).toString('base64');
+      passport.authenticate(type, params)(req, res, next);
+    };
+  }
+
+  function checkStateObjectAndPassport(type, options) {
+    return function checkStateObjectAndPassportCb(req, res, next) {
+      var state;
+
+      try {
+        state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));
+        context.tokens.checkToken(state, state.hash);
+      } catch(err) {
+        return next(err);
+      }
+      req._authState = state;
+      passport.authenticate(type, options)(req, res, next);
+    };
   }
 }

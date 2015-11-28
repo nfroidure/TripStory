@@ -13,6 +13,7 @@ var util = require('util');
 var authUtils = require('http-auth-utils');
 var favicon = require('serve-favicon');
 var path = require('path');
+var TokenService = require('sf-token');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
@@ -46,7 +47,6 @@ TwittLog.prototype.log = function log(level, msg, meta, callback) {
 
   callback(null, true);
 };
-
 // Preparing services
 Promise.all([
   MongoClient.connect(process.env.MONGODB_URL),
@@ -54,6 +54,7 @@ Promise.all([
   var context = {};
 
   // Services
+  context.time = Date.now.bind(Date);
   context.db = db;
   context.bus = {
     consume: function busConsume(callback) {
@@ -77,6 +78,11 @@ Promise.all([
       }
       ),
     ],
+  });
+  context.tokens = new TokenService({
+    uniqueId: function() { return context.createObjectId().toString(); },
+    secret: process.env.TOKEN_SECRET,
+    time: context.time,
   });
   context.checkAuth = function isLoggedIn(req, res, next) {
     context.logger.debug('isLoggedIn', req.isAuthenticated(), req.user);
@@ -107,8 +113,8 @@ Promise.all([
   initTwitterWorker(context);
 
   // Periodical signals
-  randomRunDelay(triggerPSASync.bind(null, context), 240000);
-  triggerPSASync(context);
+  //randomRunDelay(triggerPSASync.bind(null, context), 240000);
+  //triggerPSASync(context);
   randomRunDelay(triggerXEESync.bind(null, context), 240000);
   triggerXEESync(context);
   randomRunDelay(triggerTwitterSync.bind(null, context), 960000);

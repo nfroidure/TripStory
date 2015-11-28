@@ -26,23 +26,28 @@ function initAuthenticationController(context) {
   passport.use('local-signup', new LocalStrategy({
     passReqToCallback: true,
   }, localSignupLogic));
-  passport.use(new BasicStrategy(localLoginLogic));
+  passport.use(new BasicStrategy({
+    passReqToCallback: true,
+  }, localLoginLogic));
   passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_ID,
     clientSecret: process.env.FACEBOOK_SECRET,
     callbackURL: context.base + '/auth/facebook/callback',
     enableProof: false,
     profileFields: ['id', 'displayName', 'photos', 'emails'],
+    passReqToCallback: true,
   }, facebookLoginLogic));
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
     callbackURL: context.base + '/auth/google/callback',
+    passReqToCallback: true,
   }, googleLoginLogic));
   passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: context.base + '/auth/twitter/callback',
+    passReqToCallback: true,
   }, twitterLoginLogic));
   passport.use('xee', new OAuth2Strategy({
     authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
@@ -51,9 +56,10 @@ function initAuthenticationController(context) {
     clientSecret: process.env.XEE_SECRET,
     callbackURL: context.base + '/auth/xee/callback',
     useAuthorizationHeaderForGET: true,
+    passReqToCallback: true,
   }, xeeLoginLogic));
 
-  function localLoginLogic(username, password, done) {
+  function localLoginLogic(req, username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);
     context.db.collection('users').findOne({
       'contents.email': username,
@@ -115,14 +121,29 @@ function initAuthenticationController(context) {
     });
   }
 
-  function facebookLoginLogic(accessToken, refreshToken, profile, done) {
+  function facebookLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
+    var findQuery = {};
 
     context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
 
-    context.db.collection('users').findOneAndUpdate({
-      'auth.facebook.id': profile.id,
-    }, {
+    if(!req._authState.contents) {
+      return done(new YError('E_NO_STATE'));
+    }
+
+    if(req._authState.contents.user_id) {
+      findQuery._id = req._authState.contents.user_id;
+    } else {
+      findQuery.$or = [{
+        'auth.facebook.id': profile.id,
+      }, {
+        'contents.email': { $in: profile.emails.map(function(email) {
+          return email.value;
+        }) },
+      }];
+    }
+
+    context.db.collection('users').findOneAndUpdate(findQuery, {
       $set: {
         'contents.name': profile.displayName,
         'contents.email': profile.emails[0].value,
@@ -142,7 +163,7 @@ function initAuthenticationController(context) {
     }, function facebookLoginHandler(err, result) {
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
-          '@nfroidure: Facebook signup:', profile.displayName,
+          'Facebook signup:', profile.displayName,
           ' https://facebook.com/' + profile.id
         );
         context.bus.trigger({
@@ -163,19 +184,29 @@ function initAuthenticationController(context) {
     });
   }
 
-  function googleLoginLogic(accessToken, refreshToken, profile, done) {
+  function googleLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
+    var findQuery = {};
 
     context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
-    context.db.collection('users').findOneAndUpdate({
-      $or: [{
+
+    if(!req._authState.contents) {
+      return done(new YError('E_NO_STATE'));
+    }
+
+    if(req._authState.contents.user_id) {
+      findQuery._id = req._authState.contents.user_id;
+    } else {
+      findQuery.$or = [{
         'auth.google.id': profile.id,
       }, {
         'contents.email': { $in: profile.emails.map(function(email) {
           return email.value;
         }) },
-      }],
-    }, {
+      }];
+    }
+
+    context.db.collection('users').findOneAndUpdate(findQuery, {
       $set: {
         'contents.name': profile.displayName,
         'contents.email': profile.emails[0].value,
@@ -196,7 +227,7 @@ function initAuthenticationController(context) {
     }, function googleLoginHandler(err, result) {
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
-          '@nfroidure: Google signup:', profile.displayName
+          'Google signup:', profile.displayName
         );
         context.bus.trigger({
           exchange: 'A_GG_SIGNUP',
@@ -218,11 +249,21 @@ function initAuthenticationController(context) {
 
   function twitterLoginLogic(accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
+    var findQuery = {};
 
     context.logger.debug('Twitter auth info:', JSON.stringify(profile, null, 2), accessToken);
-    context.db.collection('users').findOneAndUpdate({
-      'auth.twitter.id': profile.id,
-    }, {
+
+    if(!req._authState.contents) {
+      return done(new YError('E_NO_STATE'));
+    }
+
+    if(req._authState.contents.user_id) {
+      findQuery._id = req._authState.contents.user_id
+    } else {
+      findQuery['auth.twitter.id'] = profile.id;
+    }
+
+    context.db.collection('users').findOneAndUpdate(findQuery, {
       $set: {
         'contents.name': profile.displayName,
         'contents.photo': profile.photos[0].value,
@@ -241,7 +282,7 @@ function initAuthenticationController(context) {
     }, function twitterLoginHandler(err, result) {
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
-          '@nfroidure: Twitter signup:', profile.displayName, '- @starring',
+          'Twitter signup:', profile.displayName, '- @starring',
           profile.username
         );
         context.bus.trigger({
@@ -262,8 +303,12 @@ function initAuthenticationController(context) {
     });
   }
 
-  function xeeLoginLogic(accessToken, refreshToken, profile, done) {
+  function xeeLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
+
+    if(!req._authState.contents) {
+      return done(new YError('E_NO_STATE'));
+    }
 
     new Promise(function(resolve, reject) {
       request.get(
@@ -275,10 +320,18 @@ function initAuthenticationController(context) {
         resolve(JSON.parse(httpData));
       });
     }).then(function(profile) {
+      var findQuery = {};
+
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
-      context.db.collection('users').findOneAndUpdate({
-        'auth.xee.id': profile.id,
-      }, {
+
+
+      if(req._authState.contents.user_id) {
+        findQuery._id = req._authState.contents.user_id
+      } else {
+        findQuery['auth.xee.id'] = profile.id;
+      }
+
+      context.db.collection('users').findOneAndUpdate(findQuery, {
         $set: {
           contents: {
             name: profile.firstName + ' ' + profile.name,
@@ -301,7 +354,7 @@ function initAuthenticationController(context) {
         }
         if(!result.lastErrorObject.updatedExisting) {
           context.logger.info(
-            '@nfroidure: Xee signup:', profile.firstName + ' ' + profile.name
+            'Xee signup:', profile.firstName + ' ' + profile.name
           );
           context.bus.trigger({
             exchange: 'A_XEE_SIGNUP',
