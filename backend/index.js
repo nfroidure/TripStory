@@ -66,7 +66,6 @@ Promise.all([
   };
   context.app = express();
   context.createObjectId = ObjectId;
-  context.castToObjectId = ObjectId;
   context.logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({ level: 'silly' }),
@@ -113,8 +112,8 @@ Promise.all([
   initTwitterWorker(context);
 
   // Periodical signals
-  //randomRunDelay(triggerPSASync.bind(null, context), 240000);
-  //triggerPSASync(context);
+  // randomRunDelay(triggerPSASync.bind(null, context), 240000);
+  // triggerPSASync(context);
   randomRunDelay(triggerXEESync.bind(null, context), 240000);
   triggerXEESync(context);
   randomRunDelay(triggerTwitterSync.bind(null, context), 960000);

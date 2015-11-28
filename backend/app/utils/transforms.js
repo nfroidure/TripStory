@@ -1,35 +1,50 @@
 'use strict';
 
+var castToObjectId = require('mongodb').ObjectId;
+var transformPerPrefixes = require('transform-per-suffixes');
+
+var FROM_SUFFIXES = [{
+  value: '_id',
+  transform: castToObjectId,
+}, {
+  value: '_ids',
+  transform: transformsUtilsMapToOBjectIds,
+}, {
+  value: '_date',
+  transform: transformsUtilsToDate,
+}];
+
+var TO_SUFFIXES = [{
+  value: '_id',
+  transform: transformsUtilsToString,
+}, {
+  value: '_ids',
+  transform: function mapToOBjectId(ids) {
+    return ids.map(castToObjectId);
+  },
+}, {
+  value: '_date',
+  transform: transformsUtilsToISOString,
+}];
+
 var transformsUtils = {
-  toString: transformsUtilsToString,
-  mapIds: transformsUtilsMapIds,
+  fromCollection: transformPerPrefixes.bind(null, FROM_SUFFIXES),
+  toCollection: transformPerPrefixes.bind(null, TO_SUFFIXES),
 };
 
 module.exports = transformsUtils;
 
-function transformsUtilsToString(id) {
-  console.log('Something wieird here', (new Error()).stack);
-  return id ? id.toString() : {}.undef; // Temp ugly fix
+function transformsUtilsMapToOBjectIds(ids) {
+  return ids.map(castToObjectId);
 }
 
-function transformsUtilsMapIds(fn, val) {
-  if(val instanceof Array) {
-    return val.map(transformsUtilsMapIds.bind(null, fn));
-  }
-  if('object' === typeof val && null !== val) {
-    Object.keys(val).forEach(function(key) {
-      if(key.length >= '_id'.length &&
-        key.indexOf('_id') === key.length - '_id'.length) {
-        val[key] = fn(val[key]);
-        return;
-      }
-      if(key.length >= '_ids'.length &&
-        key.indexOf('_ids') === key.length - '_ids'.length) {
-        val[key] = val[key].map(fn);
-        return;
-      }
-      val[key] = transformsUtilsMapIds(fn, val[key]);
-    });
-  }
-  return val;
+function transformsUtilsToString(id) {
+  return id.toString();
+}
+
+function transformsUtilsToISOString(date) {
+  return date.toISOString();
+}
+function transformsUtilsToDate(isoStringDate) {
+  return new Date(isoStringDate);
 }

@@ -1,7 +1,6 @@
 'use strict';
 
 var transformsUtils = require('../utils/transforms');
-var castToObjectId = require('mongodb').ObjectId;
 
 var eventsTransforms = {
   fromCollection: eventsTransformsFromCollection,
@@ -16,7 +15,7 @@ function eventsTransformsFromCollection(src) {
     contents: src.contents,
   };
 
-  return transformsUtils.mapIds(transformsUtils.toString, dest);
+  return transformsUtils.fromCollection(dest);
 }
 
 function eventsTransformsToCollection(src) {
@@ -24,7 +23,7 @@ function eventsTransformsToCollection(src) {
     contents: src.contents,
   };
 
-  dest.contents.date = new Date(dest.contents.date);
+  dest.contents.date = new Date(dest.contents.date); // Remove this and use created.seal_date
 
-  return transformsUtils.mapIds(castToObjectId, dest);
+  return transformsUtils.toCollection(dest);
 }

@@ -1,5 +1,6 @@
 'use strict';
 
+var castToObjectId = require('mongodb').ObjectId;
 var usersTransforms = require('./users.transforms');
 
 module.exports = initUsersController;
@@ -24,7 +25,7 @@ function initUsersController(context) {
 
   function userControllerGet(req, res, next) {
     context.db.collection('users').findOne({
-      _id: context.castToObjectId(req.params.user_id),
+      _id: castToObjectId(req.params.user_id),
     })
     .then(function(entry) {
       if(!entry) {
@@ -36,7 +37,7 @@ function initUsersController(context) {
 
   function userControllerPut(req, res, next) {
     context.db.collection('users').findOneAndUpdate({
-      _id: context.castToObjectId(req.params.user_id),
+      _id: castToObjectId(req.params.user_id),
     }, {
       $set: {
         contents: req.body.contents || {},
@@ -62,7 +63,7 @@ function initUsersController(context) {
 
   function userControllerDelete(req, res, next) {
     context.db.collection('users').deleteOne({
-      _id: context.castToObjectId(req.params.user_id),
+      _id: castToObjectId(req.params.user_id),
     })
     .then(function() {
       res.status(410).send();
@@ -71,7 +72,7 @@ function initUsersController(context) {
 
   function userControllerListFriends(req, res, next) {
     context.db.collection('users').findOne({
-      _id: context.castToObjectId(req.params.user_id),
+      _id: castToObjectId(req.params.user_id),
     })
     .then(function(entry) {
       if(!entry) {

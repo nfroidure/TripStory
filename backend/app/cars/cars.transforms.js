@@ -2,7 +2,6 @@
 
 var clone = require('clone');
 var transformsUtils = require('../utils/transforms');
-var castToObjectId = require('mongodb').ObjectId;
 
 var carsTransforms = {
   fromCollection: carsTransformsFromCollection,
@@ -18,7 +17,7 @@ function carsTransformsFromCollection(src) {
   };
 
   dest.contents.user_id = src.user_id;
-  return transformsUtils.mapIds(transformsUtils.toString, dest);
+  return transformsUtils.fromCollection(dest);
 }
 
 function carsTransformsToCollection(src) {
@@ -26,5 +25,5 @@ function carsTransformsToCollection(src) {
     contents: src.contents,
   };
 
-  return transformsUtils.mapIds(castToObjectId, dest);
+  return transformsUtils.toCollection(dest);
 }

@@ -6,7 +6,6 @@ var initEventsRoutes = require('./events/events.routes');
 var initUsersRoutes = require('./users/users.routes');
 var initCarsRoutes = require('./cars/cars.routes');
 var transformsUtils = require('./utils/transforms');
-var castToObjectId = require('mongodb').ObjectId;
 
 module.exports = initRoutes;
 
@@ -24,7 +23,7 @@ function initRoutes(context) {
   });
 
   context.app.post('/bus', function triggerEvent(req, res) {
-    context.bus.trigger(transformsUtils.mapIds(castToObjectId, req.body));
+    context.bus.trigger(transformsUtils.toCollection(req.body));
     res.send(200);
   });
 }

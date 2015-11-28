@@ -1,5 +1,6 @@
 'use strict';
 
+var castToObjectId = require('mongodb').ObjectId;
 var carsTransforms = require('./cars.transforms');
 
 module.exports = initCarsController;
@@ -17,7 +18,7 @@ function initCarsController(context) {
   function carControllerList(req, res, next) {
     context.db.collection('users').aggregate([{
       $match: {
-        _id: context.castToObjectId(req.params.user_id),
+        _id: castToObjectId(req.params.user_id),
       },
     }, {
       $unwind: '$cars',
@@ -36,7 +37,7 @@ function initCarsController(context) {
   function carControllerGet(req, res, next) {
     context.db.collection('users').aggregate([{
       $match: {
-        _id: context.castToObjectId(req.params.user_id),
+        _id: castToObjectId(req.params.user_id),
       },
     }, {
       $unwind: '$cars',
@@ -48,7 +49,7 @@ function initCarsController(context) {
       },
     }, {
       $match: {
-        _id: context.castToObjectId(req.params.car_id),
+        _id: castToObjectId(req.params.car_id),
       },
     }]).toArray()
     .then(function(entries) {
@@ -62,29 +63,29 @@ function initCarsController(context) {
   function carControllerPut(req, res, next) {
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
-        owner_id: context.castToObjectId(req.params.user_id),
-        'contents.car_id': context.castToObjectId(req.params.car_id),
+        owner_id: castToObjectId(req.params.user_id),
+        'contents.car_id': castToObjectId(req.params.car_id),
         'contents.type': 'car-start',
       }, {
         $set: {
           contents: {
-            car_id: context.castToObjectId(req.params.car_id),
+            car_id: castToObjectId(req.params.car_id),
             type: 'car-start',
             date: (new Date()).toISOString(),
           },
           car: req.body.contents || {},
         },
         $setOnInsert: {
-          _id: context.castToObjectId(req.params.car_id),
-          owner_id: context.castToObjectId(req.params.user_id),
+          _id: castToObjectId(req.params.car_id),
+          owner_id: castToObjectId(req.params.user_id),
         },
       }, {
         upsert: true,
         returnOriginal: false,
       }),
       context.db.collection('events').updateMany({
-        owner_id: context.castToObjectId(req.params.user_id),
-        'contents.car_id': context.castToObjectId(req.params.car_id),
+        owner_id: castToObjectId(req.params.user_id),
+        'contents.car_id': castToObjectId(req.params.car_id),
         'contents.type': { $ne: 'car-start' },
       }, {
         $set: {
@@ -99,8 +100,8 @@ function initCarsController(context) {
 
   function carControllerDelete(req, res, next) {
     context.db.collection('events').findOne({
-      owner_id: context.castToObjectId(req.params.user_id),
-      'contents.car_id': context.castToObjectId(req.params.car_id),
+      owner_id: castToObjectId(req.params.user_id),
+      'contents.car_id': castToObjectId(req.params.car_id),
       'contents.type': 'car-start',
     }).then(function(startEvent) {
       if(!startEvent) {
@@ -108,7 +109,7 @@ function initCarsController(context) {
         return Promise.resolve();
       }
       return context.db.collection('events').deleteMany({
-        _id: context.castToObjectId(req.params.car_id),
+        _id: castToObjectId(req.params.car_id),
       })
       .then(function() {
         res.sendStatus(410);

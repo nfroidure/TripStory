@@ -1,5 +1,6 @@
 'use strict';
 
+var castToObjectId = require('mongodb').ObjectId;
 var eventsTransforms = require('./events.transforms');
 
 module.exports = initEventsController;
@@ -17,9 +18,9 @@ function initEventsController(context) {
   function eventControllerList(req, res, next) {
     context.db.collection('events').find({
       $or: [{
-        owner_id: context.castToObjectId(req.params.user_id),
+        owner_id: castToObjectId(req.params.user_id),
       }, {
-        'trip.friends_ids': context.castToObjectId(req.params.user_id),
+        'trip.friends_ids': castToObjectId(req.params.user_id),
       }],
     }).sort({ 'contents.date': 1 }).toArray()
     .then(function(entries) {
@@ -31,11 +32,11 @@ function initEventsController(context) {
   function eventControllerGet(req, res, next) {
     context.db.collection('events').findOne({
       $or: [{
-        owner_id: context.castToObjectId(req.params.user_id),
+        owner_id: castToObjectId(req.params.user_id),
       }, {
-        'trip.friends_ids': context.castToObjectId(req.params.user_id),
+        'trip.friends_ids': castToObjectId(req.params.user_id),
       }],
-      _id: context.castToObjectId(req.params.event_id),
+      _id: castToObjectId(req.params.event_id),
     })
     .then(function(entry) {
       if(!entry) {
@@ -48,21 +49,21 @@ function initEventsController(context) {
   function eventControllerPut(req, res, next) {
     context.db.collection('events').findOne({
       'contents.type': 'trip-start',
-      'contents.trip_id': context.castToObjectId(req.body.contents.trip_id),
+      'contents.trip_id': castToObjectId(req.body.contents.trip_id),
     }).then(function(startEvent) {
       if(!startEvent) {
         return res.send(400);
       }
       return context.db.collection('events').findOneAndUpdate({
-        _id: context.castToObjectId(req.params.event_id),
-        owner_id: context.castToObjectId(req.params.user_id),
+        _id: castToObjectId(req.params.event_id),
+        owner_id: castToObjectId(req.params.user_id),
       }, {
         $set: {
           contents: eventsTransforms.toCollection(req.body).contents || {},
         },
         $setOnInsert: {
-          _id: context.castToObjectId(req.params.event_id),
-          owner_id: context.castToObjectId(req.params.user_id),
+          _id: castToObjectId(req.params.event_id),
+          owner_id: castToObjectId(req.params.user_id),
           trip: startEvent.trip,
         },
       }, {
@@ -78,8 +79,8 @@ function initEventsController(context) {
 
   function eventControllerDelete(req, res, next) {
     context.db.collection('events').deleteOne({
-      _id: context.castToObjectId(req.params.event_id),
-      owner_id: context.castToObjectId(req.params.user_id),
+      _id: castToObjectId(req.params.event_id),
+      owner_id: castToObjectId(req.params.user_id),
     })
     .then(function() {
       res.status(410).send();

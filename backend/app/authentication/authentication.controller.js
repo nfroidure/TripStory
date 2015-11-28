@@ -8,6 +8,7 @@ var FacebookStrategy = require('passport-facebook');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var OAuth2Strategy = require('passport-oauth2');
+var YError = require('yerror');
 
 module.exports = initAuthenticationController;
 
@@ -124,12 +125,26 @@ function initAuthenticationController(context) {
   function facebookLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
     var findQuery = {};
+    var updateQuery;
 
     context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
 
     if(!req._authState.contents) {
       return done(new YError('E_NO_STATE'));
     }
+
+    updateQuery = {
+      $set: {
+        'contents.name': profile.displayName,
+        'contents.email': profile.emails[0].value,
+        'contents.photo': profile.photos[0].value,
+        'auth.facebook': {
+          id: profile.id,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        },
+      },
+    };
 
     if(req._authState.contents.user_id) {
       findQuery._id = req._authState.contents.user_id;
@@ -141,26 +156,25 @@ function initAuthenticationController(context) {
           return email.value;
         }) },
       }];
+      // It looks like Mongo can't recognize when an upsert is beeing processed...
+      // So we avoid setting the upsert id ourself when we are sure the user exists.
+      // MongoError: exception: After applying the update to the document
+      // {_id: "xxx" , ...}, the (immutable) field '_id' was found to have
+      // been altered to _id: ObjectId('yyy')
+      updateQuery.$setOnInsert = {
+        _id: upsertId,
+      };
     }
 
-    context.db.collection('users').findOneAndUpdate(findQuery, {
-      $set: {
-        'contents.name': profile.displayName,
-        'contents.email': profile.emails[0].value,
-        'contents.photo': profile.photos[0].value,
-        'auth.facebook': {
-          id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        },
-      },
-      $setOnInsert: {
-        _id: upsertId,
-      },
-    }, {
+    context.logger.info('findQuery', findQuery);
+
+    context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
     }, function facebookLoginHandler(err, result) {
+      if(err) {
+        return done(err);
+      }
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           'Facebook signup:', profile.displayName,
@@ -187,6 +201,7 @@ function initAuthenticationController(context) {
   function googleLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
     var findQuery = {};
+    var updateQuery;
 
     context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -194,19 +209,7 @@ function initAuthenticationController(context) {
       return done(new YError('E_NO_STATE'));
     }
 
-    if(req._authState.contents.user_id) {
-      findQuery._id = req._authState.contents.user_id;
-    } else {
-      findQuery.$or = [{
-        'auth.google.id': profile.id,
-      }, {
-        'contents.email': { $in: profile.emails.map(function(email) {
-          return email.value;
-        }) },
-      }];
-    }
-
-    context.db.collection('users').findOneAndUpdate(findQuery, {
+    updateQuery = {
       $set: {
         'contents.name': profile.displayName,
         'contents.email': profile.emails[0].value,
@@ -218,13 +221,35 @@ function initAuthenticationController(context) {
           emails: profile.emails,
         },
       },
-      $setOnInsert: {
+    };
+
+    if(req._authState.contents.user_id) {
+      findQuery._id = req._authState.contents.user_id;
+    } else {
+      findQuery.$or = [{
+        'auth.google.id': profile.id,
+      }, {
+        'contents.email': { $in: profile.emails.map(function(email) {
+          return email.value;
+        }) },
+      }];
+      // It looks like Mongo can't recognize when an upsert is beeing processed...
+      // So we avoid setting the upsert id ourself when we are sure the user exists.
+      // MongoError: exception: After applying the update to the document
+      // {_id: "xxx" , ...}, the (immutable) field '_id' was found to have
+      // been altered to _id: ObjectId('yyy')
+      updateQuery.$setOnInsert = {
         _id: upsertId,
-      },
-    }, {
+      };
+    }
+
+    context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
     }, function googleLoginHandler(err, result) {
+      if(err) {
+        return done(err);
+      }
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           'Google signup:', profile.displayName
@@ -247,9 +272,10 @@ function initAuthenticationController(context) {
     });
   }
 
-  function twitterLoginLogic(accessToken, refreshToken, profile, done) {
+  function twitterLoginLogic(req, accessToken, refreshToken, profile, done) {
     var upsertId = context.createObjectId();
     var findQuery = {};
+    var updateQuery;
 
     context.logger.debug('Twitter auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -257,13 +283,7 @@ function initAuthenticationController(context) {
       return done(new YError('E_NO_STATE'));
     }
 
-    if(req._authState.contents.user_id) {
-      findQuery._id = req._authState.contents.user_id
-    } else {
-      findQuery['auth.twitter.id'] = profile.id;
-    }
-
-    context.db.collection('users').findOneAndUpdate(findQuery, {
+    updateQuery = {
       $set: {
         'contents.name': profile.displayName,
         'contents.photo': profile.photos[0].value,
@@ -273,13 +293,29 @@ function initAuthenticationController(context) {
           refreshToken: refreshToken,
         },
       },
-      $setOnInsert: {
+    };
+
+    if(req._authState.contents.user_id) {
+      findQuery._id = req._authState.contents.user_id;
+    } else {
+      findQuery['auth.twitter.id'] = profile.id;
+      // It looks like Mongo can't recognize when an upsert is beeing processed...
+      // So we avoid setting the upsert id ourself when we are sure the user exists.
+      // MongoError: exception: After applying the update to the document
+      // {_id: "xxx" , ...}, the (immutable) field '_id' was found to have
+      // been altered to _id: ObjectId('yyy')
+      updateQuery.$setOnInsert = {
         _id: upsertId,
-      },
-    }, {
+      };
+    }
+
+    context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
     }, function twitterLoginHandler(err, result) {
+      if(err) {
+        return done(err);
+      }
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           'Twitter signup:', profile.displayName, '- @starring',
@@ -321,17 +357,11 @@ function initAuthenticationController(context) {
       });
     }).then(function(profile) {
       var findQuery = {};
+      var updateQuery;
 
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
 
-
-      if(req._authState.contents.user_id) {
-        findQuery._id = req._authState.contents.user_id
-      } else {
-        findQuery['auth.xee.id'] = profile.id;
-      }
-
-      context.db.collection('users').findOneAndUpdate(findQuery, {
+      updateQuery = {
         $set: {
           contents: {
             name: profile.firstName + ' ' + profile.name,
@@ -342,10 +372,23 @@ function initAuthenticationController(context) {
             refreshToken: refreshToken,
           },
         },
-        $setOnInsert: {
+      };
+
+      if(req._authState.contents.user_id) {
+        findQuery._id = req._authState.contents.user_id;
+      } else {
+        findQuery['auth.xee.id'] = profile.id;
+        // It looks like Mongo can't recognize when an upsert is beeing processed...
+        // So we avoid setting the upsert id ourself when we are sure the user exists.
+        // MongoError: exception: After applying the update to the document
+        // {_id: "xxx" , ...}, the (immutable) field '_id' was found to have
+        // been altered to _id: ObjectId('yyy')
+        updateQuery.$setOnInsert = {
           _id: upsertId,
-        },
-      }, {
+        };
+      }
+
+      context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
         upsert: true,
         returnOriginal: false,
       }, function xeeLoginHandler(err, result) {

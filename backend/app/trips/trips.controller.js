@@ -1,5 +1,6 @@
 'use strict';
 
+var castToObjectId = require('mongodb').ObjectId;
 var tripsTransforms = require('./trips.transforms');
 var eventsTransforms = require('../events/events.transforms');
 var Promise = require('bluebird');
@@ -20,9 +21,9 @@ function initTripsController(context) {
     context.db.collection('events').aggregate([{
       $match: {
         $or: [{
-          owner_id: context.castToObjectId(req.params.user_id),
+          owner_id: castToObjectId(req.params.user_id),
         }, {
-          'trip.friends_ids': context.castToObjectId(req.params.user_id),
+          'trip.friends_ids': castToObjectId(req.params.user_id),
         }],
       },
     }, {
@@ -45,11 +46,11 @@ function initTripsController(context) {
     context.db.collection('events').aggregate([{
       $match: {
         $or: [{
-          owner_id: context.castToObjectId(req.params.user_id),
+          owner_id: castToObjectId(req.params.user_id),
         }, {
-          'trip.friends_ids': context.castToObjectId(req.params.user_id),
+          'trip.friends_ids': castToObjectId(req.params.user_id),
         }],
-        'contents.trip_id': context.castToObjectId(req.params.trip_id),
+        'contents.trip_id': castToObjectId(req.params.trip_id),
       },
     }, {
       $project: {
@@ -82,29 +83,29 @@ function initTripsController(context) {
   function tripControllerPut(req, res, next) {
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
-        owner_id: context.castToObjectId(req.params.user_id),
-        'contents.trip_id': context.castToObjectId(req.params.trip_id),
+        owner_id: castToObjectId(req.params.user_id),
+        'contents.trip_id': castToObjectId(req.params.trip_id),
         'contents.type': 'trip-start',
       }, {
         $set: {
           contents: {
-            trip_id: context.castToObjectId(req.params.trip_id),
+            trip_id: castToObjectId(req.params.trip_id),
             type: 'trip-start',
             date: (new Date()).toISOString(),
           },
           trip: req.body.contents || {},
         },
         $setOnInsert: {
-          _id: context.castToObjectId(req.params.trip_id),
-          owner_id: context.castToObjectId(req.params.user_id),
+          _id: castToObjectId(req.params.trip_id),
+          owner_id: castToObjectId(req.params.user_id),
         },
       }, {
         upsert: true,
         returnOriginal: false,
       }),
       context.db.collection('events').updateMany({
-        owner_id: context.castToObjectId(req.params.user_id),
-        'contents.trip_id': context.castToObjectId(req.params.trip_id),
+        owner_id: castToObjectId(req.params.user_id),
+        'contents.trip_id': castToObjectId(req.params.trip_id),
         'contents.type': { $ne: 'trip-start' },
       }, {
         $set: {
@@ -119,8 +120,8 @@ function initTripsController(context) {
 
   function tripControllerDelete(req, res, next) {
     context.db.collection('events').findOne({
-      owner_id: context.castToObjectId(req.params.user_id),
-      'contents.trip_id': context.castToObjectId(req.params.trip_id),
+      owner_id: castToObjectId(req.params.user_id),
+      'contents.trip_id': castToObjectId(req.params.trip_id),
       'contents.type': 'trip-start',
     }).then(function(startEvent) {
       if(!startEvent) {
@@ -128,7 +129,7 @@ function initTripsController(context) {
         return Promise.resolve();
       }
       return context.db.collection('events').deleteMany({
-        _id: context.castToObjectId(req.params.trip_id),
+        _id: castToObjectId(req.params.trip_id),
       })
       .then(function() {
         res.sendStatus(410);
