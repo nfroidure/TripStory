@@ -22,7 +22,6 @@
     function activate() {
       tripsFactory.get(tripId)
         .then(function(trip){
-          console.log('trip', trip);
           $scope.trip = trip.data;
         })
       // $scope.startEvent = $scope.trip.events.filter(isPsaGeo)[0];

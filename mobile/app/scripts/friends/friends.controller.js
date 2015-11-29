@@ -17,7 +17,6 @@
     function activate() {
       friendsFactory.list()
         .then(function(friends){
-          console.log('friends', friends);
           $scope.friends = friends.data;
         })
     }

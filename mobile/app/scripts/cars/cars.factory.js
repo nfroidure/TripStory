@@ -17,7 +17,7 @@
 
       function list() {
         return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + 'api/v0/users/' + userId + '/cars';
+          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/cars';
           return $http.get(url);
         });
       }

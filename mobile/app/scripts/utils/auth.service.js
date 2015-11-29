@@ -8,42 +8,42 @@
   AuthService.$inject = ['$http', 'ENV', '$q'];
   /* @ngInject */
   function AuthService($http, ENV, $q) {
-    var apiEndPoint = ENV.apiEndpoint;
     var profileDeffered = $q.defer();
     var service = {
-      userIdPromise: profileDeffered.promise, // a corriger - empeche le reload
+      userIdPromise: profileDeffered.promise,
       log: log,
       signup: signup,
       logout: logout,
       getId: getId,
-    }
-    $http.get(apiEndPoint + 'api/v0/profile')
-      .then(function(profile){
-        console.log('profile', profile);
-        profileDeffered.resolve(profile._id);
+    };
+    $http.get(ENV.apiEndpoint + '/api/v0/profile')
+      .then(function(res){
+        profileDeffered.resolve(res.data._id);
       });
     return service;
 
     ////////////////
     function log(credentials) {
-      return $http.post(apiEndPoint + 'api/v0/login', credentials)
-        .then(function(val){
-          service.userIdPromise = $q.when(val.data._id);
+      return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
+        .then(function(res){
+          service.userIdPromise = $q.when(res.data._id);
           return val;
         });
     }
 
     function logout(credentials) {
-      return $http.post(apiEndPoint + 'api/v0/logout', credentials);
+      return $http.post(ENV.apiEndpoint + '/api/v0/logout', credentials);
     }
 
     function signup(credentials) {
-      return $http.post(apiEndPoint + 'api/v0/signup', credentials);
+      return $http.post(ENV.apiEndpoint + '/api/v0/signup', credentials);
     }
 
     function getId() {
       return service.userIdPromise
-        .then(function(val) {return val});
+        .then(function(userId) {
+          return userId;
+        });
     }
   }
 

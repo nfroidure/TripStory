@@ -19,19 +19,19 @@
 
       function get(idTrip) {
         return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips/' + idTrip;
+          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips/' + idTrip;
           return $http.get(url);
         });
       }
       function list() {
         return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips';
+          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips';
           return $http.get(url);
         });
       }
       function put(trip) {
         return AuthService.userIdPromise.then(function(userId){
-          return $http.put(ENV.apiEndpoint + 'api/v0/users/' + userId + '/trips/' + createObjectId(), trip);
+          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips/' + createObjectId(), trip);
         });
       }
   }

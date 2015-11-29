@@ -5,11 +5,12 @@
     .module('app')
     .controller('AuthCtrl', AuthCtrl);
 
-  AuthCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'AuthService'];
+  AuthCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'AuthService', 'ENV'];
   /* @ngInject */
-  function AuthCtrl($scope, $state, $ionicModal, $timeout, AuthService) {
-    $scope.user = {}
-    $scope.loginData = {}
+  function AuthCtrl($scope, $state, $ionicModal, $timeout, AuthService, ENV) {
+    $scope.user = {};
+    $scope.loginData = {};
+    $scope.apiEndpoint = ENV.apiEndpoint;
 
     $scope.doLogin = doLogin;
     $scope.doSignup = doSignup;

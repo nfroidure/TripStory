@@ -7,7 +7,6 @@
       'app.cars',
       'app.friends',
       'app.trips',
-      'app.members',
       'app.utils',
       'config',
       'uiGmapgoogle-maps',

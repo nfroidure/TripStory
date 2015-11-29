@@ -17,7 +17,6 @@
     function activate() {
       carsFactory.list()
         .then(function(cars){
-          console.log('cars', cars);
           $scope.cars = cars.data;
         })
     }
