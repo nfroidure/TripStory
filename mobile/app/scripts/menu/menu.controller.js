@@ -21,6 +21,7 @@
     $scope.tripToAdd = { contents: {} };
     $scope.user = {};
 
+    $scope.goToProfile = goToProfile;
     $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;
     $scope.closeAddTrip = closeAddTrip;
@@ -48,6 +49,9 @@
     }
 
     // go to related page
+    function goToProfile(trip) {
+      $state.go('app.profile');
+    }
     function goToTrip(trip) {
       $state.go('app.trip', { tripId: trip._id });
     }

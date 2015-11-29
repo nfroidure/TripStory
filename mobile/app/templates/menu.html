@@ -19,7 +19,7 @@
           <img ng-src="{{user.contents.photo}}" class="user__photo" width="100%"/>
         </div>
 
-        <ion-item class="user__name" ng-click="goToProfile()" ng-if="user.contents.name">
+        <ion-item menu-close class="user__name" ng-click="goToProfile()" ng-if="user.contents.name">
           Hi {{user.contents.name}}!
         </ion-item>
 

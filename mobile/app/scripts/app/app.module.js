@@ -5,6 +5,7 @@
     .module('app', [
       'ionic',
       'app.menu',
+      'app.profile',
       'app.cars',
       'app.friends',
       'app.trips',

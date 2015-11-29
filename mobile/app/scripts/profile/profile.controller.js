@@ -5,10 +5,11 @@
     .module('app.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'AuthService'];
+  ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'AuthService', 'ENV'];
   /* @ngInject */
-  function ProfileCtrl($scope, $state, $stateParams, carsFactory) {
+  function ProfileCtrl($scope, $state, $stateParams, AuthService, ENV) {
     $scope.profile = {};
+    $scope.apiEndpoint = ENV.apiEndpoint;
 
     activate();
 

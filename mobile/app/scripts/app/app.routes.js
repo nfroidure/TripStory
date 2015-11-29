@@ -27,6 +27,15 @@
         templateUrl: 'templates/menu.html',
         controller: 'MenuCtrl',
       })
+      .state('app.profile', {
+        url: '/profile',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/profile.html',
+            controller: 'ProfileCtrl'
+          }
+        },
+      })
       .state('app.cars', {
         url: '/cars',
         views: {
