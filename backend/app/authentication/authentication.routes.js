@@ -145,6 +145,7 @@ function initAuthenticationRoutes(context) {
       var state;
 
       params = clone(params);
+
       if(req.user) {
         stateContents.user_id = req.user._id.toString();
       }
@@ -153,6 +154,11 @@ function initAuthenticationRoutes(context) {
         (new Date(context.time() + TOKEN_DURATION)).getTime()
       );
       params.state = (new Buffer(JSON.stringify(state))).toString('base64');
+      // Extra glue for twitter OAuth1...
+      if('twitter' === type) {
+        params.callbackURL = context.base + '/auth/twitter/callback?state=' +
+          params.state;
+      }
       passport.authenticate(type, params)(req, res, next);
     };
   }
