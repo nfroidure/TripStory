@@ -16,8 +16,8 @@
       ////////////////
 
       function list() {
-        return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/friends';
+        return AuthService.getProfile().then(function(profile){
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
           return $http.get(url);
         });
       }

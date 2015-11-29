@@ -2,6 +2,6 @@
   'use strict';
 
   angular
-    .module('app.trips', []);
+    .module('app.trips', ['app.authentication']);
 
 }());

@@ -25,7 +25,7 @@
         cache: 'false',
         abstract: true,
         templateUrl: 'templates/menu.html',
-        controller: 'AppCtrl',
+        controller: 'MenuCtrl',
       })
       .state('app.cars', {
         url: '/cars',

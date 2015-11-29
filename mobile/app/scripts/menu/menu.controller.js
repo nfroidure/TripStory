@@ -2,20 +2,24 @@
   'use strict';
 
   angular
-    .module('app')
+    .module('app.menu')
     .controller('MenuCtrl', MenuCtrl);
 
-  MenuCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory', 'AuthService', 'profile', '$ionicHistory'];
+  MenuCtrl.$inject = [
+    '$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory',
+    'AuthService', '$ionicHistory'
+  ];
   /* @ngInject */
-  function MenuCtrl($scope, $state, $ionicModal, $timeout, $http, tripsFactory, AuthService, profile, $ionicHistory) {
+  function MenuCtrl(
+    $scope, $state, $ionicModal, $timeout, $http, tripsFactory,
+    AuthService, $ionicHistory
+  ) {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
 
     $scope.tripToAdd = { contents: {} };
-    $scope.trips = [];
-
-    $scope.user = profile.data;
+    $scope.user = {};
 
     $scope.goToTrip = goToTrip;
     $scope.addTrip = addTrip;
@@ -35,11 +39,9 @@
     activate();
 
     function activate() {
-      tripsFactory.get().then(
-        function(values){
-          $scope.trips = values.data;
-        }
-      );
+      AuthService.getProfile().then(function(profile) {
+        $scope.user = profile;
+      });
     }
 
     // go to related page

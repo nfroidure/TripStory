@@ -18,20 +18,20 @@
       ////////////////
 
       function get(idTrip) {
-        return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips/' + idTrip;
+        return AuthService.getProfile().then(function(profile){
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + idTrip;
           return $http.get(url);
         });
       }
       function list() {
-        return AuthService.userIdPromise.then(function(userId){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips';
+        return AuthService.getProfile().then(function(profile){
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips';
           return $http.get(url);
         });
       }
       function put(trip) {
-        return AuthService.userIdPromise.then(function(userId){
-          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + userId + '/trips/' + createObjectId(), trip);
+        return AuthService.getProfile().then(function(profile){
+          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + createObjectId(), trip);
         });
       }
   }

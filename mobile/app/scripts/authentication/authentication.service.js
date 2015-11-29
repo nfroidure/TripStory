@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app.utils')
+    .module('app.authentication')
     .factory('AuthService', AuthService);
 
   AuthService.$inject = ['$http', 'ENV', '$q'];
@@ -10,23 +10,26 @@
   function AuthService($http, ENV, $q) {
     var profileDeffered = $q.defer();
     var service = {
-      userIdPromise: profileDeffered.promise,
+      getProfile: getProfile,
       log: log,
       signup: signup,
       logout: logout,
-      getId: getId,
     };
     $http.get(ENV.apiEndpoint + '/api/v0/profile')
       .then(function(res){
-        profileDeffered.resolve(res.data._id);
+        profileDeffered.resolve(res.data);
       });
     return service;
 
     ////////////////
+
+    function getProfile() {
+      return profileDeffered.promise;
+    }
     function log(credentials) {
       return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
         .then(function(res){
-          service.userIdPromise = $q.when(res.data._id);
+          profileDeffered.promise = $q.when(res.data._id);
           return val;
         });
     }
@@ -37,13 +40,6 @@
 
     function signup(credentials) {
       return $http.post(ENV.apiEndpoint + '/api/v0/signup', credentials);
-    }
-
-    function getId() {
-      return service.userIdPromise
-        .then(function(userId) {
-          return userId;
-        });
     }
   }
 

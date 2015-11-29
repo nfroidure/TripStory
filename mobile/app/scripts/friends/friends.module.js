@@ -2,6 +2,6 @@
   'use strict';
 
   angular
-    .module('app.friends', []);
+    .module('app.friends', ['app.authentication']);
 
 }());

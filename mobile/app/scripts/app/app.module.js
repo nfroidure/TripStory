@@ -4,6 +4,7 @@
   angular
     .module('app', [
       'ionic',
+      'app.menu',
       'app.cars',
       'app.friends',
       'app.trips',

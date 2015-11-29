@@ -2,10 +2,12 @@
   'use strict';
 
   angular
-    .module('app')
+    .module('app.authentication')
     .controller('AuthCtrl', AuthCtrl);
 
-  AuthCtrl.$inject = ['$scope', '$state', '$ionicModal', '$timeout', 'AuthService', 'ENV'];
+  AuthCtrl.$inject = [
+    '$scope', '$state', '$ionicModal', '$timeout', 'AuthService', 'ENV'
+  ];
   /* @ngInject */
   function AuthCtrl($scope, $state, $ionicModal, $timeout, AuthService, ENV) {
     $scope.user = {};
