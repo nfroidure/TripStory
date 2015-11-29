@@ -16,6 +16,7 @@ function initAuthenticationController(context) {
 
   // Serialization
   passport.serializeUser(function(user, done) {
+    console.log(user)
     done(null, user._id);
   });
   passport.deserializeUser(function(id, done) {
@@ -23,7 +24,9 @@ function initAuthenticationController(context) {
   });
 
   // Local login
-  passport.use('local', new LocalStrategy(localLoginLogic));
+  passport.use('local', new LocalStrategy({
+    passReqToCallback: true,
+  }, localLoginLogic));
   passport.use('local-signup', new LocalStrategy({
     passReqToCallback: true,
   }, localSignupLogic));

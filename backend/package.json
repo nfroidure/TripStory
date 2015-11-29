@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "cd .. && npm run start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint app/*.js workers/*.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.0.5",
     "body-parser": "^1.14.1",
