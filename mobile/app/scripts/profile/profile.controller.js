@@ -17,7 +17,7 @@
       AuthService.getProfile()
         .then(function(profile){
           $scope.profile = profile;
-        })
+        });
     }
   }
 

@@ -11,7 +11,7 @@
     var tripId = $stateParams.trip_id;
     // $scope.trip = trip;
 
-    $scope.trip = {};
+    $scope.trip = null;
     $scope.startEvent = '';
     $scope.goToMember = goToMember;
     $scope.mapClassEvent = mapClassEvent;

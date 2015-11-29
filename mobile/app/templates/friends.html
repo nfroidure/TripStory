@@ -1,6 +1,7 @@
 <ion-view view-title="Your friends">
   <ion-content>
-    <ion-list>
+    <ion-spinner icon="lines" ng-hide="friends.length"></ion-spinner>
+    <ion-list ng-show="friends.length">
       <ion-item ng-repeat="friend in friends" class="item-avatar">
         <img ng-if="friend.contents.photo" src="{{friend.contents.photo}}">
         <h2>{{friend.contents.name}}</h2>

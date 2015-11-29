@@ -1,6 +1,7 @@
 <ion-view view-title="{{ trip.contents.title }}">
   <ion-content>
-    <div class="headerPage">
+    <ion-spinner icon="lines" ng-hide="trip"></ion-spinner>
+    <div class="headerPage" ng-show="trip">
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
@@ -21,7 +22,7 @@
         </div>
       </div>
     </div>
-    <ion-list>
+    <ion-list ng-show="trip">
       <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)" class="event-list-item card">
 
         <div ng-switch-when="trip-start" class="event">
