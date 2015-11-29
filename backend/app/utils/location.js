@@ -14,11 +14,14 @@ function locationGetFormatedAddress(lat, lon, cb) {
     lat + ',' + lon,
     function(err, res, body) {
       if (err) {
-        console.log(err);
-        cb(err);
+        return cb(err);
       }
 
-      body = JSON.parse(body);
+      try {
+        body = JSON.parse(body);
+      } catch(err) {
+        return cb(err);
+      }
 
       cb(null, body.results[0].formatted_address);
     }
