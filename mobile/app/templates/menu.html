@@ -18,22 +18,29 @@
         <div class="user__img" ng-click="newUserPicture()" ng-if="user.contents.photo">
           <img ng-src="{{user.contents.photo}}" class="user__photo" width="100%"/>
         </div>
-
         <ion-item menu-close class="user__name" ng-click="goToProfile()" ng-if="user.contents.name">
           Hi {{user.contents.name}}!
         </ion-item>
 
         <ion-list>
-          <ion-item menu-close class="centered logout__link" ng-click="goToTrips()">
+          <ion-item menu-close class="item-icon-left" ng-click="goToProfile()">
+            <i class="icon ion-android-person"></i>
+            Profile
+          </ion-item>
+          <ion-item menu-close class="centered item-icon-left" ng-click="goToTrips()">
+            <i class="icon ion-plane"></i>
             Trips
           </ion-item>
-          <ion-item menu-close class="centered logout__link" ng-click="goToFriends()">
+          <ion-item menu-close class="centered item-icon-left" ng-click="goToFriends()">
+            <i class="icon ion-person-stalker"></i>
             Friends
           </ion-item>
-          <ion-item menu-close class="centered logout__link" ng-click="goToCars()">
+          <ion-item menu-close class="centered item-icon-left" ng-click="goToCars()">
+            <i class="icon ion-model-s"></i>
             Cars
           </ion-item>
-          <ion-item menu-close class="centered logout__link" ng-click="doLogout()">
+          <ion-item menu-close class="centered item-icon-left" ng-click="doLogout()">
+            <i class="icon ion-log-out"></i>
             Logout
           </ion-item>
         </ion-list>
