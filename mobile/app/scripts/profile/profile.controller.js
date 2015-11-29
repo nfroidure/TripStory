@@ -10,6 +10,7 @@
   function ProfileCtrl($scope, $state, $stateParams, AuthService, ENV) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
+    $scope.goUpdateProfile = goUpdateProfile;
 
     activate();
 
@@ -18,6 +19,10 @@
         .then(function(profile){
           $scope.profile = profile;
         });
+    }
+
+    function goUpdateProfile() {
+      AuthService.setProfile($scope.profile);
     }
   }
 
