@@ -18,7 +18,7 @@
     $http.get(ENV.apiEndpoint + '/api/v0/profile')
       .then(function(res){
         profileDeffered.resolve(res.data);
-      });
+      }).catch(profileDeffered.reject);
     return service;
 
     ////////////////

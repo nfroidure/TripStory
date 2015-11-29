@@ -17,6 +17,14 @@
     $scope.doLogin = doLogin;
     $scope.doSignup = doSignup;
 
+    activate();
+
+    function activate() {
+      AuthService.getProfile().then(function(profile) {
+        $state.go('app.trips');
+      });
+    }
+
     function doLogin() {
       AuthService.log($scope.loginData)
         .then(function(logResponse) {
