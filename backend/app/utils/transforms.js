@@ -3,7 +3,7 @@
 var castToObjectId = require('mongodb').ObjectId;
 var transformPerPrefixes = require('transform-per-suffixes');
 
-var FROM_SUFFIXES = [{
+var TO_SUFFIXES = [{
   value: '_id',
   transform: castToObjectId,
 }, {
@@ -14,14 +14,12 @@ var FROM_SUFFIXES = [{
   transform: transformsUtilsToDate,
 }];
 
-var TO_SUFFIXES = [{
+var FROM_SUFFIXES = [{
   value: '_id',
   transform: transformsUtilsToString,
 }, {
   value: '_ids',
-  transform: function mapToOBjectId(ids) {
-    return ids.map(castToObjectId);
-  },
+  transform: transformsUtilsToStrings,
 }, {
   value: '_date',
   transform: transformsUtilsToISOString,
@@ -40,6 +38,10 @@ function transformsUtilsMapToOBjectIds(ids) {
 
 function transformsUtilsToString(id) {
   return id.toString();
+}
+
+function transformsUtilsToStrings(ids) {
+  return ids.map(transformsUtilsToString);
 }
 
 function transformsUtilsToISOString(date) {
