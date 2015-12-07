@@ -2,6 +2,7 @@
 
 var castToObjectId = require('mongodb').ObjectId;
 var eventsTransforms = require('./events.transforms');
+var controllersUtils = require('../utils/controllers');
 
 module.exports = initEventsController;
 
@@ -22,7 +23,7 @@ function initEventsController(context) {
       }, {
         'trip.friends_ids': castToObjectId(req.params.user_id),
       }],
-    }).sort({ 'contents.date': 1 }).toArray()
+    }).sort({ 'created.seal_date': 1 }).toArray()
     .then(function(entries) {
       context.logger.debug('Sending:', entries);
       res.status(200).send(entries.map(eventsTransforms.fromCollection));
@@ -47,6 +48,8 @@ function initEventsController(context) {
   }
 
   function eventControllerPut(req, res, next) {
+    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+
     context.db.collection('events').findOne({
       'contents.type': 'trip-start',
       'contents.trip_id': castToObjectId(req.body.contents.trip_id),
@@ -65,6 +68,13 @@ function initEventsController(context) {
           _id: castToObjectId(req.params.event_id),
           owner_id: castToObjectId(req.params.user_id),
           trip: startEvent.trip,
+          created: dateSeal,
+        },
+        $push: {
+          modified: {
+            $each: [dateSeal],
+            $slice: -10,
+          },
         },
       }, {
         upsert: true,

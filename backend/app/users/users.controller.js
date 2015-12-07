@@ -2,6 +2,7 @@
 
 var castToObjectId = require('mongodb').ObjectId;
 var usersTransforms = require('./users.transforms');
+var controllersUtils = require('../utils/controllers');
 
 module.exports = initUsersController;
 
@@ -36,6 +37,8 @@ function initUsersController(context) {
   }
 
   function userControllerPut(req, res, next) {
+    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+
     context.db.collection('users').findOneAndUpdate({
       _id: castToObjectId(req.params.user_id),
     }, {
@@ -50,6 +53,13 @@ function initUsersController(context) {
           vin: 'VF7NC9HD8DY611112',
           contract: '620028501',
           code: 'KNL347037',
+        },
+        created: dateSeal,
+      },
+      $push: {
+        modified: {
+          $each: [dateSeal],
+          $slice: -10,
         },
       },
     }, {

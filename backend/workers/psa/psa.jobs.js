@@ -4,8 +4,6 @@ var request = require('request');
 var workersUtils = require('../utils');
 
 var SERVER = 'https://api.mpsa.com/bgd/jdmc/1.0';
-var CLIENT_ID = '3636b9ef-0217-4962-b186-f0333117ddcd';
-var CLIENT_SECRET = 'C1xV6pC3yX7cB3jV8oM6tW4vK2mU7fV0nT6eB2fG2fO4mT7gS0';
 var psaJobs = {
   A_PSA_SYNC: psaSyncJob,
   A_PSA_SIGNUP: psaSignupJob,
@@ -16,7 +14,6 @@ var lastLongitude;
 
 module.exports = psaJobs;
 
-// Sample: https://api.mpsa.com/bgd/jdmc/1.0/place/lastposition/VF7NC9HD8DY611112?contract=620028501&listsecond=6,12,18,24,30,36,42,48,54,60&client_id=3636b9ef-0217-4962-b186-f0333117ddcd
 // For each user retrieve current GPS location
 // Check for nice places around if the vehicle is stopped
 // Save the location event with some useful informations
@@ -48,7 +45,7 @@ function psaSyncJob(context, event) {
             '/place/lastposition/' + car.vin +
             '?contract=' + car.contract +
             '&listsecond=' + SECONDS.join(',') +
-            '&client_id=' + CLIENT_ID,
+            '&client_id=' + process.env.PSA_CLIENT_ID,
             function(err, res, data) {
               if(err) {
                 return reject(err);
@@ -59,88 +56,89 @@ function psaSyncJob(context, event) {
                 return reject(err);
               }
               resolve(data);
-            });
-          }).then(function(data) {
-            var bestSecond;
-            var geo;
-
-            //context.logger.debug('Data', JSON.stringify(data, null, 2));
-            // Get the best precision possible
-            bestSecond = SECONDS.reduce(function(best, second) {
-              if(data.nbsat && (!best) || best.nbsat < data.nbsat[second]) {
-                return {
-                  nbsat: data.nbsat[second],
-                  second: second,
-                };
-              }
-              return best;
-            }, { second: SECONDS[0], nbsat: 0 }).second;
-            geo = [
-              data.latitude[bestSecond],
-              data.longitude[bestSecond],
-              data.altitude[bestSecond],
-            ];
-
-            context.logger.debug('Got positions:', geo, bestSecond);
-
-            if (data.latitude[bestSecond] !== lastLatitude
-              || data.longitude[bestSecond] !== lastLongitude
-            ) {
-              context.logger.debug(
-                'Got positions: %s http://maps.google.com/maps?q=%s,%s',
-                geo.join(' '),
-                data.latitude[bestSecond],
-                data.longitude[bestSecond]
-              );
-
-              request
-                .get(
-                  'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-                  data.latitude[bestSecond] + ',' + 
-                  data.longitude[bestSecond],
-                  function(err, res, body) {
-                    var address;
-
-                    if (err) {
-                      context.logger.error(err);
-                    }
-                    body = JSON.parse(body);
-                    address = body.results[0].formatted_address;
-
-                    context.logger.debug(
-                      'Je suis au : %s @hackthemobility',
-                      address
-                    );
-
-                    // Save the coordinates as an event
-                    return context.db.collection('events').findOneAndUpdate({
-                      'contents.type': 'psa-geo',
-                      'contents.trip_id': tripEvent._id,
-                      'contents.date': new Date(transformPSADate(data.lastUpdate)),
-                    }, {
-                      $set: {
-                        'contents.geo': geo,
-                        'contents.address': address,
-                      },
-                      $setOnInsert: {
-                        'contents.date': new Date(transformPSADate(data.lastUpdate)),
-                        'contents.trip_id': tripEvent._id,
-                        'contents.type': 'psa-geo',
-                        trip: tripEvent.trip,
-                      },
-                    }, {
-                      upsert: true,
-                      returnOriginal: false,
-                    });
-                  }
-                )
-              ;
             }
+          );
+        }).then(function(data) {
+          var bestSecond;
+          var geo;
 
-            lastLongitude = data.longitude[bestSecond];
-            lastLatitude = data.latitude[bestSecond];
+          // context.logger.debug('Data', JSON.stringify(data, null, 2));
+          // Get the best precision possible
+          bestSecond = SECONDS.reduce(function(best, second) {
+            if(data.nbsat && (!best) || best.nbsat < data.nbsat[second]) {
+              return {
+                nbsat: data.nbsat[second],
+                second: second,
+              };
+            }
+            return best;
+          }, { second: SECONDS[0], nbsat: 0 }).second;
+          geo = [
+            data.latitude[bestSecond],
+            data.longitude[bestSecond],
+            data.altitude[bestSecond],
+          ];
 
-          });
+          context.logger.debug('Got positions:', geo, bestSecond);
+
+          if (data.latitude[bestSecond] !== lastLatitude ||
+            data.longitude[bestSecond] !== lastLongitude
+          ) {
+            context.logger.debug(
+              'Got positions: %s http://maps.google.com/maps?q=%s,%s',
+              geo.join(' '),
+              data.latitude[bestSecond],
+              data.longitude[bestSecond]
+            );
+
+            request
+              .get(
+                'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+                data.latitude[bestSecond] + ',' +
+                data.longitude[bestSecond],
+                function(err, res, body) {
+                  var address;
+
+                  if (err) {
+                    context.logger.error(err);
+                  }
+                  body = JSON.parse(body);
+                  address = body.results[0].formatted_address;
+
+                  context.logger.debug(
+                    'Je suis au : %s @hackthemobility',
+                    address
+                  );
+
+                  // Save the coordinates as an event
+                  return context.db.collection('events').findOneAndUpdate({
+                    'contents.type': 'psa-geo',
+                    'contents.trip_id': tripEvent._id,
+                    'contents.date': new Date(transformPSADate(data.lastUpdate)),
+                  }, {
+                    $set: {
+                      'contents.geo': geo,
+                      'contents.address': address,
+                    },
+                    $setOnInsert: {
+                      'contents.date': new Date(transformPSADate(data.lastUpdate)),
+                      'contents.trip_id': tripEvent._id,
+                      'contents.type': 'psa-geo',
+                      trip: tripEvent.trip,
+                    },
+                  }, {
+                    upsert: true,
+                    returnOriginal: false,
+                  });
+                }
+              )
+            ;
+          }
+
+          lastLongitude = data.longitude[bestSecond];
+          lastLatitude = data.latitude[bestSecond];
+
+        });
       });
     }));
   });
@@ -150,8 +148,7 @@ function psaSignupJob(context, event) {
   return context.db.collection('users').findOne({
     _id: event.contents.user_id,
   })
-  .then(function handlePSASignup(user) {
-    // Sample: https://api.mpsa.com/bgd/jdmc/1.0/vehicle/information/VF7NC9HD8DY611112?contract=620028501&listsecond=6,12,18,24,30,36,42,48,54,60&client_id=3636b9ef-0217-4962-b186-f0333117ddcd
+  .then(function handlePSASignup() {
     // Get the user car specs, save the color to customize the app
     // The event should be triggered at signup for one of the signup mechanisms
   });

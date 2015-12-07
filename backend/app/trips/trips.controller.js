@@ -3,6 +3,7 @@
 var castToObjectId = require('mongodb').ObjectId;
 var tripsTransforms = require('./trips.transforms');
 var eventsTransforms = require('../events/events.transforms');
+var controllersUtils = require('../utils/controllers');
 var Promise = require('bluebird');
 
 module.exports = initTripsController;
@@ -30,11 +31,13 @@ function initTripsController(context) {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
+        created: '$created',
       },
     }, {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
+        created: { $first: '$created' },
       },
     }]).toArray()
     .then(function(entries) {
@@ -56,15 +59,22 @@ function initTripsController(context) {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
+        created: '$created',
         event: {
           _id: '$_id',
+          created: '$created',
           contents: '$contents',
         },
+      },
+    }, {
+      $sort: {
+        'event.created.seal_date': 1,
       },
     }, {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
+        created: { $first: '$created' },
         events: { $push: '$event' },
       },
     }]).toArray()
@@ -81,6 +91,8 @@ function initTripsController(context) {
   }
 
   function tripControllerPut(req, res, next) {
+    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
         owner_id: castToObjectId(req.params.user_id),
@@ -91,13 +103,19 @@ function initTripsController(context) {
           contents: {
             trip_id: castToObjectId(req.params.trip_id),
             type: 'trip-start',
-            date: (new Date()).toISOString(),
           },
           trip: req.body.contents || {},
         },
         $setOnInsert: {
           _id: castToObjectId(req.params.trip_id),
           owner_id: castToObjectId(req.params.user_id),
+          created: dateSeal,
+        },
+        $push: {
+          modified: {
+            $each: [dateSeal],
+            $slice: -10,
+          },
         },
       }, {
         upsert: true,

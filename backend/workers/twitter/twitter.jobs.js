@@ -2,12 +2,12 @@
 
 var Twitter = require('twitter');
 var workersUtils = require('../utils');
+var controllersUtils = require('../../app/utils/controllers');
 
-var SERVER = 'https://api.mtwitter.com/bgd/jdmc/1.0/';
-var CONSUMER_KEY = 'EAJ3wyvzBNBSvW3Yq9UIX65ZX';
-var CONSUMER_SECRET = 'UqTprTLqBVa5DgAHQEqL2yyZvouZcIqRvywR2WyfeLDIjfOcW5';
-var ACCESS_TOKEN_KEY = '4181697333-ZfAMC9FZD9o56bXeNBGJGMo8T532U6UNEoGUKY9';
-var ACCESS_TOKEN_SECRET = '8HVXHVZCDATQEXxlZtNOhNSSmUQtNHyn0uGljYvkFyIft';
+var CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY;
+var CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
+var ACCESS_TOKEN_KEY = process.env.TWITTER_ACCESS_TOKEN_KEY;
+var ACCESS_TOKEN_SECRET = process.env.TWITTER_ACCESS_TOKEN_SECRET;
 var client = new Twitter({
   consumer_key: CONSUMER_KEY,
   consumer_secret: CONSUMER_SECRET,
@@ -61,13 +61,13 @@ function twitterSyncJob(context, event) {
                     'contents.profile_image': status.profile_image_url_https,
                     'contents.entities': status.entities,
                     'contents.user_name': status.user.name,
-                    'contents.created_at': status.created_at,
                   },
                   $setOnInsert: {
-                    'contents.date': new Date(status.created_at),
+                    owner_id: author._id,
                     'contents.trip_id': tripEvent._id,
                     'contents.type': 'twitter-status',
                     trip: tripEvent.trip,
+                    created: controllersUtils.getDateSeal(status.created_at),
                   },
                 }, {
                   upsert: true,

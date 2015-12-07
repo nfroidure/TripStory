@@ -2,10 +2,9 @@
 
 var request = require('request');
 var workersUtils = require('../utils');
+var controllersUtils = require('../../app/utils/controllers');
 
 var SERVER = 'https://cloud.xee.com/v1';
-var CLIENT_ID = 'oWQQcef8pZ7hRaC7LXY3';
-var CLIENT_SECRET = 'G8Q6hoEv8z8M8hB1wI4T';
 var xeeJobs = {
   A_XEE_SYNC: xeeSyncJob,
   A_XEE_SIGNUP: xeeSignupJob,
@@ -25,7 +24,7 @@ function xeeSignupJob(context, event) {
       context.logger.debug(
         SERVER +
         '/user/' + user.auth.xee.id + '/car.json' +
-        '?access_token=' + user.auth.xee.accessToken)
+        '?access_token=' + user.auth.xee.accessToken);
       request.get(
         SERVER +
         '/user/' + user.auth.xee.id + '/car.json' +
@@ -34,7 +33,7 @@ function xeeSignupJob(context, event) {
           if(err) {
             return reject(err);
           }
-          context.logger.debug(data)
+          context.logger.debug(data);
           try {
             data = JSON.parse(data);
           } catch(err) {
@@ -95,7 +94,7 @@ function xeeSyncJob(context, event) {
             '/car/' + car.xeeId + '/carstatus.json' +
             '?access_token=' + user.auth.xee.accessToken,
             function(err, res, data) {
-              context.logger.debug(JSON.stringify(data, null, 2))
+              context.logger.debug(JSON.stringify(data, null, 2));
               if(err) {
                 return reject(err);
               }
@@ -105,61 +104,67 @@ function xeeSyncJob(context, event) {
                 return reject(err);
               }
               resolve(data);
-            });
-          }).then(function(data) {
-            var geo = [
-              data.location.latitude,
-              data.location.longitude,
-              data.location.altitude,
-            ];
-
-            if (lastLatitude !== data.location.latitude ||
-              lastLongitude !== data.location.longitude) {
-
-              context.logger.debug(
-                'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
-                geo.join(' '),
-                data.location.latitude,
-                data.location.longitude
-              );
-
-              require('../../app/utils/location.js')
-                .getFormatedAddress(
-                  data.location.latitude,
-                  data.location.longitude,
-                  function(err, address) {
-                    context.logger.debug(
-                      'Notre #xee est au : %s @hackthemobility',
-                      address
-                    )
-                  }
-                )
-              ;
             }
+          );
+        }).then(function(data) {
+          var geo = [
+            data.location.latitude,
+            data.location.longitude,
+            data.location.altitude,
+          ];
 
-            lastLatitude = data.location.latitude;
-            lastLongitude = data.location.longitude;
+          if (lastLatitude !== data.location.latitude ||
+            lastLongitude !== data.location.longitude) {
 
-            // Save the coordinates as an event
-            return context.db.collection('events').findOneAndUpdate({
-              'contents.type': 'xee-geo',
+            context.logger.debug(
+              'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
+              geo.join(' '),
+              data.location.latitude,
+              data.location.longitude
+            );
+
+            require('../../app/utils/location.js')
+              .getFormatedAddress(
+                data.location.latitude,
+                data.location.longitude,
+                function(err, address) {
+                  if(err) {
+                    context.logger.error('Geolocation error', err);
+                    return;
+                  }
+                  context.logger.debug(
+                    'Notre #xee est au : %s @hackthemobility',
+                    address
+                  );
+                }
+              )
+            ;
+          }
+
+          lastLatitude = data.location.latitude;
+          lastLongitude = data.location.longitude;
+
+          // Save the coordinates as an event
+          return context.db.collection('events').findOneAndUpdate({
+            'contents.type': 'xee-geo',
+            'contents.trip_id': tripEvent._id,
+            'create.seal_date': new Date(data.location.date),
+          }, {
+            $set: {
+              'contents.geo': geo,
+            },
+            $setOnInsert: {
               'contents.trip_id': tripEvent._id,
-              'contents.date': new Date(data.location.date),
-            }, {
-              $set: {
-                'contents.geo': geo,
-              },
-              $setOnInsert: {
-                'contents.date': new Date(data.location.date),
-                'contents.trip_id': tripEvent._id,
-                'contents.type': 'xee-geo',
-                trip: tripEvent.trip,
-              },
-            }, {
-              upsert: true,
-              returnOriginal: false,
-            });
+              'contents.type': 'xee-geo',
+              trip: tripEvent.trip,
+              owner_id: user._id,
+              created: controllersUtils.getDateSeal(data.location.date),
+            },
+          }, {
+            upsert: true,
+            returnOriginal: false,
           });
+        });
       });
     }));
   });

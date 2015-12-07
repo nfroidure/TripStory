@@ -13,6 +13,7 @@ function eventsTransformsFromCollection(src) {
   var dest = {
     _id: src._id,
     contents: src.contents,
+    created_date: src.created.seal_date,
   };
 
   return transformsUtils.fromCollection(dest);
