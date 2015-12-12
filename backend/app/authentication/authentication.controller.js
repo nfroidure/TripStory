@@ -36,30 +36,30 @@ function initAuthenticationController(context) {
     passReqToCallback: true,
   }, localLoginLogic));
   passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_ID,
-    clientSecret: process.env.FACEBOOK_SECRET,
+    clientID: context.env.FACEBOOK_ID,
+    clientSecret: context.env.FACEBOOK_SECRET,
     callbackURL: context.base + '/auth/facebook/callback',
     enableProof: false,
     profileFields: ['id', 'displayName', 'photos', 'emails'],
     passReqToCallback: true,
   }, facebookLoginLogic));
   passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_ID,
-    clientSecret: process.env.GOOGLE_SECRET,
+    clientID: context.env.GOOGLE_ID,
+    clientSecret: context.env.GOOGLE_SECRET,
     callbackURL: context.base + '/auth/google/callback',
     passReqToCallback: true,
   }, googleLoginLogic));
   passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    consumerKey: context.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: context.env.TWITTER_CONSUMER_SECRET,
     callbackURL: context.base + '/auth/twitter/callback',
     passReqToCallback: true,
   }, twitterLoginLogic));
   passport.use('xee', new OAuth2Strategy({
     authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
     tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
-    clientID: process.env.XEE_ID,
-    clientSecret: process.env.XEE_SECRET,
+    clientID: context.env.XEE_ID,
+    clientSecret: context.env.XEE_SECRET,
     callbackURL: context.base + '/auth/xee/callback',
     useAuthorizationHeaderForGET: true,
     passReqToCallback: true,
@@ -112,9 +112,9 @@ function initAuthenticationController(context) {
             _id: context.createObjectId(),
             type: 'psa',
             name: '206 Blanc Blanquise',
-            vin: process.env.PSA_VIN,
-            contract: process.env.PSA_CONTRACT,
-            code: process.env.PSA_CODE,
+            vin: context.env.PSA_VIN,
+            contract: context.env.PSA_CONTRACT,
+            code: context.env.PSA_CODE,
           }],
         },
       }, {

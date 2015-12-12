@@ -20,39 +20,13 @@ var initXeeWorker = require('./workers/xee/xee.bin.js');
 var initPSAWorker = require('./workers/psa/psa.bin.js');
 var initTwitterWorker = require('./workers/twitter/twitter.bin.js');
 
-// Twitter logger transport
-var TwittLog = exports.TwittLog = function TwittLog(options) {
-  this.client = new Twitter(options || {});
-};
+var context = {};
 
-util.inherits(TwittLog, winston.Transport);
-TwittLog.prototype.log = function log(level, msg, meta, callback) {
-  var self = this; // eslint-disable-line
-
-  // Dont log sensible infos
-  if(-1 !== ['debug', 'error'].indexOf(level)) {
-    return callback(null, true);
-  }
-
-  msg = '[' + level + '] ' + msg.substring(0, 128) + '… #jdmc15';
-  this.client.post('statuses/update', { status: msg }, function twitterCb(error) {
-    if (error) {
-      console.log('Twitter console', error); // eslint-disable-line
-      // context.logger.error(error); // eslint-disable-line no-console
-      // self.emit('error', error); Disable since it crashes the app
-    }
-  });
-
-  this.emit('logged');
-
-  callback(null, true);
-};
 // Preparing services
+context.env = process.env;
 Promise.all([
-  MongoClient.connect(process.env.MONGODB_URL),
+  MongoClient.connect(context.env.MONGODB_URL),
 ]).spread(function handleServerServices(db) {
-  var context = {};
-
   // Services
   context.time = Date.now.bind(Date);
   context.db = db;
@@ -67,20 +41,11 @@ Promise.all([
   context.app = express();
   context.createObjectId = ObjectId;
   context.logger = new (winston.Logger)({
-    transports: [
-      new (winston.transports.Console)({ level: 'silly' }),
-      new (TwittLog)({
-        consumer_key: process.env.TWITTER_CONSUMER_KEY,
-        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-        access_token_key: process.env.TWITTER_TOKEN_KEY,
-        access_token_secret: process.env.TWITTER_TOKEN_SECRET,
-      }
-      ),
-    ],
+    transports: [new (winston.transports.Console)({ level: 'silly' })],
   });
   context.tokens = new TokenService({
     uniqueId: function() { return context.createObjectId().toString(); },
-    secret: process.env.TOKEN_SECRET,
+    secret: context.env.TOKEN_SECRET,
     time: context.time,
   });
   context.checkAuth = function isLoggedIn(req, res, next) {
@@ -93,7 +58,7 @@ Promise.all([
 
   // Middlewares
   context.app.use(initCors(context));
-  context.app.use(express.static(process.env.mobile_path || '../mobile/app'));
+  context.app.use(express.static(context.env.mobile_path || '../mobile/app'));
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
@@ -101,9 +66,9 @@ Promise.all([
   context.app.use(favicon(path.resolve(__dirname, 'favicon.png')));
   context.host = 'localhost';
   context.port = 3000;
-  context.base = process.env.cors || 'http://' + context.host + ':' + context.port;
-  context.cors = process.env.cors || 'http://' + context.host + ':8100';
-  context.logger.debug('Env', process.env);
+  context.base = context.env.cors || 'http://' + context.host + ':' + context.port;
+  context.cors = context.env.cors || 'http://' + context.host + ':8100';
+  context.logger.debug('Env', context.env);
 
   /* / Workers
   initFacebookWorker(context);

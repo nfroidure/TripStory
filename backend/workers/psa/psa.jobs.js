@@ -45,7 +45,7 @@ function psaSyncJob(context, event) {
             '/place/lastposition/' + car.vin +
             '?contract=' + car.contract +
             '&listsecond=' + SECONDS.join(',') +
-            '&client_id=' + process.env.PSA_CLIENT_ID,
+            '&client_id=' + context.env.PSA_CLIENT_ID,
             function(err, res, data) {
               if(err) {
                 return reject(err);

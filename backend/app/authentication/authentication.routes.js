@@ -14,7 +14,7 @@ function initAuthenticationRoutes(context) {
   var passport = initAuthenticationController(context);
 
   context.app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: context.env.SESSION_SECRET,
     store: new MongoStore({ db: context.db }),
   }));
   context.app.use(passport.initialize());
