@@ -71,19 +71,19 @@ Promise.all([
   context.logger.debug('Env', context.env);
 
   /* / Workers
-  initFacebookWorker(context);
-  initXeeWorker(context);
   initPSAWorker(context);
-  initTwitterWorker(context);
   */
+  initFacebookWorker(context);
+  initTwitterWorker(context);
+  initXeeWorker(context);
 
   /* / Periodical signals
   randomRunDelay(triggerPSASync.bind(null, context), 240000);
   triggerPSASync(context);
-  randomRunDelay(triggerXEESync.bind(null, context), 240000);
-  triggerXEESync(context);
   randomRunDelay(triggerTwitterSync.bind(null, context), 960000);
   triggerTwitterSync(context);
+  randomRunDelay(triggerXEESync.bind(null, context), 240000);
+  triggerXEESync(context);
   */
 
   // Routes
