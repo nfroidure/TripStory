@@ -14,7 +14,7 @@ function initAuthenticationRoutes(context) {
   var passport = initAuthenticationController(context);
 
   context.app.use(session({
-    secret: 'onattendpaspatrick',
+    secret: process.env.SESSION_SECRET,
     store: new MongoStore({ db: context.db }),
   }));
   context.app.use(passport.initialize());
@@ -146,6 +146,9 @@ function initAuthenticationRoutes(context) {
 
       params = clone(params);
 
+      if(req.isAuthenticated()) {
+        stateContents.user_id = req.session.passport.user;
+      }
       if(req.user) {
         stateContents.user_id = req.user._id.toString();
       }
@@ -159,6 +162,7 @@ function initAuthenticationRoutes(context) {
         params.callbackURL = context.base + '/auth/twitter/callback?state=' +
           params.state;
       }
+      context.logger.debug('Assigned a state', state);
       passport.authenticate(type, params)(req, res, next);
     };
   }
@@ -173,6 +177,7 @@ function initAuthenticationRoutes(context) {
       } catch(err) {
         return next(err);
       }
+      context.logger.debug('Collected a state', state);
       req._authState = state;
       passport.authenticate(type, options)(req, res, next);
     };

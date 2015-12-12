@@ -9,6 +9,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var OAuth2Strategy = require('passport-oauth2');
 var YError = require('yerror');
+var castToObjectId = require('mongodb').ObjectId;
 
 module.exports = initAuthenticationController;
 
@@ -16,10 +17,11 @@ function initAuthenticationController(context) {
 
   // Serialization
   passport.serializeUser(function(user, done) {
-    console.log(user)
-    done(null, user._id);
+    context.logger.debug('Deserialized user:', user);
+    done(null, user._id.toString());
   });
   passport.deserializeUser(function(id, done) {
+    context.logger.debug('Serialized user:', id);
     done(null, { _id: id });
   });
 
@@ -150,7 +152,7 @@ function initAuthenticationController(context) {
     };
 
     if(req._authState.contents.user_id) {
-      findQuery._id = req._authState.contents.user_id;
+      findQuery._id = castToObjectId(req._authState.contents.user_id);
     } else {
       findQuery.$or = [{
         'auth.facebook.id': profile.id,
@@ -227,7 +229,7 @@ function initAuthenticationController(context) {
     };
 
     if(req._authState.contents.user_id) {
-      findQuery._id = req._authState.contents.user_id;
+      findQuery._id = castToObjectId(req._authState.contents.user_id);
     } else {
       findQuery.$or = [{
         'auth.google.id': profile.id,
@@ -299,7 +301,7 @@ function initAuthenticationController(context) {
     };
 
     if(req._authState.contents.user_id) {
-      findQuery._id = req._authState.contents.user_id;
+      findQuery._id = castToObjectId(req._authState.contents.user_id);
     } else {
       findQuery['auth.twitter.id'] = profile.id;
       // It looks like Mongo can't recognize when an upsert is beeing processed...
@@ -378,7 +380,7 @@ function initAuthenticationController(context) {
       };
 
       if(req._authState.contents.user_id) {
-        findQuery._id = req._authState.contents.user_id;
+        findQuery._id = castToObjectId(req._authState.contents.user_id);
       } else {
         findQuery['auth.xee.id'] = profile.id;
         // It looks like Mongo can't recognize when an upsert is beeing processed...
