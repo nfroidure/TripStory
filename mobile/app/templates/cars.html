@@ -1,7 +1,10 @@
 <ion-view view-title="Your cars">
   <ion-content>
-    <ion-spinner icon="lines" ng-hide="cars.length"></ion-spinner>
-    <ion-list ng-show="cars.length">
+    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
+    <ion-list ng-show="'loaded' === state">
+      <ion-item ng-if="!cars.length">
+        <p>Currently no cars</p>
+      </ion-item>
       <ion-item ng-repeat="car in cars">
         <h2>{{car.contents.name}}</h2>
         <p ng-if="car.contents.brand">{{car.contents.brand}} {{car.contents.model}}</p>

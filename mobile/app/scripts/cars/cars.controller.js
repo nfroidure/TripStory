@@ -8,17 +8,21 @@
   CarsCtrl.$inject = ['$scope', '$state', '$stateParams', 'carsFactory'];
   /* @ngInject */
   function CarsCtrl($scope, $state, $stateParams, carsFactory) {
-    // $scope.car = car;
-
     $scope.cars = [];
+    $scope.state = 'loading';
 
     activate();
 
     function activate() {
+      $scope.state = 'loading';
       carsFactory.list()
         .then(function(cars){
           $scope.cars = cars.data;
+          $scope.state = 'loaded';
         })
+        .catch(function(err) {
+          $scope.state = 'errored';
+        });
     }
   }
 

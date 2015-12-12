@@ -9,6 +9,7 @@
   /* @ngInject */
   function TripsCtrl($scope, $state, $stateParams, tripsFactory, $ionicModal) {
     $scope.trips = [];
+    $scope.state = 'loading';
 
     $scope.newTrip = {};
 
@@ -27,9 +28,14 @@
     activate()
 
     function activate() {
+      $scope.state = 'loading';
       tripsFactory.list()
         .then(function(values) {
           $scope.trips = values.data;
+          $scope.state = 'loaded';
+        })
+        .catch(function(err) {
+          $scope.state = 'errored';
         });
     }
 

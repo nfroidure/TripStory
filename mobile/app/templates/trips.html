@@ -6,8 +6,11 @@
     </button>
   </ion-nav-buttons>
   <ion-content>
-    <ion-spinner icon="lines" ng-hide="trips.length"></ion-spinner>
-    <ion-list ng-show="trips.length">
+    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
+    <ion-list ng-show="'loaded' === state">
+      <ion-item ng-if="!trips.length">
+        <p>Currently no trips</p>
+      </ion-item>
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
         <p>{{trip.contents.description}}</p>
