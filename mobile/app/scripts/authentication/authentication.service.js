@@ -47,7 +47,11 @@
     }
 
     function logout() {
-      return $http.post(ENV.apiEndpoint + '/api/v0/logout');
+      return $http.post(ENV.apiEndpoint + '/api/v0/logout')
+        .then(function() {
+          profileDeffered = $q.defer();
+          profileDeffered.reject();
+        });
     }
 
     function signup(credentials) {

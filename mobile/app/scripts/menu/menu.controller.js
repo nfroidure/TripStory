@@ -78,12 +78,11 @@
     function doLogout() {
       AuthService.logout()
         .then(function(status) {
-          if (status.status === 204) {
-            $scope.user = {};
-            $state.go("login");
-          }
+          $state.go("login");
         })
-        .catch(function(err){ $scope.fail = err; });
+        .catch(function(err){
+          $scope.fail = err;
+        });
     }
   }
 })();
