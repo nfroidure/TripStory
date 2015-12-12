@@ -70,21 +70,11 @@ Promise.all([
   context.cors = context.env.cors || 'http://' + context.host + ':8100';
   context.logger.debug('Env', context.env);
 
-  /* / Workers
+  // Workers
   initPSAWorker(context);
-  */
   initFacebookWorker(context);
   initTwitterWorker(context);
   initXeeWorker(context);
-
-  /* / Periodical signals
-  randomRunDelay(triggerPSASync.bind(null, context), 240000);
-  triggerPSASync(context);
-  randomRunDelay(triggerTwitterSync.bind(null, context), 960000);
-  triggerTwitterSync(context);
-  randomRunDelay(triggerXEESync.bind(null, context), 240000);
-  triggerXEESync(context);
-  */
 
   // Routes
   initRoutes(context);
@@ -143,32 +133,4 @@ function initBasicAuth(context) {
       next();
     }).catch(next);
   };
-}
-
-function triggerTwitterSync(context) {
-  context.bus.trigger({
-    exchange: 'A_TWITTER_SYNC',
-    contents: {},
-  });
-}
-
-function triggerPSASync(context) {
-  context.bus.trigger({
-    exchange: 'A_PSA_SYNC',
-    contents: {},
-  });
-}
-
-function triggerXEESync(context) {
-  context.bus.trigger({
-    exchange: 'A_XEE_SYNC',
-    contents: {},
-  });
-}
-
-function randomRunDelay(fn, delay) {
-  setTimeout(function() {
-    fn();
-    randomRunDelay(fn, delay);
-  }, Math.random() * delay);
 }

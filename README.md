@@ -129,3 +129,20 @@ Resource:
   }
 }
 ```
+
+# Bus
+- Add: PUT /bus
+
+Allow to trigger events in order to trigger workers jobs ('A_TWITTER_SYNC',
+ 'A_PSA_SYNC', 'A_XEE_SYNC'). Install cron jobs that fire them periodically.
+
+ Resource:
+ ```js
+ {
+   "_id": "564b2cabeec81a63aae5f4e8",
+   "exchange": "A_XEE_SYNC",
+   "contents": {
+     // May be needed for some events
+   }
+ }
+ ```
