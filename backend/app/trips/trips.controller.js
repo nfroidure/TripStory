@@ -26,18 +26,32 @@ function initTripsController(context) {
         }, {
           'trip.friends_ids': castToObjectId(req.params.user_id),
         }],
+        'contents.type': {
+          $in: ['trip-start', 'trip-stop'],
+        },
+      },
+    }, {
+      $sort: {
+        'created.seal_date': 1,
       },
     }, {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
         created: '$created',
+        ended: { $cond: {
+          if: { $eq: ['trip-stop', '$contents.type'] },
+          then: '$created',
+          else: null,
+        } },
       },
     }, {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
         created: { $first: '$created' },
+        modified: { $last: '$created' },
+        ended: { $last: '$ended' },
       },
     }]).toArray()
     .then(function(entries) {
@@ -60,6 +74,11 @@ function initTripsController(context) {
         _id: '$contents.trip_id',
         contents: '$trip',
         created: '$created',
+        ended: { $cond: {
+          if: { $eq: ['trip-stop', '$contents.type'] },
+          then: '$created',
+          else: null,
+        } },
         event: {
           _id: '$_id',
           created: '$created',
@@ -74,8 +93,10 @@ function initTripsController(context) {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
-        created: { $first: '$created' },
         events: { $push: '$event' },
+        created: { $first: '$created' },
+        modified: { $last: '$created' },
+        ended: { $last: '$ended' },
       },
     }]).toArray()
     .then(function(entries) {

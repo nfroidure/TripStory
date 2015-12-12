@@ -105,19 +105,21 @@ Promise.all([
   context.cors = process.env.cors || 'http://' + context.host + ':8100';
   context.logger.debug('Env', process.env);
 
-  // Workers
+  /* / Workers
   initFacebookWorker(context);
   initXeeWorker(context);
   initPSAWorker(context);
   initTwitterWorker(context);
+  */
 
-  // Periodical signals
-  // randomRunDelay(triggerPSASync.bind(null, context), 240000);
-  // triggerPSASync(context);
+  /* / Periodical signals
+  randomRunDelay(triggerPSASync.bind(null, context), 240000);
+  triggerPSASync(context);
   randomRunDelay(triggerXEESync.bind(null, context), 240000);
   triggerXEESync(context);
   randomRunDelay(triggerTwitterSync.bind(null, context), 960000);
   triggerTwitterSync(context);
+  */
 
   // Routes
   initRoutes(context);

@@ -14,7 +14,12 @@ function tripsTransformsFromCollection(src) {
     _id: src._id,
     contents: src.contents,
     created_date: src.created.seal_date,
+    modified_date: src.modified.seal_date,
   };
+
+  if(src.ended) {
+    dest.ended_date = src.ended.seal_date;
+  }
 
   return transformsUtils.fromCollection(dest);
 }

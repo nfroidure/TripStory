@@ -7,7 +7,7 @@ var workersUtils = {
 module.exports = workersUtils;
 
 function workersUtilsGetCurrentTrips(context, options) {
-  var match  = {
+  var match = {
     'contents.type': { $in: ['trip-start', 'trip-stop'] },
   };
 

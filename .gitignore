@@ -1,5 +1,6 @@
 # Config
 app.json
+app.prod.json
 # Logs
 logs
 *.log
