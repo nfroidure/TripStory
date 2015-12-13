@@ -9,6 +9,7 @@
   /* @ngInject */
   function TripsCtrl($scope, $state, $stateParams, tripsFactory, $ionicModal) {
     $scope.trips = [];
+    $scope.canCreateTrip = false;
     $scope.state = 'loading';
 
     $scope.newTrip = {};
@@ -29,9 +30,13 @@
 
     function activate() {
       $scope.state = 'loading';
+      $scope.canCreateTrip = false;
       tripsFactory.list()
         .then(function(values) {
           $scope.trips = values.data;
+          $scope.canCreateTrip = values.data.every(function(trip) {
+            return trip.ended_date;
+          });
           $scope.state = 'loaded';
         })
         .catch(function(err) {

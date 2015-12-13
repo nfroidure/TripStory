@@ -1,5 +1,5 @@
 <ion-view view-title="Your trips">
-  <ion-nav-buttons side="right">
+  <ion-nav-buttons side="right" ng-if="canCreateTrip">
     <button class="button" ng-click="showCreateTripModal()">
       <i class="ion-plus"></i>
       Create trip
@@ -13,7 +13,12 @@
       </ion-item>
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
-        <p>{{trip.contents.description}}</p>
+        <p>
+          {{ trip.contents.description }}
+          <span class="item-note">
+            {{ trip.ended_date ? 'Ended' : 'Running' }}
+          </span>
+        </p>
       </ion-item>
     </ion-list>
   </ion-content>
