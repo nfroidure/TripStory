@@ -5,10 +5,18 @@
     .module('app.trips')
     .controller('TripsCtrl', TripsCtrl);
 
-  TripsCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory', '$ionicModal'];
+  TripsCtrl.$inject = [
+    '$scope', '$state', '$stateParams', '$ionicModal', '$q',
+    'tripsFactory', 'carsFactory', 'friendsFactory',
+  ];
   /* @ngInject */
-  function TripsCtrl($scope, $state, $stateParams, tripsFactory, $ionicModal) {
+  function TripsCtrl(
+    $scope, $state, $stateParams, $ionicModal, $q,
+    tripsFactory, carsFactory, friendsFactory
+  ) {
     $scope.trips = [];
+    $scope.cars = [];
+    $scope.friends = [];
     $scope.canCreateTrip = false;
     $scope.state = 'loading';
 
@@ -29,19 +37,34 @@
     activate()
 
     function activate() {
+      var canCreateTrip = false;
+
       $scope.state = 'loading';
       $scope.canCreateTrip = false;
-      tripsFactory.list()
-        .then(function(values) {
-          $scope.trips = values.data;
-          $scope.canCreateTrip = values.data.every(function(trip) {
-            return trip.ended_date;
-          });
-          $scope.state = 'loaded';
-        })
-        .catch(function(err) {
-          $scope.state = 'errored';
-        });
+      $q.all([
+        tripsFactory.list()
+          .then(function(values) {
+            $scope.trips = values.data;
+            $scope.state = 'loaded';
+            canCreateTrip = values.data.every(function(trip) {
+              return trip.ended_date;
+            });
+          }),
+        carsFactory.list()
+          .then(function(values) {
+            $scope.cars = values.data;
+          }),
+        friendsFactory.list()
+          .then(function(values) {
+            $scope.friends = values.data;
+          }),
+      ])
+      .then(function() {
+        $scope.canCreateTrip = canCreateTrip;
+      })
+      .catch(function(err) {
+        $scope.state = 'errored';
+      });
     }
 
     function goToTrip(tripId){
@@ -49,6 +72,11 @@
     }
 
     function showCreateTripModal(){
+      $scope.newTrip = {
+        contents: {
+          friends_ids: [],
+        },
+      };
       $scope.modal.show();
     }
 

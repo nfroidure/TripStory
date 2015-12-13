@@ -20,8 +20,22 @@
           <span class="input-label">Hashtag</span>
           <input type="text" ng-model="newTrip.contents.hash" required>
         </label>
+        <label class="item item-input item-select" ng-if="cars.length">
+          <span class="input-label">Car</span>
+          <select ng-model="newTrip.contents.car_id"
+            ng-options="car._id as car.contents.name for car in cars track by car._id">
+          </select>
+        </label>
+        <label class="item item-input item-select" ng-if="friends.length">
+          <span class="input-label">Friends</span>
+          <select ng-model="newTrip.contents.friends_ids" multiple
+            ng-options="friend._id as friend.contents.name for friend in friends track by friend._id">
+          </select>
+        </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Start tracking</button>
+          <button class="button button-block button-positive" type="submit">
+            Start tripping
+          </button>
         </label>
       </div>
     </form>
