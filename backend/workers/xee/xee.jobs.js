@@ -55,6 +55,7 @@ function xeeSignupJob(context, event) {
           }).map(function(car) {
             return {
               _id: context.createObjectId(),
+              type: 'xee',
               name: car.name,
               brand: car.brand,
               xeeId: car.id,
@@ -79,7 +80,7 @@ function xeeSyncJob(context, event) {
           _id: tripEvent.trip.car_id,
         } },
       }).then(function(user) {
-        var car = user.cars.filter(function(car) {
+        var car = (user ? user.cars : []).filter(function(car) {
           return tripEvent.trip.car_id.toString() === car._id.toString() &&
             'xee' === car.type;
         })[0];

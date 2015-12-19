@@ -24,6 +24,6 @@ function initRoutes(context) {
 
   context.app.post('/bus', function triggerEvent(req, res) {
     context.bus.trigger(transformsUtils.toCollection(req.body));
-    res.send(200);
+    res.status(200).json(req.body);
   });
 }
