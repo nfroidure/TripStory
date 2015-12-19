@@ -153,6 +153,7 @@ function initTripsController(context) {
       }),
     ])
     .spread(function(result) {
+      console.log('result.value', JSON.stringify(result.value));
       res.status(201).send(tripsTransforms.fromCollection(result.value));
     }).catch(next);
   }

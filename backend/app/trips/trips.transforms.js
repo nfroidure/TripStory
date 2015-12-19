@@ -13,10 +13,12 @@ function tripsTransformsFromCollection(src) {
   var dest = {
     _id: src._id,
     contents: src.contents,
-    created_date: src.created.seal_date,
-    modified_date: src.modified.seal_date,
   };
 
+  dest.created_date = src.created.seal_date;
+  if(src.modified && src.modified.length) {
+    dest.modified_date = src.modified[0].seal_date;
+  }
   if(src.ended) {
     dest.ended_date = src.ended.seal_date;
   }
