@@ -1,7 +1,7 @@
 <ion-view view-title="{{ trip.contents.title }}">
   <ion-content>
-    <ion-spinner icon="lines" ng-hide="trip"></ion-spinner>
-    <div class="headerPage" ng-show="trip">
+    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
+    <div class="headerPage" ng-show="'loaded' === state">
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
@@ -19,17 +19,21 @@
             <i class="ion-map"></i>
             See on map
           </button>
+          <button ng-click="showStopTripModal()" ng-show="!trip.ended_date" class="button button-energized">
+            <i class="ion-trophy"></i>
+            The end!
+          </button>
         </div>
       </div>
     </div>
-    <ion-list ng-show="trip">
+    <ion-list ng-show="'loaded' === state">
       <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)" class="event-list-item card">
 
         <div ng-switch-when="trip-start" class="event">
           <div class="event__icon">
             <i class="ion-location"></i>
             <em>Depart</em>
-            <span class="date">{{event.contents.date | date:'short'}}</span>
+            <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
         </div>
 
@@ -37,7 +41,7 @@
           <div class="event__icon">
             <i class="ion-social-twitter"></i>
             <em>Twitter</em>
-            <span class="date">{{event.contents.date | date:'short'}}</span>
+            <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
           <div class="event__text">
             <p class="event__user__name"><strong>{{event.contents.user_name}}</strong> tweeted:</p>
@@ -49,7 +53,7 @@
           <div class="event__icon">
             <i class="ion-android-car"></i>
             <em>PSA</em>
-            <span class="date">{{event.contents.date | date:'short'}}</span>
+            <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
           <div class="event__text">
             <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
@@ -60,7 +64,7 @@
           <div class="event__icon">
             <i class="ion-map"></i>
             <em>Xee</em>
-            <span class="date">{{event.contents.date | date:'short'}}</span>
+            <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
           <div class="event__text">
             <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
@@ -71,7 +75,7 @@
           <div class="event__icon">
             <i class="ion-android-star-outline"></i>
             <em>Arrived at destination</em>
-            <span class="date">{{event.contents.date | date:'short'}}</span>
+            <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
         </div>
       </ion-item>

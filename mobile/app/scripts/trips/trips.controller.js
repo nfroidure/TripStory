@@ -17,17 +17,17 @@
     $scope.trips = [];
     $scope.cars = [];
     $scope.friends = [];
-    $scope.canCreateTrip = false;
+    $scope.canStartTrip = false;
     $scope.state = 'loading';
 
     $scope.newTrip = {};
 
-    $scope.showCreateTripModal = showCreateTripModal;
-    $scope.closeCreateTripModal = closeCreateTripModal;
+    $scope.showStartTripModal = showStartTripModal;
+    $scope.closeStartTripModal = closeStartTripModal;
     $scope.goToTrip = goToTrip;
     $scope.submitTrip = submitTrip;
 
-    $ionicModal.fromTemplateUrl('./templates/addTripModal.html', {
+    $ionicModal.fromTemplateUrl('./templates/startTripModal.html', {
       scope: $scope,
       animation: 'slide-in-up'
     }).then(function(modal) {
@@ -37,16 +37,16 @@
     activate()
 
     function activate() {
-      var canCreateTrip = false;
+      var canStartTrip = false;
 
       $scope.state = 'loading';
-      $scope.canCreateTrip = false;
+      $scope.canStartTrip = false;
       $q.all([
         tripsFactory.list()
           .then(function(values) {
             $scope.trips = values.data;
             $scope.state = 'loaded';
-            canCreateTrip = values.data.every(function(trip) {
+            canStartTrip = values.data.every(function(trip) {
               return trip.ended_date;
             });
           }),
@@ -60,7 +60,7 @@
           }),
       ])
       .then(function() {
-        $scope.canCreateTrip = canCreateTrip;
+        $scope.canStartTrip = canStartTrip;
       })
       .catch(function(err) {
         $scope.state = 'errored';
@@ -71,7 +71,7 @@
       $state.go('app.trip', { trip_id: tripId });
     }
 
-    function showCreateTripModal(){
+    function showStartTripModal(){
       $scope.newTrip = {
         contents: {
           friends_ids: [],
@@ -80,15 +80,15 @@
       $scope.modal.show();
     }
 
-    function closeCreateTripModal(){
+    function closeStartTripModal(){
       $scope.modal.hide();
     }
 
     function submitTrip(){
       tripsFactory.put($scope.newTrip)
-        .then(function(values) {
+        .then(function() {
           activate();
-          $scope.closeCreateTripModal();
+          $scope.closeStartTripModal();
         });
     }
   }

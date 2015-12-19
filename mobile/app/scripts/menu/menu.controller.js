@@ -6,13 +6,13 @@
     .controller('MenuCtrl', MenuCtrl);
 
   MenuCtrl.$inject = [
-    '$scope', '$state', '$ionicModal', '$timeout', '$http', 'tripsFactory',
-    'AuthService', '$ionicHistory'
+    '$scope', '$state', '$ionicHistory',
+    'AuthService'
   ];
   /* @ngInject */
   function MenuCtrl(
-    $scope, $state, $ionicModal, $timeout, $http, tripsFactory,
-    AuthService, $ionicHistory
+    $scope, $state, $ionicHistory,
+    AuthService
   ) {
     $ionicHistory.nextViewOptions({
       disableBack: true
@@ -23,19 +23,10 @@
 
     $scope.goToProfile = goToProfile;
     $scope.goToTrip = goToTrip;
-    $scope.addTrip = addTrip;
-    $scope.closeAddTrip = closeAddTrip;
-    $scope.submitTrip = submitTrip;
     $scope.doLogout = doLogout;
     $scope.goToCars = goToCars;
     $scope.goToFriends = goToFriends;
     $scope.goToTrips = goToTrips;
-
-    $ionicModal.fromTemplateUrl('templates/addTripModal.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.addTripModal = modal;
-    });
 
     activate();
 
@@ -63,16 +54,6 @@
     }
     function goToTrips() {
       $state.go('app.trips', {});
-    }
-    // add trip
-    function addTrip() {
-      $scope.addTripModal.show();
-    }
-    function closeAddTrip() {
-      $scope.addTripModal.hide();
-    }
-    function submitTrip() {
-      tripsFactory.post($scope.tripToAdd);
     }
 
     function doLogout() {

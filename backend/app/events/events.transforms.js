@@ -24,7 +24,5 @@ function eventsTransformsToCollection(src) {
     contents: src.contents,
   };
 
-  dest.contents.date = new Date(dest.contents.date); // Remove this and use created.seal_date
-
   return transformsUtils.toCollection(dest);
 }
