@@ -113,7 +113,7 @@ function initTripsController(context) {
 
   function tripControllerPut(req, res, next) {
     var dateSeal = controllersUtils.getDateSeal(context.time(), req);
-    tripContents = tripsTransforms.toCollection(req.body.contents || {});
+    var newTrip = tripsTransforms.toCollection(req.body || {});
 
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
@@ -126,7 +126,7 @@ function initTripsController(context) {
             trip_id: castToObjectId(req.params.trip_id),
             type: 'trip-start',
           },
-          trip: tripContents,
+          trip: newTrip.contents,
         },
         $setOnInsert: {
           _id: castToObjectId(req.params.trip_id),
@@ -149,7 +149,7 @@ function initTripsController(context) {
         'contents.type': { $ne: 'trip-start' },
       }, {
         $set: {
-          trip: tripContents,
+          trip: newTrip.contents,
         },
       }),
     ])
