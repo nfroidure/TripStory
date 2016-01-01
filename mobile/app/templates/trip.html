@@ -1,4 +1,10 @@
 <ion-view view-title="{{ trip.contents.title }}">
+  <ion-nav-buttons side="right">
+    <button class="button" ng-click="refresh()">
+      <i class="ion-refresh"></i>
+      Refresh
+    </button>
+  </ion-nav-buttons>
   <ion-content>
     <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
     <div class="headerPage" ng-show="'loaded' === state">

@@ -19,6 +19,7 @@
     };
 
     $scope.markers = [];
+    $scope.refresh = activate;
 
 
     activate()

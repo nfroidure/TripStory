@@ -24,6 +24,7 @@
     $scope.showStopTripModal = showStopTripModal;
     $scope.closeStopTripModal = closeStopTripModal;
     $scope.stopTrip = stopTrip;
+    $scope.refresh = activate;
 
     $ionicModal.fromTemplateUrl('./templates/stopTripModal.html', {
       scope: $scope,
