@@ -38,7 +38,7 @@ function twitterSyncJob(context, event) {
             if(err) {
               reject(err);
             }
-            //context.logger.debug(JSON.stringify(tweets, null, 2));
+            context.logger.debug(JSON.stringify(tweets, null, 2));
             resolve(Promise.all(tweets.statuses.map(function(status) {
               return context.db.collection('users').findOne({
                 'auth.twitter.id': status.user.id + '',

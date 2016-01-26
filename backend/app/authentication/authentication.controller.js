@@ -25,7 +25,7 @@ function initAuthenticationController(context) {
     done(null, { _id: id });
   });
 
-  // Local login
+  // Local strategies
   passport.use('local', new LocalStrategy({
     passReqToCallback: true,
   }, localLoginLogic));
@@ -35,35 +35,39 @@ function initAuthenticationController(context) {
   passport.use(new BasicStrategy({
     passReqToCallback: true,
   }, localLoginLogic));
-  passport.use(new FacebookStrategy({
-    clientID: context.env.FACEBOOK_ID,
-    clientSecret: context.env.FACEBOOK_SECRET,
-    callbackURL: context.base + '/auth/facebook/callback',
-    enableProof: false,
-    profileFields: ['id', 'displayName', 'photos', 'emails'],
-    passReqToCallback: true,
-  }, facebookLoginLogic));
-  passport.use(new GoogleStrategy({
-    clientID: context.env.GOOGLE_ID,
-    clientSecret: context.env.GOOGLE_SECRET,
-    callbackURL: context.base + '/auth/google/callback',
-    passReqToCallback: true,
-  }, googleLoginLogic));
-  passport.use(new TwitterStrategy({
-    consumerKey: context.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: context.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: context.base + '/auth/twitter/callback',
-    passReqToCallback: true,
-  }, twitterLoginLogic));
-  passport.use('xee', new OAuth2Strategy({
-    authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
-    tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
-    clientID: context.env.XEE_ID,
-    clientSecret: context.env.XEE_SECRET,
-    callbackURL: context.base + '/auth/xee/callback',
-    useAuthorizationHeaderForGET: true,
-    passReqToCallback: true,
-  }, xeeLoginLogic));
+
+  // OAuth strategies
+  if(!context.env.TESTING) {
+    passport.use(new FacebookStrategy({
+      clientID: context.env.FACEBOOK_ID,
+      clientSecret: context.env.FACEBOOK_SECRET,
+      callbackURL: context.base + '/auth/facebook/callback',
+      enableProof: false,
+      profileFields: ['id', 'displayName', 'photos', 'emails'],
+      passReqToCallback: true,
+    }, facebookLoginLogic));
+    passport.use(new GoogleStrategy({
+      clientID: context.env.GOOGLE_ID,
+      clientSecret: context.env.GOOGLE_SECRET,
+      callbackURL: context.base + '/auth/google/callback',
+      passReqToCallback: true,
+    }, googleLoginLogic));
+    passport.use(new TwitterStrategy({
+      consumerKey: context.env.TWITTER_CONSUMER_KEY,
+      consumerSecret: context.env.TWITTER_CONSUMER_SECRET,
+      callbackURL: context.base + '/auth/twitter/callback',
+      passReqToCallback: true,
+    }, twitterLoginLogic));
+    passport.use('xee', new OAuth2Strategy({
+      authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
+      tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
+      clientID: context.env.XEE_ID,
+      clientSecret: context.env.XEE_SECRET,
+      callbackURL: context.base + '/auth/xee/callback',
+      useAuthorizationHeaderForGET: true,
+      passReqToCallback: true,
+    }, xeeLoginLogic));
+  }
 
   function localLoginLogic(req, username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);

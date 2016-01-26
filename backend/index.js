@@ -5,14 +5,7 @@ var ObjectId = require('mongodb').ObjectId;
 var express = require('express');
 var initRoutes = require('./app/routes');
 var Promise = require('bluebird');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
 var winston = require('winston');
-var Twitter = require('twitter');
-var util = require('util');
-var authUtils = require('http-auth-utils');
-var favicon = require('serve-favicon');
-var path = require('path');
 var TokenService = require('sf-token');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
@@ -44,7 +37,9 @@ Promise.all([
     transports: [new (winston.transports.Console)({ level: 'silly' })],
   });
   context.tokens = new TokenService({
-    uniqueId: function() { return context.createObjectId().toString(); },
+    uniqueId: function createTokenUniqueId() {
+      return context.createObjectId().toString();
+    },
     secret: context.env.TOKEN_SECRET,
     time: context.time,
   });
@@ -56,14 +51,6 @@ Promise.all([
     res.sendStatus(401);
   };
 
-  // Middlewares
-  context.app.use(initCors(context));
-  context.app.use(express.static(context.env.mobile_path || '../mobile/app'));
-  context.app.use(bodyParser.json());
-  context.app.use(bodyParser.urlencoded());
-  context.app.use(cookieParser());
-  context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
-  context.app.use(favicon(path.resolve(__dirname, 'favicon.png')));
   context.host = 'localhost';
   context.port = 3000;
   context.base = context.env.cors || 'http://' + context.host + ':' + context.port;
@@ -94,43 +81,3 @@ Promise.all([
     });
   });
 });
-
-function initCors(context) {
-  return function corsFunction(req, res, next) {
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Origin', context.cors);
-    res.header('Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, ' +
-      'X-SF-Ionic-Version, Cookies'
-    );
-    res.header('Access-Control-Allow-Methods',
-      'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    if('OPTIONS' === req.method) {
-      return res.status(200).send();
-    }
-    next();
-  };
-}
-
-function initBasicAuth(context) {
-  return function(req, res, next) {
-    var data;
-
-    if(!req.headers.authorization) {
-      return next();
-    }
-    data = authUtils.parseAuthorizationHeader(req.headers.authorization).data;
-
-    context.db.collection('users').findOne({
-      'contents.email': data.username,
-      password: data.password,
-    }).then(function(user) {
-      if(!user) {
-        context.logger.debug('Bad login attempt:', data);
-        return res.sendStatus(401);
-      }
-      req.user = user;
-      next();
-    }).catch(next);
-  };
-}

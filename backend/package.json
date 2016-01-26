@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "cd .. && npm run start",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "env NPM_RUN_CLI=1",
+    "test": "mocha tests/api/*.behavior.js",
     "lint": "eslint app/*.js workers/*.js"
   },
   "author": "",
@@ -36,7 +37,13 @@
     "eslint": "^1.9.0",
     "eslint-config-simplifield": "^1.1.0",
     "eslint-plugin-mongodb": "^0.2.3",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "mockery": "^1.4.0",
     "passport-http": "^0.3.0",
-    "passport-twitter": "^1.0.3"
+    "passport-twitter": "^1.0.3",
+    "sinon": "^1.17.2",
+    "supertest": "^1.1.0"
   }
 }
