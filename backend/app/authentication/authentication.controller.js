@@ -16,11 +16,11 @@ module.exports = initAuthenticationController;
 function initAuthenticationController(context) {
 
   // Serialization
-  passport.serializeUser(function(user, done) {
+  passport.serializeUser(function passportSerializeUser(user, done) {
     context.logger.debug('Deserialized user:', user);
     done(null, user._id.toString());
   });
-  passport.deserializeUser(function(id, done) {
+  passport.deserializeUser(function passportDeserializeUser(id, done) {
     context.logger.debug('Serialized user:', id);
     done(null, { _id: id });
   });
@@ -37,7 +37,7 @@ function initAuthenticationController(context) {
   }, localLoginLogic));
 
   // OAuth strategies
-  if(!context.env.TESTING) {
+  if(context.env.FACEBOOK_ID) {
     passport.use(new FacebookStrategy({
       clientID: context.env.FACEBOOK_ID,
       clientSecret: context.env.FACEBOOK_SECRET,
@@ -46,18 +46,30 @@ function initAuthenticationController(context) {
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       passReqToCallback: true,
     }, facebookLoginLogic));
+  } else {
+    context.logger.error('No Facebook ID!');
+  }
+  if(context.env.GOOGLE_ID) {
     passport.use(new GoogleStrategy({
       clientID: context.env.GOOGLE_ID,
       clientSecret: context.env.GOOGLE_SECRET,
       callbackURL: context.base + '/auth/google/callback',
       passReqToCallback: true,
     }, googleLoginLogic));
+  } else {
+    context.logger.error('No Google ID!');
+  }
+  if(context.env.TWITTER_CONSUMER_KEY) {
     passport.use(new TwitterStrategy({
       consumerKey: context.env.TWITTER_CONSUMER_KEY,
       consumerSecret: context.env.TWITTER_CONSUMER_SECRET,
       callbackURL: context.base + '/auth/twitter/callback',
       passReqToCallback: true,
     }, twitterLoginLogic));
+  } else {
+    context.logger.error('No Twitter Consumer Key!');
+  }
+  if(context.env.XEE_ID) {
     passport.use('xee', new OAuth2Strategy({
       authorizationURL: 'https://cloud.xee.com/v1/auth/auth',
       tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
@@ -67,6 +79,8 @@ function initAuthenticationController(context) {
       useAuthorizationHeaderForGET: true,
       passReqToCallback: true,
     }, xeeLoginLogic));
+  } else {
+    context.logger.error('No Xee ID!');
   }
 
   function localLoginLogic(req, username, password, done) {

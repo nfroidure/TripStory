@@ -17,8 +17,12 @@ describe('System endpoints', function() {
     context.checkAuth = function() {};
     context.env = {
       SESSION_SECRET: 'none',
-      TESTING: true,
       mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    };
+    context.logger = {
+      error: sinon.spy(),
+      debug: sinon.spy(),
+      info: sinon.spy(),
     };
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
       .then(function(db) {

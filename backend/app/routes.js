@@ -22,12 +22,20 @@ function initRoutes(context) {
 
   // Middlewares
   context.app.use(initCors(context));
-  context.app.use(express.static(context.env.mobile_path));
+  if(context.env.STATIC_PATH) {
+    context.app.use(express.static(context.env.STATIC_PATH));
+  } else {
+    context.logger.error('Static files path is not set!');
+  }
+  if(context.env.FAVICON_PATH) {
+    context.app.use(favicon(context.env.FAVICON_PATH));
+  } else {
+    context.logger.error('Favicon path is not set!');
+  }
   context.app.use(bodyParser.json());
   context.app.use(bodyParser.urlencoded());
   context.app.use(cookieParser());
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
-  context.app.use(favicon(path.join(context.env.mobile_path, 'favicon.png')));
 
   // API
   initAuthenticationRoutes(context);

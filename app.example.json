@@ -13,6 +13,8 @@
   },
   "restart_delay": 100,
   "env": {
+    "STATIC_PATH": "",
+    "FAVICON_PATH": "",
     "SESSION_SECRET": "",
     "TOKEN_SECRET": "",
     "MONGODB_URL": "",
