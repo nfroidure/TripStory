@@ -10,6 +10,8 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var OAuth2Strategy = require('passport-oauth2');
 var YError = require('yerror');
 var castToObjectId = require('mongodb').ObjectId;
+var authenticationUtils = require('./authentication.utils');
+var Promise = require('bluebird');
 
 module.exports = initAuthenticationController;
 
@@ -86,44 +88,53 @@ function initAuthenticationController(context) {
   function localLoginLogic(req, username, password, done) {
     context.logger.debug('Authentication attempt:', username, password);
     context.db.collection('users').findOne({
-      'contents.email': username,
+      emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
     }, function(err, user) {
       if (err) { return done(err); }
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (!user.password === password) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      context.logger.info('Authenticated a user:', user._id, user.name);
-      done(null, user);
+
+      authenticationUtils.comparePasswordToHash(password, user.passwordHash)
+        .then(function(matched) {
+          if (!matched) {
+            return done(null, false, { message: 'Incorrect password.' });
+          }
+          context.logger.info('Authenticated a user:', user._id, user.name);
+          done(null, user);
+        }).catch(done);
     });
   }
 
   function localSignupLogic(req, username, password, done) {
     var upsertId = context.createObjectId();
 
-    context.logger.debug('Sinup attempt:', req.body.username, upsertId);
-    context.db.collection('users').findOne({
-      'contents.email': username,
-    }, function(err, user) {
-      if (err) { return done(err); }
-      if(user) { return done(new Error('E_EXISTS')); }
+    context.logger.debug('Signup attempt:', req.body.username, upsertId);
+    Promise.all([
+      context.db.collection('users').findOne({
+        emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
+      }),
+      authenticationUtils.createPasswordHash(password),
+    ]).spread(function(user, passwordHash) {
+      if(user) {
+        throw new Error('E_EXISTS');
+      }
       if(!req.body.username) {
         return done(null, false, { message: 'Incorrect name.' });
       }
       context.logger.info('Registered a new user', username);
-      context.db.collection('users').findOneAndUpdate({
-        'contents.email': username,
+      return context.db.collection('users').findOneAndUpdate({
+        emailKey: authenticationUtils.normalizeEmail(username),
       }, {
         $set: {
           contents: {
             name: req.body.username,
             email: username,
           },
+          emailKeys: [authenticationUtils.normalizeEmail(username)],
         },
         $setOnInsert: {
-          password: password,
+          passwordHash: passwordHash,
           _id: upsertId,
           // Setting the PSA test car
           cars: [{
@@ -138,11 +149,10 @@ function initAuthenticationController(context) {
       }, {
         upsert: true,
         returnOriginal: false,
-      }, function(err2, result) {
-        if (err2) { return done(err); }
+      }).then(function(result) {
         done(null, result.value);
       });
-    });
+    }).catch(done);
   }
 
   function facebookLoginLogic(req, accessToken, refreshToken, profile, done) {
@@ -165,6 +175,13 @@ function initAuthenticationController(context) {
           id: profile.id,
           accessToken: accessToken,
           refreshToken: refreshToken,
+        },
+      },
+      $addToSet: {
+        emailKeys: {
+          $each: profile.emails.map(function(email) {
+            return authenticationUtils.normalizeEmail(email.value);
+          }),
         },
       },
     };
@@ -242,6 +259,13 @@ function initAuthenticationController(context) {
           accessToken: accessToken,
           refreshToken: refreshToken,
           emails: profile.emails,
+        },
+      },
+      $addToSet: {
+        emailKeys: {
+          $each: profile.emails.map(function(email) {
+            return authenticationUtils.normalizeEmail(email.value);
+          }),
         },
       },
     };

@@ -76,7 +76,8 @@ describe('Authentication endpoints', function() {
           name: 'Popol',
           email: 'popol@moon.u',
         },
-        password: 'test',
+        emailKeys: ['popol@moon.u'],
+        passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
       }, done);
     });
 
@@ -151,6 +152,8 @@ describe('Authentication endpoints', function() {
         }).then(function(user) {
           assert(user, 'User is created.');
           assert.equal(user.contents.email, 'popol@moon.u');
+          assert(user.passwordHash, 'Computed the hash');
+          assert.deepEqual(user.emailKeys, ['popol@moon.u']);
           done();
         }).catch(done);
       });
