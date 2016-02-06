@@ -31,8 +31,6 @@ describe('Authentication endpoints', function() {
     context.time = sinon.stub().returns(1664);
     context.env = {
       SESSION_SECRET: 'none',
-      FACEBOOK_ID: '123-456-789',
-      FACEBOOK_SECRET: 'shhh-its-a-secret',
       mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
     };
     context.logger = {
@@ -157,39 +155,6 @@ describe('Authentication endpoints', function() {
           done();
         }).catch(done);
       });
-  });
-
-  describe('with facebook', function() {
-
-    it('should redirect to the OAuth page', function(done) {
-      request(context.app).get('/auth/facebook')
-        .expect(302)
-        .end(function(err, res) {
-          if(err) {
-            return done(err);
-          }
-          assert(context.tokens.createToken.callCount, 1);
-          assert(0 === res.headers.location.indexOf(
-            'https://www.facebook.com/v2.2/dialog/oauth' +
-            '?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A'
-          ));
-          // Here goes the server port that can vary
-          assert(-1 !== res.headers.location.indexOf(
-            '%2Fauth%2Fundefined%2Fauth%2Ffacebook%2Fcallback&scope=public_profile' +
-            '%2Cemail%2Cuser_friends&state=eyJmYWtlIjoidG9rZW4ifQ%3D%3D' +
-            '&client_id=123-456-789'
-          ));
-          done();
-        });
-
-    });
-
-    it.skip('should sign up when user is not known', function() {
-    });
-
-    it.skip('should login up when user is known', function() {
-    });
-
   });
 
 });
