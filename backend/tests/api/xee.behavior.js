@@ -9,9 +9,10 @@ var sinon = require('sinon');
 var assert = require('assert');
 var nock = require('nock');
 var initObjectIdStub = require('objectid-stub');
+
 var initRoutes = require('../../app/routes');
 
-describe('OAuth Facebook endpoints', function() {
+describe('OAuth XEE endpoints', function() {
   var context;
   var fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
@@ -34,8 +35,8 @@ describe('OAuth Facebook endpoints', function() {
     context.time = sinon.stub().returns(1664);
     context.env = {
       SESSION_SECRET: 'none',
-      FACEBOOK_ID: '123-456-789',
-      FACEBOOK_SECRET: 'shhh-its-a-secret',
+      XEE_ID: '123-456-789',
+      XEE_SECRET: 'shhh-its-a-secret',
       mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
     };
     context.logger = {
@@ -74,7 +75,7 @@ describe('OAuth Facebook endpoints', function() {
   describe('entry point', function() {
 
     it('should redirect to the OAuth page', function(done) {
-      request(context.app).get('/auth/facebook')
+      request(context.app).get('/auth/xee')
         .expect(302)
         .end(function(err, res) {
           if(err) {
@@ -83,14 +84,15 @@ describe('OAuth Facebook endpoints', function() {
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://www.facebook.com/v2.2/dialog/oauth' +
+            'https://cloud.xee.com/v1/auth/auth' +
             '?response_type=code' +
             '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/facebook/callback'
+              context.base + '/auth/xee/callback'
             ) +
-            '&scope=public_profile%2Cemail%2Cuser_friends' +
+            '&scope=user_get%20email_get%20car_get%20data_get%20' +
+              'location_get%20address_all%20accelerometer_get' +
             '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.FACEBOOK_ID
+            '&client_id=' + context.env.XEE_ID
           );
           done();
         });
@@ -103,58 +105,50 @@ describe('OAuth Facebook endpoints', function() {
     var profileCall;
 
     beforeEach(function() {
-      accessTokenCall = nock('https://graph.facebook.com:443', {
+      accessTokenCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
       })
       .post(
-        '/oauth/access_token',
+        '/v1/auth/access_token.json',
         'grant_type=authorization_code' +
         '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/facebook/callback'
+          context.base + '/auth/xee/callback'
         ) +
-        '&client_id=' + context.env.FACEBOOK_ID +
-        '&client_secret=' + context.env.FACEBOOK_SECRET +
+        '&client_id=' + context.env.XEE_ID +
+        '&client_secret=' + context.env.XEE_SECRET +
         '&code=THISISIT')
       .basicAuth({
-        user: context.env.FACEBOOK_ID,
-        pass: context.env.FACEBOOK_SECRET,
+        user: context.env.XEE_ID,
+        pass: context.env.XEE_SECRET,
       })
       .reply(
         200, {
           access_token: 'COMMON_BOY',
-          expires: '5183533',
+          token_type: 'bearer',
+          expires_in: '13060800',
+          expires_at: 1467821352,
+          refresh_token: 'COME_AGAIN_MAN',
         }, {
-          'access-control-allow-origin': '*',
           'content-type': 'text/plain; charset=UTF-8',
-          'x-fb-trace-id': 'HK+ldZSWY4h',
-          'x-fb-rev': '2168097',
-          pragma: 'no-cache',
-          'cache-control': 'private, no-cache, no-store, must-revalidate',
-          'facebook-api-version': 'v2.0',
-          expires: 'Sat, 01 Jan 2000 00:00:00 GMT',
-          vary: 'Accept-Encoding',
-          'x-fb-debug': '09l2f32pxz1J7AM6zsWXu8nObBUVw2YAaqzRHA1T3JuKnzFcHVBtibH92F0/VOOxxGmqkSprL1t0lZX+UWIerQ==',  // eslint-disable-line
-          date: 'Sat, 06 Feb 2016 10:01:52 GMT',
-          connection: 'close',
         });
 
 
-      profileCall = nock('https://graph.facebook.com:443', {
+      profileCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
       })
-      .get('/v2.2/me')
+      .get('/v1/user/me.json')
       .query({
-        fields: 'id%2Cname%2Cpicture%2Cemail',
         access_token: 'COMMON_BOY',
       })
       .reply(200, {
-        id: '1664',
-        name: 'Nicolas Froidure',
-        picture: { data: {
-          is_silhouette: false,
-          url: 'https://robohash.org/lol',
-        } },
-        email: 'clown@fake.fr',
+        id: 1664,
+        name: 'Froidure',
+        firstName: 'Nicolas',
+        gender: 1,
+        nickName: '',
+        role: 'dev',
+        birthDate: '2015-11-22',
+        licenseDeliveryDate: null,
       }, {
         'content-type': 'text/javascript; charset=UTF-8',
       });
@@ -166,11 +160,11 @@ describe('OAuth Facebook endpoints', function() {
         var newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/facebook/callback' +
+          '/auth/xee/callback' +
           '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT'
+          '&client_id=' + context.env.XEE_ID +
+          '&client_secret=' + context.env.XEE_SECRET +
+          '&code=THISISIT' // eslint-disable-line
         )
           .expect(301)
           .end(function(err) {
@@ -180,24 +174,21 @@ describe('OAuth Facebook endpoints', function() {
             accessTokenCall.done();
             profileCall.done();
             context.db.collection('users').findOne({
-              emailKeys: { $all: ['clown@fake.fr'] },
+              'contents.name': 'Nicolas Froidure',
             }).then(function(user) {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: newUserId,
                 contents: {
                   name: 'Nicolas Froidure',
-                  email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
                 },
                 auth: {
-                  facebook: {
+                  xee: {
                     id: '1664',
                     accessToken: 'COMMON_BOY',
-                    refreshToken: null,
+                    refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
-                emailKeys: ['clown@fake.fr'],
               });
               done();
             }).catch(done);
@@ -218,10 +209,10 @@ describe('OAuth Facebook endpoints', function() {
           emailKeys: ['popol@moon.u'],
           passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
           auth: {
-            facebook: {
+            xee: {
               id: '1664',
               accessToken: 'COMMON_BOY',
-              refreshToken: null,
+              refreshToken: 'COME_AGAIN_MAN',
             },
           },
         }, done);
@@ -229,11 +220,11 @@ describe('OAuth Facebook endpoints', function() {
 
       it('should work', function(done) {
         request(context.app).get(
-          '/auth/facebook/callback' +
+          '/auth/xee/callback' +
           '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          '&client_id=' + context.env.XEE_ID +
+          '&client_secret=' + context.env.XEE_SECRET +
+          '&code=THISISIT'
         )
           .expect(301)
           .end(function(err) {
@@ -249,18 +240,17 @@ describe('OAuth Facebook endpoints', function() {
               assert.deepEqual(user, {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),
                 contents: {
-                  name: 'Nicolas Froidure',
-                  email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
+                  name: 'Popol',
+                  email: 'popol@moon.u',
                 },
                 auth: {
-                  facebook: {
+                  xee: {
                     id: '1664',
                     accessToken: 'COMMON_BOY',
-                    refreshToken: null,
+                    refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
-                emailKeys: ['popol@moon.u', 'clown@fake.fr'],
+                emailKeys: ['popol@moon.u'],
                 passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
               });
               done();
