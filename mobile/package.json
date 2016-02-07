@@ -5,6 +5,7 @@
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.6.5",
+    "chai": "^3.5.0",
     "cordova": "~4.2.0",
     "elementtree": "0.1.6",
     "glob": "~4.3.5",
@@ -38,6 +39,7 @@
     "load-grunt-tasks": "~3.1.0",
     "lodash": "~3.1.0",
     "mkdirp": "~0.5.0",
+    "mocha": "^2.4.5",
     "ncp": "~1.0.1",
     "orchestrator": "~0.3.7",
     "plist": "1.1.0",

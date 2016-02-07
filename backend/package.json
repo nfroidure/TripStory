@@ -4,7 +4,7 @@
   "description": "Our backend!",
   "main": "index.js",
   "scripts": {
-    "start": "cd .. && npm run start",
+    "start": "cd backend && npm run start && cd ..",
     "cli": "env NPM_RUN_CLI=1",
     "test": "mocha tests/api/*.behavior.js",
     "lint": "eslint app/*.js workers/*.js"

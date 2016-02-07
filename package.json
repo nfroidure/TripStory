@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 startOrRestart app.json --no-daemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd backend; npm test"
   },
   "repository": {
     "type": "git",
