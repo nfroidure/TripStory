@@ -1,3 +1,7 @@
+# Trip Story
+
+[![Build status](https://secure.travis-ci.org/nfroidure/TripStory.png)](https://travis-ci.org/nfroidure/TripStory)
+
 ## API
 
 ### Configuration

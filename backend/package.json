@@ -7,7 +7,8 @@
     "start": "cd backend && npm run start && cd ..",
     "cli": "env NPM_RUN_CLI=1",
     "test": "mocha tests/api/*.behavior.js",
-    "lint": "eslint app/*.js workers/*.js"
+    "lint": "eslint app/*.js workers/*.js",
+    "cover": "istanbul cover --report html _mocha -- tests/*.mocha.js -R spec -t 5000"
   },
   "author": "",
   "license": "MIT",
