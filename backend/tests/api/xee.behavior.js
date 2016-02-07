@@ -116,7 +116,8 @@ describe('OAuth XEE endpoints', function() {
         ) +
         '&client_id=' + context.env.XEE_ID +
         '&client_secret=' + context.env.XEE_SECRET +
-        '&code=THISISIT')
+        '&code=THISISIT'
+      )
       .basicAuth({
         user: context.env.XEE_ID,
         pass: context.env.XEE_SECRET,
@@ -166,8 +167,8 @@ describe('OAuth XEE endpoints', function() {
           '&client_secret=' + context.env.XEE_SECRET +
           '&code=THISISIT' // eslint-disable-line
         )
-          .expect(301)
-          .end(function(err) {
+          //.expect(301)
+          .end(function(err, res) {
             if(err) {
               return done(err);
             }

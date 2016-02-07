@@ -4,8 +4,8 @@ var Twitter = require('twitter');
 var workersUtils = require('../utils');
 var controllersUtils = require('../../app/utils/controllers');
 
-var CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY;
-var CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
+var CONSUMER_KEY = process.env.TWITTER_ID;
+var CONSUMER_SECRET = process.env.TWITTER_SECRET;
 var ACCESS_TOKEN_KEY = process.env.TWITTER_ACCESS_TOKEN_KEY;
 var ACCESS_TOKEN_SECRET = process.env.TWITTER_ACCESS_TOKEN_SECRET;
 var client = new Twitter({

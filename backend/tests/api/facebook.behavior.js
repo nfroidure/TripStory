@@ -115,10 +115,6 @@ describe('OAuth Facebook endpoints', function() {
         '&client_id=' + context.env.FACEBOOK_ID +
         '&client_secret=' + context.env.FACEBOOK_SECRET +
         '&code=THISISIT')
-      .basicAuth({
-        user: context.env.FACEBOOK_ID,
-        pass: context.env.FACEBOOK_SECRET,
-      })
       .reply(
         200, {
           access_token: 'COMMON_BOY',

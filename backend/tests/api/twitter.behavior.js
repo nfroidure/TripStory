@@ -12,7 +12,7 @@ var initObjectIdStub = require('objectid-stub');
 
 var initRoutes = require('../../app/routes');
 
-describe('OAuth Google endpoints', function() {
+describe('OAuth Twitter endpoints', function() {
   var context;
   var fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
@@ -21,6 +21,7 @@ describe('OAuth Google endpoints', function() {
   before(function(done) {
     context = {};
     context.checkAuth = function(req, res, next) {
+      console.log('checkAuth')
       if(context.mockAuthenticated) {
         return next();
       }
@@ -35,8 +36,8 @@ describe('OAuth Google endpoints', function() {
     context.time = sinon.stub().returns(1664);
     context.env = {
       SESSION_SECRET: 'none',
-      GOOGLE_ID: '123-456-789',
-      GOOGLE_SECRET: 'shhh-its-a-secret',
+      TWITTER_ID: '123-456-789',
+      TWITTER_SECRET: 'shhh-its-a-secret',
       mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
     };
     context.logger = {
@@ -68,30 +69,45 @@ describe('OAuth Google endpoints', function() {
     context.db.collection('users').deleteMany({}, done);
   });
 
+  afterEach(function(done) {
+    context.db.collection('sessions').deleteMany({}, done);
+  });
+
   beforeEach(function() {
     context.mockAuthenticated = false;
   });
 
   describe('entry point', function() {
+    var requestTokenCall;
+
+    beforeEach(function() {
+        requestTokenCall = nock('https://api.twitter.com:443', {
+          encodedQueryParams: true,
+        })
+        .post(
+          '/oauth/request_token'
+        )
+        .reply(
+          200,
+          'oauth_token=YOP' +
+          '&oauth_token_secret=POY' +
+          '&oauth_callback_confirmed=true', {
+            'content-type': 'text/plain; charset=UTF-8',
+          });
+    });
 
     it('should redirect to the OAuth page', function(done) {
-      request(context.app).get('/auth/google')
+      request(context.app).get('/auth/twitter')
         .expect(302)
         .end(function(err, res) {
           if(err) {
             return done(err);
           }
+          requestTokenCall.done();
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://accounts.google.com/o/oauth2/auth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/google/callback'
-            ) +
-            '&scope=profile%20email' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.GOOGLE_ID
+            'https://api.twitter.com/oauth/authenticate?oauth_token=YOP'
           );
           done();
         });
@@ -103,97 +119,91 @@ describe('OAuth Google endpoints', function() {
     var accessTokenCall;
     var profileCall;
 
+    beforeEach(function(done) {
+      context.db.collection('sessions').insertOne({
+        _id: 'x6L9CiWPF1pD4bIFyCFvV--sg7H2znNj',
+        session: JSON.stringify({
+          cookie: {
+            originalMaxAge: null,
+            expires: null,
+            httpOnly: true,
+            path: '/',
+          },
+          'oauth:twitter': {
+            oauth_token: 'YOP',
+            oauth_token_secret: 'POY',
+          },
+        }),
+      }, done);
+    });
+
     beforeEach(function() {
-      accessTokenCall = nock('https://accounts.google.com:443', {
+      accessTokenCall = nock('https://api.twitter.com:443', {
         encodedQueryParams: true,
       })
       .post(
-        '/o/oauth2/token',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/google/callback'
-        ) +
-        '&client_id=' + context.env.GOOGLE_ID +
-        '&client_secret=' + context.env.GOOGLE_SECRET +
-        '&code=THISISIT')
+        '/oauth/access_token'
+      )
       .reply(
-        200, {
-          access_token: 'COMMON_BOY',
-          token_type: 'bearer',
-          expires_in: '13060800',
-          expires_at: 1467821352,
-          refresh_token: 'COME_AGAIN_MAN',
-        }, {
+        200,
+        'oauth_token=COMMON_BOY' +
+        '&oauth_token_secret=COME_AGAIN_MAN' +
+        '&user_id=1664' +
+        '&screen_name=nfroidure' +
+        '&x_auth_expires=0', {
           'content-type': 'text/plain; charset=UTF-8',
         });
 
-
-      profileCall = nock('https://www.googleapis.com:443', {
+      profileCall = nock('https://api.twitter.com:443', {
         encodedQueryParams: true,
       })
-      .get('/plus/v1/people/me')
+      .get('/1.1/users/show.json')
       .query({
-        access_token: 'COMMON_BOY',
+        user_id: '1664',
       })
       .reply(200, {
-        kind: 'plus#person',
-        etag: '"Plop"',
-        occupation: 'To fake',
-        skills: 'Fake',
-        birthday: '0000-04-28',
-        gender: 'male',
-        emails: [{
-          value: 'clown@fake.fr',
-          type: 'account',
-        }],
-        urls: [{
-          value: 'http://twitter.com/nfroidure',
-          type: 'otherProfile',
-          label: 'Twitter',
-        }],
-        objectType: 'person',
-        id: '1664',
-        displayName: 'Nicolas Froidure',
-        name: {
-          familyName: 'FROIDURE',
-          givenName: 'Nicolas',
-        },
-        tagline: 'Lol',
-        braggingRights: 'Faking everything',
-        aboutMe: 'I Fake all the time<br />',
-        url: 'https://plus.google.com/+Lol',
-        image: {
-          url: 'https://robohash.org/lol',
-          isDefault: false,
-        },
-        organizations: [{
-          name: 'Fake academy',
-          title: 'Faker',
-          type: 'school',
-          startDate: '0',
-          endDate: '3042',
-          primary: false,
-        }],
-        placesLived: [{
-          value: 'Smallville',
-          primary: true,
-        }],
-        isPlusUser: true,
-        language: 'fr',
-        circledByCount: 332,
-        verified: false,
-        cover: {
-          layout: 'banner',
-          coverPhoto: {
-            url: 'https://robohash.org/lol',
-            height: 332,
-            width: 940,
-          },
-          coverInfo: {
-            topImageOffset: -8,
-            leftImageOffset: 0,
-          },
-        },
+        "id": 1664,
+        "id_str": "1664",
+        "name": "Nicolas Froidure",
+        "screen_name": "nfroidure",
+        "location": "Lille, France.",
+        "profile_location": null,
+        "description": "Full-stack JavaScript developer @SimpliField, NodeJS early user, NPM flooder, GitHub fan.",
+        "url": "http://t.co/VYWWEzqULI",
+        "protected": false,
+        "followers_count": 1055,
+        "friends_count": 393,
+        "listed_count": 134,
+        "created_at": "Wed Jul 15 12:44:38 +0000 2009",
+        "favourites_count": 306,
+        "utc_offset": 3600,
+        "time_zone": "Paris",
+        "geo_enabled": true,
+        "verified": false,
+        "statuses_count": 9300,
+        "lang": "fr",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "is_translation_enabled": false,
+        "profile_background_color": "008000",
+        "profile_background_image_url": "http://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png",
+        "profile_background_image_url_https": "https://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png",
+        "profile_background_tile": false,
+        "profile_image_url": "http://robohash.org/lol",
+        "profile_image_url_https": "https://robohash.org/lol",
+        "profile_link_color": "0099CC",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "DDEEF6",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "has_extended_profile": true,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": false,
+        "follow_request_sent": false,
+        "notifications": false,
+        "suspended": false,
+        "needs_phone_verification": false
       }, {
         'content-type': 'text/javascript; charset=UTF-8',
       });
@@ -205,42 +215,36 @@ describe('OAuth Google endpoints', function() {
         var newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/google/callback' +
+          '/auth/twitter/callback' +
           '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.GOOGLE_ID +
-          '&client_secret=' + context.env.GOOGLE_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          '&oauth_token=YOP' +
+          '&oauth_verifier=POY'
         )
+          .set('Cookie', 'connect.sid=s%3Ax6L9CiWPF1pD4bIFyCFvV--sg7H2znNj.4eX1VfudnVnDiwRDUy0G0%2FeiG05doSmwDp5EUOEYcS0')
           .expect(301)
-          .end(function(err) {
+          .end(function(err, res) {
             if(err) {
               return done(err);
             }
             accessTokenCall.done();
             profileCall.done();
             context.db.collection('users').findOne({
-              emailKeys: { $all: ['clown@fake.fr'] },
+              'contents.name': 'Nicolas Froidure',
             }).then(function(user) {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: newUserId,
                 contents: {
                   name: 'Nicolas Froidure',
-                  email: 'clown@fake.fr',
                   photo: 'https://robohash.org/lol',
                 },
                 auth: {
-                  google: {
+                  twitter: {
                     id: '1664',
-                    emails: [{
-                      type: 'account',
-                      value: 'clown@fake.fr',
-                    }],
                     accessToken: 'COMMON_BOY',
                     refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
-                emailKeys: ['clown@fake.fr'],
               });
               done();
             }).catch(done);
@@ -261,7 +265,7 @@ describe('OAuth Google endpoints', function() {
           emailKeys: ['popol@moon.u'],
           passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
           auth: {
-            google: {
+            twitter: {
               id: '1664',
               accessToken: 'COMMON_BOY',
               refreshToken: 'COME_AGAIN_MAN',
@@ -272,12 +276,12 @@ describe('OAuth Google endpoints', function() {
 
       it('should work', function(done) {
         request(context.app).get(
-          '/auth/google/callback' +
+          '/auth/twitter/callback' +
           '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.GOOGLE_ID +
-          '&client_secret=' + context.env.GOOGLE_SECRET +
-          '&code=THISISIT'
+          '&oauth_token=YOP' +
+          '&oauth_verifier=POY'
         )
+          .set('Cookie', 'connect.sid=s%3Ax6L9CiWPF1pD4bIFyCFvV--sg7H2znNj.4eX1VfudnVnDiwRDUy0G0%2FeiG05doSmwDp5EUOEYcS0')
           .expect(301)
           .end(function(err) {
             if(err) {
@@ -293,21 +297,17 @@ describe('OAuth Google endpoints', function() {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),
                 contents: {
                   name: 'Nicolas Froidure',
-                  email: 'clown@fake.fr',
                   photo: 'https://robohash.org/lol',
+                  email: 'popol@moon.u',
                 },
                 auth: {
-                  google: {
+                  twitter: {
                     id: '1664',
-                    emails: [{
-                      type: 'account',
-                      value: 'clown@fake.fr',
-                    }],
                     accessToken: 'COMMON_BOY',
                     refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
-                emailKeys: ['popol@moon.u', 'clown@fake.fr'],
+                emailKeys: ['popol@moon.u'],
                 passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
               });
               done();

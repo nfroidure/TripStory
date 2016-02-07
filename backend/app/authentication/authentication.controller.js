@@ -12,6 +12,15 @@ var YError = require('yerror');
 var castToObjectId = require('mongodb').ObjectId;
 var authenticationUtils = require('./authentication.utils');
 var Promise = require('bluebird');
+/*
+var fs = require('fs');
+var nock = require('nock');
+var appendLogToFile = function(content) {
+  fs.appendFile('../google.txt', content);
+}
+nock.recorder.rec({
+  logging: appendLogToFile,
+});*/
 
 module.exports = initAuthenticationController;
 
@@ -61,10 +70,10 @@ function initAuthenticationController(context) {
   } else {
     context.logger.error('No Google ID!');
   }
-  if(context.env.TWITTER_CONSUMER_KEY) {
+  if(context.env.TWITTER_ID) {
     passport.use(new TwitterStrategy({
-      consumerKey: context.env.TWITTER_CONSUMER_KEY,
-      consumerSecret: context.env.TWITTER_CONSUMER_SECRET,
+      consumerKey: context.env.TWITTER_ID,
+      consumerSecret: context.env.TWITTER_SECRET,
       callbackURL: context.base + '/auth/twitter/callback',
       passReqToCallback: true,
     }, twitterLoginLogic));
@@ -79,6 +88,7 @@ function initAuthenticationController(context) {
       clientSecret: context.env.XEE_SECRET,
       callbackURL: context.base + '/auth/xee/callback',
       useAuthorizationHeaderForGET: true,
+      useAuthorizationHeaderForPOST: true,
       passReqToCallback: true,
     }, xeeLoginLogic));
   } else {
