@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 startOrRestart app.json --no-daemon",
-    "test": "cd backend; npm test"
+    "test": "cd backend; npm test",
+    "postinstall": "cd backend; npm i; cd ..; cd mobile; npm i; cd .."
   },
   "repository": {
     "type": "git",
