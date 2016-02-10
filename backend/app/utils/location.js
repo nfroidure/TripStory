@@ -19,8 +19,8 @@ function locationGetFormatedAddress(lat, lon, cb) {
 
       try {
         body = JSON.parse(body);
-      } catch(err) {
-        return cb(err);
+      } catch(err2) {
+        return cb(err2);
       }
 
       cb(null, body.results[0].formatted_address);

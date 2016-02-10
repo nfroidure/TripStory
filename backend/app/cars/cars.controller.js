@@ -8,7 +8,7 @@ module.exports = initCarsController;
 function initCarsController(context) {
   var carController = {
     list: carControllerList,
-    get: carControllerGet,/*
+    get: carControllerGet, /*
     put: carControllerPut,
     delete: carControllerDelete,*/
   };

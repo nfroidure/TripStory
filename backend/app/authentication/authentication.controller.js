@@ -12,6 +12,7 @@ var YError = require('yerror');
 var castToObjectId = require('mongodb').ObjectId;
 var authenticationUtils = require('./authentication.utils');
 var Promise = require('bluebird');
+var YHTTPError = require('yhttperror');
 /*
 var fs = require('fs');
 var nock = require('nock');
@@ -100,15 +101,17 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
     }, function(err, user) {
-      if (err) { return done(err); }
+      if (err) {
+        return done(err);
+      }
       if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: 'E_BAD_USERNAME' }, 400);
       }
 
       authenticationUtils.comparePasswordToHash(password, user.passwordHash)
         .then(function(matched) {
           if (!matched) {
-            return done(null, false, { message: 'Incorrect password.' });
+            return done(null, false, { message: 'E_BAD_PASSWORD' }, 400);
           }
           context.logger.info('Authenticated a user:', user._id, user.name);
           done(null, user);
@@ -127,10 +130,10 @@ function initAuthenticationController(context) {
       authenticationUtils.createPasswordHash(password),
     ]).spread(function(user, passwordHash) {
       if(user) {
-        throw new Error('E_EXISTS');
+        throw new YHTTPError(400, 'E_USER_EXISTS', user._id);
       }
       if(!req.body.username) {
-        return done(null, false, { message: 'Incorrect name.' });
+        return done(null, false, { message: 'E_BAD_USERNAME' }, 400);
       }
       context.logger.info('Registered a new user', username);
       return context.db.collection('users').findOneAndUpdate({
@@ -165,7 +168,7 @@ function initAuthenticationController(context) {
     }).catch(done);
   }
 
-  function facebookLoginLogic(req, accessToken, refreshToken, profile, done) {
+  function facebookLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
     var upsertId = context.createObjectId();
     var findQuery = {};
     var updateQuery;
@@ -248,7 +251,7 @@ function initAuthenticationController(context) {
     });
   }
 
-  function googleLoginLogic(req, accessToken, refreshToken, profile, done) {
+  function googleLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
     var upsertId = context.createObjectId();
     var findQuery = {};
     var updateQuery;
@@ -329,7 +332,7 @@ function initAuthenticationController(context) {
     });
   }
 
-  function twitterLoginLogic(req, accessToken, refreshToken, profile, done) {
+  function twitterLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
     var upsertId = context.createObjectId();
     var findQuery = {};
     var updateQuery;
@@ -396,7 +399,7 @@ function initAuthenticationController(context) {
     });
   }
 
-  function xeeLoginLogic(req, accessToken, refreshToken, profile, done) {
+  function xeeLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
     var upsertId = context.createObjectId();
 
     if(!req._authState.contents) {

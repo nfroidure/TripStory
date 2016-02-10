@@ -3,7 +3,6 @@
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var favicon = require('serve-favicon');
-var path = require('path');
 var express = require('express');
 
 var initBasicAuth = require('./authentication/authentication.middleware');

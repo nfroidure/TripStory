@@ -98,7 +98,57 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should allow to log out', function(done) {
+    it('should fail when loggin in with bad password', function(done) {
+      request(context.app).post('/api/v0/login')
+        .send({
+          username: 'popol@moon.u',
+          password: 'testouille',
+        })
+        .expect(400)
+        .end(function(err, res) {
+          assert.equal(res.body.code, 'E_BAD_PASSWORD');
+          done(err);
+        });
+    });
+
+    it('should fail when loggin in with bad username', function(done) {
+      request(context.app).post('/api/v0/login')
+        .send({
+          username: 'leon@moon.u',
+          password: 'testouille',
+        })
+        .expect(400)
+        .end(function(err, res) {
+          assert.equal(res.body.code, 'E_BAD_USERNAME');
+          done(err);
+        });
+    });
+
+    it('should fail when loggin in with no username', function(done) {
+      request(context.app).post('/api/v0/login')
+        .send({
+          password: 'testouille',
+        })
+        .expect(400)
+        .end(function(err, res) {
+          assert.equal(res.body.code, 'E_BAD_CREDENTIALS');
+          done(err);
+        });
+    });
+
+    it('should fail when loggin in with no password', function(done) {
+      request(context.app).post('/api/v0/login')
+        .send({
+          username: 'popol@moon.u',
+        })
+        .expect(400)
+        .end(function(err, res) {
+          assert.equal(res.body.code, 'E_BAD_CREDENTIALS');
+          done(err);
+        });
+    });
+
+    it('should allow to log out when authenticated', function(done) {
       context.mockAuthenticated = true;
       request(context.app).post('/api/v0/logout')
         .expect(204)
@@ -107,13 +157,13 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it.skip('should fail when signuping twice', function(done) {
+    it('should fail when signuping twice', function(done) {
       request(context.app).post('/api/v0/signup')
         .send({
           username: 'popol@moon.u',
           password: 'test',
         })
-        .expect(500)
+        .expect(400)
         .end(function(err, res) {
           if(err) {
             return done(err);

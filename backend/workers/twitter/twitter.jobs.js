@@ -24,7 +24,7 @@ var twitterJobs = {
 
 module.exports = twitterJobs;
 
-function twitterSyncJob(context, event) {
+function twitterSyncJob(context) {
   return workersUtils.getCurrentTrips(context)
   .then(function handleTwitterUsers(tripsEvents) {
     return Promise.all(tripsEvents.map(function(tripEvent) {
@@ -34,7 +34,7 @@ function twitterSyncJob(context, event) {
             q: '#' + tripEvent.trip.hash,
             lang: 'fr',
           },
-          function twitterSearchHandler(err, tweets, response) {
+          function twitterSearchHandler(err, tweets) {
             if(err) {
               reject(err);
             }
@@ -44,8 +44,8 @@ function twitterSyncJob(context, event) {
                 'auth.twitter.id': status.user.id + '',
               }).then(function(author) {
                 if(!author) {
-                  context.logger.debug('No user found for ', status.user._id)
-                  return;
+                  context.logger.debug('No user found for ', status.user._id);
+                  return Promise.resolve();
                 }
                 return context.db.collection('events').findOneAndUpdate({
                   'twitter.id': status.id,
@@ -84,43 +84,41 @@ function twitterSyncJob(context, event) {
 
 function pairTwitterFriends(context, user) {
   return new Promise(function pairFriendsPromise(resolve, reject) {
-    return new Promise(function(resolve, reject) {
-      client.get(
-        'friends/ids',
-        {},
-        function twitterSearchHandler(err, tweets, response) {
-          if(err) {
-            reject(err);
-          }
+    client.get(
+      'friends/ids',
+      {},
+      function twitterSearchHandler(err, tweets) {
+        if(err) {
+          reject(err);
+        }
 
-          context.logger.debug('Retrieved twitter friends', tweets);
+        context.logger.debug('Retrieved twitter friends', tweets);
 
-          Promise.all((tweets.ids || []).map(function syncFriendUsers(id) {
-            // Update friends that are know in the platform
-            return context.db.collection('users').findOneAndUpdate({
-              'auth.twitter.id': id,
+        Promise.all((tweets.ids || []).map(function syncFriendUsers(id) {
+          // Update friends that are know in the platform
+          return context.db.collection('users').findOneAndUpdate({
+            'auth.twitter.id': id,
+          }, {
+            $addToSet: {
+              friends_ids: user._id,
+            },
+          }).then(function(result) {
+            return result.value._id;
+          });
+        })).then(function syncUserFriends(friendsIds) {
+          friendsIds = friendsIds.filter(function(a) { return a; });
+
+          if(friendsIds.length) {
+            return context.db.collection('users').updateOne({
+              _id: user._id,
             }, {
               $addToSet: {
-                friends_ids: user._id,
+                friends_ids: { $each: friendsIds },
               },
-            }).then(function(result) {
-              return result.value._id;
             });
-          })).then(function syncUserFriends(friendsIds) {
-            friendsIds = friendsIds.filter(function(a) { return a; });
-
-            if(friendsIds.length) {
-              return context.db.collection('users').updateOne({
-                _id: user._id,
-              }, {
-                $addToSet: {
-                  friends_ids: { $each: friendsIds },
-                },
-              });
-            }
-          }).then(resolve).catch(reject);
-        }
-      );
-    });
+          }
+        }).then(resolve).catch(reject);
+      }
+    );
   });
 }

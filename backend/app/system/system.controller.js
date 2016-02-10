@@ -24,7 +24,7 @@ function initSystemController(context) {
 
   function systemControllerCatchErrors(err, req, res, next) { // eslint-disable-line
     context.logger.error(err.stack);
-    res.status(err.status || 500).send({
+    res.status(err.status || err.httpCode || 500).send({
       code: err.code || 'E_UNEXPECTED',
       stack: err.stack,
     });

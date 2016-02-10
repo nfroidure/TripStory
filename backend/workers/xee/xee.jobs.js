@@ -3,6 +3,7 @@
 var request = require('request');
 var workersUtils = require('../utils');
 var controllersUtils = require('../../app/utils/controllers');
+var locationUtils = require('../../app/utils/location.js');
 
 var SERVER = 'https://cloud.xee.com/v1';
 var xeeJobs = {
@@ -36,8 +37,8 @@ function xeeSignupJob(context, event) {
           context.logger.debug(data);
           try {
             data = JSON.parse(data);
-          } catch(err) {
-            return reject(err);
+          } catch(err2) {
+            return reject(err2);
           }
           context.logger.debug(data);
           resolve(data);
@@ -67,7 +68,7 @@ function xeeSignupJob(context, event) {
   });
 }
 
-function xeeSyncJob(context, event) {
+function xeeSyncJob(context) {
 
   return workersUtils.getCurrentTrips(context, {
     carOnly: true,
@@ -101,8 +102,8 @@ function xeeSyncJob(context, event) {
               }
               try {
                 data = JSON.parse(data);
-              } catch(err) {
-                return reject(err);
+              } catch(err2) {
+                return reject(err2);
               }
               resolve(data);
             }
@@ -124,7 +125,7 @@ function xeeSyncJob(context, event) {
               data.location.longitude
             );
 
-            require('../../app/utils/location.js')
+            locationUtils
               .getFormatedAddress(
                 data.location.latitude,
                 data.location.longitude,

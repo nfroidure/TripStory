@@ -17,7 +17,7 @@ module.exports = psaJobs;
 // For each user retrieve current GPS location
 // Check for nice places around if the vehicle is stopped
 // Save the location event with some useful informations
-function psaSyncJob(context, event) {
+function psaSyncJob(context) {
   // Get every current trips involving psa
   return workersUtils.getCurrentTrips(context, {
     carOnly: true,
@@ -52,8 +52,8 @@ function psaSyncJob(context, event) {
               }
               try {
                 data = JSON.parse(data);
-              } catch(err) {
-                return reject(err);
+              } catch(err2) {
+                return reject(err2);
               }
               resolve(data);
             }

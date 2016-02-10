@@ -7,6 +7,7 @@ var MongoStore = require('connect-mongo')(session);
 var initAuthenticationController = require('./authentication.controller');
 var usersTransforms = require('../users/users.transforms');
 var clone = require('clone');
+var YHTTPError = require('yhttperror');
 
 module.exports = initAuthenticationRoutes;
 
@@ -21,17 +22,21 @@ function initAuthenticationRoutes(context) {
   context.app.use(passport.session());
 
   context.app.post('/api/v0/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user) {
-      if (err) {
-        return next(err);
+    passport.authenticate('local', {
+      failWithError: true,
+      badRequestMessage: 'E_BAD_CREDENTIALS',
+    }, function(err, user, message, status) {
+      if(err) {
+        return next(YHTTPError.cast(err));
       }
-      if (!user) {
-        return res.sendStatus(401);
+
+      if(!user) {
+        return next(new YHTTPError(status, message.message));
       }
 
       req.logIn(user, function(err) {
         if (err) {
-          return next(err);
+          return next(YHTTPError.cast(err));
         }
         res.status(200).send(usersTransforms.fromCollection(user));
       });
@@ -41,7 +46,7 @@ function initAuthenticationRoutes(context) {
   context.app.post('/api/v0/signup', function(req, res, next) {
     passport.authenticate('local-signup', function(err, user) {
       if (err) {
-        return next(err);
+        return next(YHTTPError.cast(err));
       }
       if (!user) {
         return res.sendStatus(401);
@@ -49,7 +54,7 @@ function initAuthenticationRoutes(context) {
 
       req.logIn(user, function(err) {
         if (err) {
-          return next(err);
+          return next(YHTTPError.cast(err));
         }
         res.status(200).send(usersTransforms.fromCollection(user));
       });
@@ -175,7 +180,7 @@ function initAuthenticationRoutes(context) {
         state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));
         context.tokens.checkToken(state, state.hash);
       } catch(err) {
-        return next(err);
+        return next(YHTTPError.cast(err));
       }
       context.logger.debug('Collected a state', state);
       req._authState = state;
