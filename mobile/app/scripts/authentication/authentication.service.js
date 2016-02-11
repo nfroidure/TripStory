@@ -41,8 +41,8 @@
     function log(credentials) {
       return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
         .then(function(res){
-          profileDeffered.promise = $q.when(res.data._id);
-          return val;
+          profileDeffered.promise = $q.when(res.data);
+          return profileDeffered.promise;
         });
     }
 

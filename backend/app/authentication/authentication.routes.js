@@ -51,12 +51,11 @@ function initAuthenticationRoutes(context) {
       if (!user) {
         return res.sendStatus(401);
       }
-
       req.logIn(user, function(err) {
         if (err) {
           return next(YHTTPError.cast(err));
         }
-        res.status(200).send(usersTransforms.fromCollection(user));
+        res.status(201).send(usersTransforms.fromCollection(user));
       });
     })(req, res, next);
   });
@@ -83,6 +82,7 @@ function initAuthenticationRoutes(context) {
     initPassportWithAStateObject('google',
     { scope: ['profile', 'email'] }
   ));
+
   context.app.get(
     '/auth/google/callback',
     checkStateObjectAndPassport('google', { failureRedirect: '/me' }),

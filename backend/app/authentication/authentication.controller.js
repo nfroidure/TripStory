@@ -97,7 +97,7 @@ function initAuthenticationController(context) {
   }
 
   function localLoginLogic(req, username, password, done) {
-    context.logger.debug('Authentication attempt:', username, password);
+    context.logger.debug('Authentication attempt:', username);
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
     }, function(err, user) {
@@ -113,7 +113,7 @@ function initAuthenticationController(context) {
           if (!matched) {
             return done(null, false, { message: 'E_BAD_PASSWORD' }, 400);
           }
-          context.logger.info('Authenticated a user:', user._id, user.name);
+          context.logger.info('Authenticated a user:', user._id, user.contents.name);
           done(null, user);
         }).catch(done);
     });
