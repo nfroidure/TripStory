@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var favicon = require('serve-favicon');
 var express = require('express');
+var path = require('path');
 
 var initBasicAuth = require('./authentication/authentication.middleware');
 var initCors = require('./system/cors.middleware');
@@ -22,17 +23,27 @@ function initRoutes(context) {
   // Middlewares
   context.app.use(initCors(context));
   if(context.env.STATIC_PATH) {
-    context.app.use(express.static(context.env.STATIC_PATH));
+    context.app.use(express.static(path.join(
+      process.cwd(),
+      context.env.STATIC_PATH
+    )));
+    context.logger.info('Static files path is set:', context.env.STATIC_PATH);
   } else {
     context.logger.error('Static files path is not set!');
   }
   if(context.env.FAVICON_PATH) {
-    context.app.use(favicon(context.env.FAVICON_PATH));
+    context.app.use(favicon(path.join(
+      process.cwd(),
+      context.env.FAVICON_PATH
+    )));
+    context.logger.info('Favicon path is set:', context.env.FAVICON_PATH);
   } else {
     context.logger.error('Favicon path is not set!');
   }
   context.app.use(bodyParser.json());
-  context.app.use(bodyParser.urlencoded());
+  context.app.use(bodyParser.urlencoded({
+    extended: false,
+  }));
   context.app.use(cookieParser());
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
 
