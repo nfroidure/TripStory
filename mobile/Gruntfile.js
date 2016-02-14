@@ -51,7 +51,7 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'production',
-            apiEndpoint: 'https://stripstory.lol'
+            apiEndpoint: 'https://tripstory.insertafter.com'
           }
         }
       }
