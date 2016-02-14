@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "cli": "env NPM_RUN_CLI=1",
     "run": "pm2 startOrRestart app.json",
     "start": "pm2 startOrRestart app.json --no-daemon",
-    "test": "cd backend; npm test",
+    "test": "cd backend; npm test; cd ..",
     "postinstall": "cd backend; npm i; cd ..; cd mobile; npm i; cd .."
   },
   "repository": {

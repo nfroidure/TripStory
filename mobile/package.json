@@ -52,6 +52,7 @@
   },
   "scripts": {
     "test": "grunt test",
+    "postinstall": "bower install",
     "droid": "env PATH=$PATH:/usr/local/var/lib/android-sdk/",
     "cli": "env NPM_RUN_CLI=1 PATH=$PATH:/usr/local/var/lib/android-sdk/"
   },
