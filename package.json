@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "run": "pm2 startOrRestart app.json",
     "start": "pm2 startOrRestart app.json --no-daemon",
     "test": "cd backend; npm test",
     "postinstall": "cd backend; npm i; cd ..; cd mobile; npm i; cd .."
