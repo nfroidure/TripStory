@@ -79,6 +79,22 @@ describe('Authentication endpoints', function() {
       }, done);
     });
 
+    it.skip('should allow to authenticate with basic auth', function(done) {
+      request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca')
+        .auth('popol@moon.u', 'test')
+        .expect(200)
+        .end(function(err, res) {
+          assert.deepEqual(res.body, {
+            _id: 'abbacacaabbacacaabbacaca',
+            contents: {
+              name: 'Popol',
+              email: 'popol@moon.u',
+            },
+          });
+          done(err);
+        });
+    });
+
     it('should allow to log in', function(done) {
       request(context.app).post('/api/v0/login')
         .send({
@@ -183,7 +199,7 @@ describe('Authentication endpoints', function() {
         username: 'popol@moon.u',
         password: 'test',
       })
-      .expect(200)
+      .expect(201)
       .end(function(err, res) {
         if(err) {
           return done(err);

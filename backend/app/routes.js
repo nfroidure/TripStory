@@ -44,7 +44,7 @@ function initRoutes(context) {
   context.app.use(bodyParser.urlencoded({
     extended: false,
   }));
-  context.app.use(cookieParser());
+  context.app.use(cookieParser(context.env.SESSION_SECRET));
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
 
   // API

@@ -29,20 +29,24 @@ function initAuthenticationController(context) {
 
   // Serialization
   passport.serializeUser(function passportSerializeUser(user, done) {
-    context.logger.debug('Deserialized user:', user);
+    context.logger.debug('Serialized user:', user._id.toString());
     done(null, user._id.toString());
   });
   passport.deserializeUser(function passportDeserializeUser(id, done) {
-    context.logger.debug('Serialized user:', id);
+    context.logger.debug('Deserialized user:', id);
     done(null, { _id: id });
   });
 
   // Local strategies
   passport.use('local', new LocalStrategy({
     passReqToCallback: true,
+    usernameField: 'username',
+    passwordField: 'password',
   }, localLoginLogic));
   passport.use('local-signup', new LocalStrategy({
     passReqToCallback: true,
+    usernameField: 'username',
+    passwordField: 'password',
   }, localSignupLogic));
   passport.use(new BasicStrategy({
     passReqToCallback: true,

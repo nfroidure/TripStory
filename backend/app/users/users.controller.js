@@ -25,6 +25,7 @@ function initUsersController(context) {
   }
 
   function userControllerGet(req, res, next) {
+    console.log('TEST');
     context.db.collection('users').findOne({
       _id: castToObjectId(req.params.user_id),
     })

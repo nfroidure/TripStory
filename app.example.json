@@ -13,6 +13,10 @@
   },
   "restart_delay": 100,
   "env": {
+    "PROTOCOL": "http",
+    "DOMAIN": "",
+    "HOST": "localhost",
+    "PORT": "3000",
     "STATIC_PATH": "/mobile/www",
     "FAVICON_PATH": "/mobile/app/images/favicon.png",
     "SESSION_SECRET": "secret",

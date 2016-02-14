@@ -51,10 +51,17 @@ Promise.all([
     res.sendStatus(401);
   };
 
-  context.host = 'localhost';
-  context.port = 3000;
-  context.base = context.env.cors || 'http://' + context.host + ':' + context.port;
-  context.cors = context.env.cors || 'http://' + context.host + ':8100';
+  context.protocol = context.env.PROTOCOL || 'http';
+  context.host = context.env.HOST || 'localhost';
+  context.domain = context.env.DOMAIN || '';
+  context.port = context.env.PORT ?
+    parseInt(context.env.PORT, 10) :
+    3000;
+  context.base = context.protocol + '://' + (
+    context.domain ?
+    context.domain :
+    context.host + ':' + context.port
+  );
   context.logger.debug('Env', context.env);
 
   // Workers
