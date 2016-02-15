@@ -1,28 +1,26 @@
 'use strict';
 
-var TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
-
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var initAuthenticationController = require('./authentication.controller');
 var usersTransforms = require('../users/users.transforms');
-var clone = require('clone');
 var YHTTPError = require('yhttperror');
+var authenticationUtils = require('./authentication.utils');
 
 module.exports = initAuthenticationRoutes;
 
 function initAuthenticationRoutes(context) {
-  var passport = initAuthenticationController(context);
+  context.passport = initAuthenticationController(context);
 
   context.app.use(session({
     secret: context.env.SESSION_SECRET,
     store: new MongoStore({ db: context.db }),
   }));
-  context.app.use(passport.initialize());
-  context.app.use(passport.session());
+  context.app.use(context.passport.initialize());
+  context.app.use(context.passport.session());
 
   context.app.post('/api/v0/login', function(req, res, next) {
-    passport.authenticate('local', {
+    context.passport.authenticate('local', {
       failWithError: true,
       badRequestMessage: 'E_BAD_CREDENTIALS',
     }, function(err, user, message, status) {
@@ -44,7 +42,7 @@ function initAuthenticationRoutes(context) {
   });
 
   context.app.post('/api/v0/signup', function(req, res, next) {
-    passport.authenticate('local-signup', function(err, user) {
+    context.passport.authenticate('local-signup', function(err, user) {
       if (err) {
         return next(YHTTPError.cast(err));
       }
@@ -68,41 +66,47 @@ function initAuthenticationRoutes(context) {
 
   context.app.get(
     '/auth/facebook',
-    initPassportWithAStateObject('facebook',
+    authenticationUtils.initPassportWithAStateObject(context, 'facebook',
     { scope: ['public_profile', 'email', 'user_friends'] }
   ));
   context.app.get(
     '/auth/facebook/callback',
-    checkStateObjectAndPassport('facebook', { failureRedirect: '/me' }),
+    authenticationUtils.checkStateObjectAndPassport(
+      context, 'facebook', { failureRedirect: '/me' }
+    ),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/google',
-    initPassportWithAStateObject('google',
+    authenticationUtils.initPassportWithAStateObject(context, 'google',
     { scope: ['profile', 'email'] }
   ));
 
   context.app.get(
     '/auth/google/callback',
-    checkStateObjectAndPassport('google', { failureRedirect: '/me' }),
+    authenticationUtils.checkStateObjectAndPassport(
+      context, 'google', { failureRedirect: '/me' }
+    ),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/twitter',
-    initPassportWithAStateObject('twitter',
+    authenticationUtils.initPassportWithAStateObject(context, 'twitter',
     { scope: ['profile', 'email'] }
   ));
   context.app.get(
     '/auth/twitter/callback',
-    checkStateObjectAndPassport('twitter', { failureRedirect: '/me' }),
+    authenticationUtils.checkStateObjectAndPassport(
+      context, 'twitter', { failureRedirect: '/me' }
+    ),
     authRedirectToApp
   );
 
   context.app.get(
     '/auth/xee',
-    initPassportWithAStateObject('xee',
+    authenticationUtils.initPassportWithAStateObject(context, 'xee',
     { scope: [
       'user_get', 'email_get', 'car_get', 'data_get',
       'location_get', 'address_all', 'accelerometer_get',
@@ -110,7 +114,9 @@ function initAuthenticationRoutes(context) {
   ));
   context.app.get(
     '/auth/xee/callback',
-    checkStateObjectAndPassport('xee', { failureRedirect: '/me' }),
+    authenticationUtils.checkStateObjectAndPassport(
+      context, 'xee', { failureRedirect: '/me' }
+    ),
     authRedirectToApp
   );
 
@@ -122,7 +128,7 @@ function initAuthenticationRoutes(context) {
 
   context.app.get(
     '/api/v0/me',
-    passport.authenticate('basic', { session: false }),
+    context.passport.authenticate('basic', { session: false }),
     authRedirectToProfile
   );
 
@@ -142,49 +148,4 @@ function initAuthenticationRoutes(context) {
     res.sendStatus(301);
   }
 
-  function initPassportWithAStateObject(type, params) {
-    return function initPassportWithAStateObjectCb(req, res, next) {
-      var stateContents = {
-        type: type,
-      };
-      var state;
-
-      params = clone(params);
-
-      if(req.isAuthenticated()) {
-        stateContents.user_id = req.session.passport.user;
-      }
-      if(req.user) {
-        stateContents.user_id = req.user._id.toString();
-      }
-      state = context.tokens.createToken(
-        stateContents,
-        (new Date(context.time() + TOKEN_DURATION)).getTime()
-      );
-      params.state = (new Buffer(JSON.stringify(state))).toString('base64');
-      // Extra glue for twitter OAuth1...
-      if('twitter' === type) {
-        params.callbackURL = context.base + '/auth/twitter/callback?state=' +
-          params.state;
-      }
-      context.logger.debug('Assigned a state', state);
-      passport.authenticate(type, params)(req, res, next);
-    };
-  }
-
-  function checkStateObjectAndPassport(type, options) {
-    return function checkStateObjectAndPassportCb(req, res, next) {
-      var state;
-
-      try {
-        state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));
-        context.tokens.checkToken(state, state.hash);
-      } catch(err) {
-        return next(YHTTPError.cast(err));
-      }
-      context.logger.debug('Collected a state', state);
-      req._authState = state;
-      passport.authenticate(type, options)(req, res, next);
-    };
-  }
 }

@@ -21,7 +21,9 @@ module.exports = initRoutes;
 function initRoutes(context) {
 
   // Middlewares
-  context.app.use(initCors(context));
+  if(context.env.CORS) {
+    context.app.use(initCors(context));
+  }
   if(context.env.STATIC_PATH) {
     context.app.use(express.static(path.join(
       process.cwd(),
