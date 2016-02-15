@@ -2,20 +2,36 @@
 
 [![Build status](https://secure.travis-ci.org/nfroidure/TripStory.png)](https://travis-ci.org/nfroidure/TripStory)
 
+## Frontend
+
+Currently the frontend is in fact an Ionic app mounted as a simple web mobile
+ application. Here is the generator used to create it for reference:
+https://github.com/diegonetto/generator-ionic
+
 ## API
 
 ### Configuration
 ```sh
+# Create the app configuration from the sample config file
 cp app.sample.json app.json && vim app.json
+
+# Install cron jobs for GPS/Social Network syncs
+# note: replace admin:admin per valid credentials
+cat "
+1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_TWITTER_SYNC"
+" > /etc/cron.d/9999-tripstory
+1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_XEE_SYNC"
+" > /etc/cron.d/9999-tripstory
+1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_PSA_SYNC"
+" > /etc/cron.d/9999-tripstory
+
 ```
 
 ### Running the back:
 
 ```sh
-npm start
+npm run run
 ```
-
-En local, le serveur tourne sur localhost:1337, en prod, stripstory.lol.
 
 ### Auth:
 - Facebook: GET /auth/facebook
