@@ -74,7 +74,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'facebook', { failureRedirect: '/me' }
     ),
-    authRedirectToApp
+    authenticationUtils.redirectToApp
   );
 
   context.app.get(
@@ -88,7 +88,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'google', { failureRedirect: '/me' }
     ),
-    authRedirectToApp
+    authenticationUtils.redirectToApp
   );
 
   context.app.get(
@@ -101,7 +101,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'twitter', { failureRedirect: '/me' }
     ),
-    authRedirectToApp
+    authenticationUtils.redirectToApp
   );
 
   context.app.get(
@@ -117,35 +117,19 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'xee', { failureRedirect: '/me' }
     ),
-    authRedirectToApp
+    authenticationUtils.redirectToApp
   );
 
   context.app.get(
     '/api/v0/profile',
     context.checkAuth,
-    authRedirectToProfile
+    authenticationUtils.redirectToProfile
   );
 
   context.app.get(
     '/api/v0/me',
     context.passport.authenticate('basic', { session: false }),
-    authRedirectToProfile
+    authenticationUtils.redirectToProfile
   );
-
-  function authRedirectToApp(req, res) {
-    if(!req.user) {
-      return res.send(401);
-    }
-    res.setHeader('Location', context.base + '/#/app/trips');
-    res.sendStatus(301);
-  }
-
-  function authRedirectToProfile(req, res) {
-    if(!req.user) {
-      return res.send(401);
-    }
-    res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
-    res.sendStatus(301);
-  }
 
 }

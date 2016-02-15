@@ -54,7 +54,7 @@ Promise.all([
   context.protocol = context.env.PROTOCOL || 'http';
   context.host = context.env.HOST || 'localhost';
   context.domain = context.env.DOMAIN || '';
-  context.port = context.env.PORT ?
+  context.port = 'undefined' !== typeof context.env.PORT ?
     parseInt(context.env.PORT, 10) :
     3000;
   context.base = context.protocol + '://' + (

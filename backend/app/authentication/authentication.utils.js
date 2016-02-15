@@ -12,6 +12,8 @@ var authenticationUtils = {
   comparePasswordToHash: authenticationUtilsComparePasswordToHash,
   initPassportWithAStateObject: initPassportWithAStateObject,
   checkStateObjectAndPassport: checkStateObjectAndPassport,
+  redirectToApp: authUtilsRedirectToApp,
+  redirectToProfile: authUtilsRedirectToProfile,
 };
 
 module.exports = authenticationUtils;
@@ -94,4 +96,20 @@ function checkStateObjectAndPassport(context, type, options) {
     req._authState = state;
     context.passport.authenticate(type, options)(req, res, next);
   };
+}
+
+function authUtilsRedirectToApp(req, res) {
+  if(!req.user) {
+    return res.send(401);
+  }
+  res.setHeader('Location', context.base + '/#/app/trips');
+  res.sendStatus(301);
+}
+
+function authUtilsRedirectToProfile(req, res) {
+  if(!req.user) {
+    return res.send(401);
+  }
+  res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
+  res.sendStatus(301);
 }
