@@ -18,13 +18,25 @@ cp app.sample.json app.json && vim app.json
 # Install cron jobs for GPS/Social Network syncs
 # note: replace admin:admin per valid credentials
 cat "
-1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_TWITTER_SYNC"
-" > /etc/cron.d/9999-tripstory
-1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_XEE_SYNC"
-" > /etc/cron.d/9999-tripstory
-1 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d "exchange=A_PSA_SYNC"
-" > /etc/cron.d/9999-tripstory
+# TripStory application timer
 
+# Trigger a Xee sync every 2 minutes
+# http://crontab.guru/#*/2_*_*_*_*
+*/2 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d \"exchange=A_XEE_SYNC\"
+
+# Trigger a PSA sync every 2 minutes
+# http://crontab.guru/#*/2_*_*_*_*
+*/2 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d \"exchange=A_PSA_SYNC\"
+
+# Trigger a Twitter sync every 10 minutes
+# http://crontab.guru/#*/10_*_*_*_*
+*/10 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d \"exchange=A_TWITTER_SYNC\"
+
+# Trigger a Facebook sync every 10 minutes
+# http://crontab.guru/#*/10_*_*_*_*
+*/10 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d \"exchange=A_FACEBOOK_SYNC\"
+
+" > /etc/cron.d/9999-tripstory
 ```
 
 ### Running the back:
