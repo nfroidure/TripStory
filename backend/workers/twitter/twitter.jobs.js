@@ -36,7 +36,7 @@ function twitterSyncJob(context) {
           },
           function twitterSearchHandler(err, tweets) {
             if(err) {
-              reject(err);
+              return reject(err);
             }
             context.logger.debug(JSON.stringify(tweets, null, 2));
             resolve(Promise.all(tweets.statuses.map(function(status) {
@@ -89,7 +89,7 @@ function pairTwitterFriends(context, user) {
       {},
       function twitterSearchHandler(err, tweets) {
         if(err) {
-          reject(err);
+          return reject(err);
         }
 
         context.logger.debug('Retrieved twitter friends', tweets);
