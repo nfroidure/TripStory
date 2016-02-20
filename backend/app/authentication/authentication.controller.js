@@ -17,8 +17,8 @@ var YHTTPError = require('yhttperror');
 var fs = require('fs');
 var nock = require('nock');
 var appendLogToFile = function(content) {
-  fs.appendFile('../google.txt', content);
-}
+  fs.appendFile('../nock.txt', content);
+};
 nock.recorder.rec({
   logging: appendLogToFile,
 });*/

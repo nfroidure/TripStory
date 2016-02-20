@@ -12,8 +12,8 @@ var authenticationUtils = {
   comparePasswordToHash: authenticationUtilsComparePasswordToHash,
   initPassportWithAStateObject: initPassportWithAStateObject,
   checkStateObjectAndPassport: checkStateObjectAndPassport,
-  redirectToApp: authUtilsRedirectToApp,
-  redirectToProfile: authUtilsRedirectToProfile,
+  redirectToApp: authenticationUtilsRedirectToApp,
+  redirectToProfile: authenticationUtilsRedirectToProfile,
 };
 
 module.exports = authenticationUtils;
@@ -98,7 +98,7 @@ function checkStateObjectAndPassport(context, type, options) {
   };
 }
 
-function authUtilsRedirectToApp(req, res) {
+function authenticationUtilsRedirectToApp(req, res) {
   if(!req.user) {
     return res.send(401);
   }
@@ -106,7 +106,7 @@ function authUtilsRedirectToApp(req, res) {
   res.sendStatus(301);
 }
 
-function authUtilsRedirectToProfile(req, res) {
+function authenticationUtilsRedirectToProfile(req, res) {
   if(!req.user) {
     return res.send(401);
   }
