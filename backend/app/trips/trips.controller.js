@@ -5,6 +5,7 @@ var tripsTransforms = require('./trips.transforms');
 var eventsTransforms = require('../events/events.transforms');
 var controllersUtils = require('../utils/controllers');
 var Promise = require('bluebird');
+var YHTTPError = require('yhttperror');
 
 module.exports = initTripsController;
 
@@ -19,96 +20,23 @@ function initTripsController(context) {
   return tripController;
 
   function tripControllerList(req, res, next) {
-    context.db.collection('events').aggregate([{
-      $match: {
-        $or: [{
-          owner_id: castToObjectId(req.params.user_id),
-        }, {
-          'trip.friends_ids': castToObjectId(req.params.user_id),
-        }],
-        'contents.type': {
-          $in: ['trip-start', 'trip-stop'],
-        },
-      },
-    }, {
-      $sort: {
-        'created.seal_date': 1,
-      },
-    }, {
-      $project: {
-        _id: '$contents.trip_id',
-        contents: '$trip',
-        created: '$created',
-        ended: { $cond: {
-          if: { $eq: ['trip-stop', '$contents.type'] },
-          then: '$created',
-          else: null,
-        } },
-      },
-    }, {
-      $group: {
-        _id: '$_id',
-        contents: { $first: '$contents' },
-        created: { $first: '$created' },
-        modified: { $last: '$created' },
-        ended: { $last: '$ended' },
-      },
-    }]).toArray()
-    .then(function(entries) {
-      res.status(200).send(entries.map(tripsTransforms.fromCollection));
-    }).catch(next);
+    createTripListAggregateStages(context, req)
+      .then(executeAggregate.bind(null, context, 'events'))
+      .then(mapEntries.bind(
+        null,
+        context,
+        tripsTransforms.fromCollection
+      ))
+      .then(sendPayload.bind(null, context, res, 200))
+      .catch(next);
   }
 
   function tripControllerGet(req, res, next) {
-    context.db.collection('events').aggregate([{
-      $match: {
-        $or: [{
-          owner_id: castToObjectId(req.params.user_id),
-        }, {
-          'trip.friends_ids': castToObjectId(req.params.user_id),
-        }],
-        'contents.trip_id': castToObjectId(req.params.trip_id),
-      },
-    }, {
-      $project: {
-        _id: '$contents.trip_id',
-        contents: '$trip',
-        created: '$created',
-        ended: { $cond: {
-          if: { $eq: ['trip-stop', '$contents.type'] },
-          then: '$created',
-          else: null,
-        } },
-        event: {
-          _id: '$_id',
-          created: '$created',
-          contents: '$contents',
-        },
-      },
-    }, {
-      $sort: {
-        'event.created.seal_date': 1,
-      },
-    }, {
-      $group: {
-        _id: '$_id',
-        contents: { $first: '$contents' },
-        events: { $push: '$event' },
-        created: { $first: '$created' },
-        modified: { $last: '$created' },
-        ended: { $last: '$ended' },
-      },
-    }]).toArray()
-    .then(function(entries) {
-      var payload;
-
-      if(!entries.length) {
-        return res.sendStatus(404);
-      }
-      payload = tripsTransforms.fromCollection(entries[0]);
-      payload.events = entries[0].events.map(eventsTransforms.fromCollection);
-      res.status(200).send(payload);
-    }).catch(next);
+    createTripGetAggregateStages(context, req)
+      .then(executeAggregate.bind(null, context, 'events'))
+      .then(castResultsToEvent.bind(null, context))
+      .then(sendPayload.bind(null, context, res, 200))
+      .catch(next);
   }
 
   function tripControllerPut(req, res, next) {
@@ -176,4 +104,111 @@ function initTripsController(context) {
       });
     }).catch(next);
   }
+}
+
+function createTripListAggregateStages(context, req) {
+  return Promise.resolve().then(function() {
+    return [{
+      $match: {
+        $or: [{
+          owner_id: castToObjectId(req.params.user_id),
+        }, {
+          'trip.friends_ids': castToObjectId(req.params.user_id),
+        }],
+        'contents.type': {
+          $in: ['trip-start', 'trip-stop'],
+        },
+      },
+    }, {
+      $sort: {
+        'created.seal_date': 1,
+      },
+    }, {
+      $project: {
+        _id: '$contents.trip_id',
+        contents: '$trip',
+        created: '$created',
+        ended: { $cond: {
+          if: { $eq: ['trip-stop', '$contents.type'] },
+          then: '$created',
+          else: null,
+        } },
+      },
+    }, {
+      $group: {
+        _id: '$_id',
+        contents: { $first: '$contents' },
+        created: { $first: '$created' },
+        modified: { $last: '$created' },
+        ended: { $last: '$ended' },
+      },
+    }];
+  });
+}
+
+function mapEntries(context, mapper, entries) {
+  return entries.map(mapper);
+}
+
+function executeAggregate(context, collection, stages) {
+  return context.db.collection(collection).aggregate(stages).toArray();
+}
+
+function sendPayload(context, res, status, payload) {
+  res.status(status).send(payload);
+}
+
+function createTripGetAggregateStages(context, req) {
+  return Promise.resolve().then(function() {
+    return [{
+      $match: {
+        $or: [{
+          owner_id: castToObjectId(req.params.user_id),
+        }, {
+          'trip.friends_ids': castToObjectId(req.params.user_id),
+        }],
+        'contents.trip_id': castToObjectId(req.params.trip_id),
+      },
+    }, {
+      $project: {
+        _id: '$contents.trip_id',
+        contents: '$trip',
+        created: '$created',
+        ended: { $cond: {
+          if: { $eq: ['trip-stop', '$contents.type'] },
+          then: '$created',
+          else: null,
+        } },
+        event: {
+          _id: '$_id',
+          created: '$created',
+          contents: '$contents',
+        },
+      },
+    }, {
+      $sort: {
+        'event.created.seal_date': 1,
+      },
+    }, {
+      $group: {
+        _id: '$_id',
+        contents: { $first: '$contents' },
+        events: { $push: '$event' },
+        created: { $first: '$created' },
+        modified: { $last: '$created' },
+        ended: { $last: '$ended' },
+      },
+    }];
+  });
+}
+
+function castResultsToEvent(context, entries) {
+  var payload;
+
+  if(!entries.length) {
+    throw new YHTTPError(404, 'E_NOT_FOUND');
+  }
+  payload = tripsTransforms.fromCollection(entries[0]);
+  payload.events = entries[0].events.map(eventsTransforms.fromCollection);
+  return payload;
 }
