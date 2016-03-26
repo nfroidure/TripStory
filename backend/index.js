@@ -1,6 +1,9 @@
 'use strict';
 
-var aac = require('@jbpionnier/api-analytics-client'); // eslint-disable-line
+if(process.env.API_ANALYTICS_KEY) { // eslint-disable-line
+  var aac = require('@jbpionnier/api-analytics-client'); // eslint-disable-line
+  var analytics = require('@jbpionnier/api-analytics-client/express'); // eslint-disable-line
+} // eslint-disable-line
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
@@ -52,6 +55,15 @@ Promise.all([
     }
     res.sendStatus(401);
   };
+
+  if(context.env.API_ANALYTICS_KEY) {
+    context.analyticsAgent = analytics({
+      apiKey: context.env.API_ANALYTICS_KEY,
+      uuidResolver: function agentUuidResolver(req) {
+        return req.user ? req.user._id : null;
+      },
+    });
+  }
 
   context.protocol = context.env.PROTOCOL || 'http';
   context.host = context.env.HOST || 'localhost';

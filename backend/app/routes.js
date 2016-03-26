@@ -21,6 +21,9 @@ module.exports = initRoutes;
 function initRoutes(context) {
 
   // Middlewares
+  if(context.analyticsAgent) {
+    context.app.use(context.analyticsAgent);
+  }
   if(context.env.CORS) {
     context.app.use(initCors(context));
   }
