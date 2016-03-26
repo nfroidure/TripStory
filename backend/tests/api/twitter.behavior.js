@@ -20,13 +20,6 @@ describe('OAuth Twitter endpoints', function() {
 
   before(function(done) {
     context = {};
-    context.checkAuth = function(req, res, next) {
-      console.log('checkAuth')
-      if(context.mockAuthenticated) {
-        return next();
-      }
-      res.sendStatus(401);
-    };
     context.tokens = {
       createToken: sinon.stub().returns({
         contents: { fake: 'token' },
@@ -71,10 +64,6 @@ describe('OAuth Twitter endpoints', function() {
 
   afterEach(function(done) {
     context.db.collection('sessions').deleteMany({}, done);
-  });
-
-  beforeEach(function() {
-    context.mockAuthenticated = false;
   });
 
   describe('entry point', function() {
@@ -245,6 +234,16 @@ describe('OAuth Twitter endpoints', function() {
                     refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
+                rights: [{
+                  methods: 127,
+                  path: '/api/v0/users/:_id/?.*',
+                }, {
+                  methods: 7,
+                  path: '/api/v0/profile',
+                }, {
+                  methods: 8,
+                  path: '/api/v0/logout',
+                }],
               });
               done();
             }).catch(done);

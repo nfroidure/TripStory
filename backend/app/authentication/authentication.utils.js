@@ -2,12 +2,15 @@
 
 var bcrypt = require('bcrypt');
 var clone = require('clone');
+var reaccess = require('express-reaccess');
 var YHTTPError = require('yhttperror');
 
 var DEFAULT_TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
 
 var authenticationUtils = {
   normalizeEmail: authenticationUtilsNormalizeEmail,
+  createDefaultRights: authenticationUtilsCreateDefaultRights,
+  createRights: authenticationUtilsCreateRights,
   createPasswordHash: authenticationUtilsCreatePasswordHash,
   comparePasswordToHash: authenticationUtilsComparePasswordToHash,
   initPassportWithAStateObject: initPassportWithAStateObject,
@@ -20,6 +23,42 @@ module.exports = authenticationUtils;
 
 function authenticationUtilsNormalizeEmail(email) {
   return email.toLowerCase().trim();
+}
+
+function authenticationUtilsCreateDefaultRights() {
+  return [{
+    // OAuth rights
+    path: '/auth/(facebook|xee|google|twitter)(/callback)?',
+    methods: reaccess.READ_MASK,
+  }, {
+    // Login/signup
+    path: '/api/v0/(login|signup)',
+    methods: reaccess.POST,
+  }, {
+    // Basic authentication
+    path: '/api/v0/me',
+    methods: reaccess.READ_MASK,
+  }, {
+    // Ping
+    path: '/ping',
+    methods: reaccess.READ_MASK,
+  }];
+}
+
+function authenticationUtilsCreateRights() {
+  return [{
+    // User relative rights
+    path: '/api/v0/users/:_id/?.*',
+    methods: reaccess.ALL_MASK,
+  }, {
+    // Profile
+    path: '/api/v0/profile',
+    methods: reaccess.READ_MASK,
+  }, {
+    // Logout
+    path: '/api/v0/logout',
+    methods: reaccess.POST,
+  }];
 }
 
 function authenticationUtilsCreatePasswordHash(password) {

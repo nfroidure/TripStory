@@ -48,13 +48,6 @@ Promise.all([
     secret: context.env.TOKEN_SECRET,
     time: context.time,
   });
-  context.checkAuth = function isLoggedIn(req, res, next) {
-    context.logger.debug('isLoggedIn', req.isAuthenticated(), req.user);
-    if(req.user || req.isAuthenticated()) {
-      return next();
-    }
-    res.sendStatus(401);
-  };
 
   if(context.env.API_ANALYTICS_KEY) {
     context.analyticsAgent = analytics({

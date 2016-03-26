@@ -20,12 +20,6 @@ describe('OAuth XEE endpoints', function() {
 
   before(function(done) {
     context = {};
-    context.checkAuth = function(req, res, next) {
-      if(context.mockAuthenticated) {
-        return next();
-      }
-      res.sendStatus(401);
-    };
     context.tokens = {
       createToken: sinon.stub().returns({
         contents: { fake: 'token' },
@@ -66,10 +60,6 @@ describe('OAuth XEE endpoints', function() {
 
   afterEach(function(done) {
     context.db.collection('users').deleteMany({}, done);
-  });
-
-  beforeEach(function() {
-    context.mockAuthenticated = false;
   });
 
   describe('entry point', function() {
@@ -167,7 +157,7 @@ describe('OAuth XEE endpoints', function() {
           '&client_secret=' + context.env.XEE_SECRET +
           '&code=THISISIT' // eslint-disable-line
         )
-          //.expect(301)
+          .expect(301)
           .end(function(err, res) {
             if(err) {
               return done(err);
@@ -190,6 +180,16 @@ describe('OAuth XEE endpoints', function() {
                     refreshToken: 'COME_AGAIN_MAN',
                   },
                 },
+                rights: [{
+                  methods: 127,
+                  path: '/api/v0/users/:_id/?.*',
+                }, {
+                  methods: 7,
+                  path: '/api/v0/profile',
+                }, {
+                  methods: 8,
+                  path: '/api/v0/logout',
+                }],
               });
               done();
             }).catch(done);

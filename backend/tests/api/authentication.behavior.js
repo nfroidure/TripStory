@@ -16,12 +16,6 @@ describe('Authentication endpoints', function() {
 
   before(function(done) {
     context = {};
-    context.checkAuth = function(req, res, next) {
-      if(context.mockAuthenticated) {
-        return next();
-      }
-      res.sendStatus(401);
-    };
     context.tokens = {
       createToken: sinon.stub().returns({
         fake: 'token',
@@ -61,10 +55,6 @@ describe('Authentication endpoints', function() {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function() {
-    context.mockAuthenticated = false;
-  });
-
   describe('for existing users', function() {
 
     beforeEach(function(done) {
@@ -76,10 +66,14 @@ describe('Authentication endpoints', function() {
         },
         emailKeys: ['popol@moon.u'],
         passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
+        rights: [{
+          path: '/.*',
+          methods: 127,
+        }],
       }, done);
     });
 
-    it.skip('should allow to authenticate with basic auth', function(done) {
+    it('should allow to authenticate with basic auth', function(done) {
       request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca')
         .auth('popol@moon.u', 'test')
         .expect(200)
@@ -165,8 +159,8 @@ describe('Authentication endpoints', function() {
     });
 
     it('should allow to log out when authenticated', function(done) {
-      context.mockAuthenticated = true;
       request(context.app).post('/api/v0/logout')
+        .auth('popol@moon.u', 'test')
         .expect(204)
         .end(function(err) {
           done(err);

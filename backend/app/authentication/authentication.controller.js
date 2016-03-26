@@ -13,15 +13,6 @@ var castToObjectId = require('mongodb').ObjectId;
 var authenticationUtils = require('./authentication.utils');
 var Promise = require('bluebird');
 var YHTTPError = require('yhttperror');
-/*
-var fs = require('fs');
-var nock = require('nock');
-var appendLogToFile = function(content) {
-  fs.appendFile('../nock.txt', content);
-};
-nock.recorder.rec({
-  logging: appendLogToFile,
-});*/
 
 module.exports = initAuthenticationController;
 
@@ -34,7 +25,11 @@ function initAuthenticationController(context) {
   });
   passport.deserializeUser(function passportDeserializeUser(id, done) {
     context.logger.debug('Deserialized user:', id);
-    done(null, { _id: id });
+    context.db.collection('users').findOne({
+      _id: castToObjectId(id),
+    })
+    .then(done.bind(null, null))
+    .catch(done);
   });
 
   // Local strategies
@@ -153,15 +148,7 @@ function initAuthenticationController(context) {
         $setOnInsert: {
           passwordHash: passwordHash,
           _id: upsertId,
-          // Setting the PSA test car
-          cars: [{
-            _id: context.createObjectId(),
-            type: 'psa',
-            name: '206 Blanc Blanquise',
-            vin: context.env.PSA_VIN,
-            contract: context.env.PSA_CONTRACT,
-            code: context.env.PSA_CODE,
-          }],
+          rights: authenticationUtils.createRights(),
         },
       }, {
         upsert: true,
@@ -220,6 +207,7 @@ function initAuthenticationController(context) {
       // been altered to _id: ObjectId('yyy')
       updateQuery.$setOnInsert = {
         _id: upsertId,
+        rights: authenticationUtils.createRights(),
       };
     }
 
@@ -304,6 +292,7 @@ function initAuthenticationController(context) {
       // been altered to _id: ObjectId('yyy')
       updateQuery.$setOnInsert = {
         _id: upsertId,
+        rights: authenticationUtils.createRights(),
       };
     }
 
@@ -370,6 +359,7 @@ function initAuthenticationController(context) {
       // been altered to _id: ObjectId('yyy')
       updateQuery.$setOnInsert = {
         _id: upsertId,
+        rights: authenticationUtils.createRights(),
       };
     }
 
@@ -449,6 +439,7 @@ function initAuthenticationController(context) {
         // been altered to _id: ObjectId('yyy')
         updateQuery.$setOnInsert = {
           _id: upsertId,
+          rights: authenticationUtils.createRights(),
         };
       }
 

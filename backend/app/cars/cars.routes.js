@@ -7,18 +7,18 @@ module.exports = function initCarsRoutes(context) {
 
   context.app.get(
     '/api/v0/users/:user_id/cars',
-    context.checkAuth, carController.list
+    carController.list
   );
   context.app.get(
     '/api/v0/users/:user_id/cars/:car_id',
-    context.checkAuth, carController.get
+    carController.get
   );/*
   context.app.put(
     '/api/v0/users/:user_id/cars/:car_id',
-    context.checkAuth, carController.put
+    carController.put
   );
   context.app.delete(
     '/api/v0/users/:user_id/cars/:car_id',
-    context.checkAuth, carController.delete
+    carController.delete
   );*/
 };

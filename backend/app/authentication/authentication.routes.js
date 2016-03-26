@@ -2,6 +2,8 @@
 
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+var reaccess = require('express-reaccess');
+
 var initAuthenticationController = require('./authentication.controller');
 var usersTransforms = require('../users/users.transforms');
 var YHTTPError = require('yhttperror');
@@ -18,6 +20,16 @@ function initAuthenticationRoutes(context) {
   }));
   context.app.use(context.passport.initialize());
   context.app.use(context.passport.session());
+  context.app.use(function setClientRights(req, res, next) {
+    req._rights = (req.user && req.user.rights ? req.user.rights : [])
+      .concat(authenticationUtils.createDefaultRights());
+    next();
+  });
+  context.app.use(reaccess({
+    rightsProps: ['_rights'],
+    valuesProps: ['user'],
+    accessErrorMessage: 'E_UNAUTHORIZED',
+  }));
 
   context.app.post('/api/v0/login', function(req, res, next) {
     context.passport.authenticate('local', {
@@ -58,7 +70,7 @@ function initAuthenticationRoutes(context) {
     })(req, res, next);
   });
 
-  context.app.post('/api/v0/logout', context.checkAuth, function authLogout(req, res) {
+  context.app.post('/api/v0/logout', function authLogout(req, res) {
     req.logout();
     req.session.destroy();
     res.sendStatus(204);
@@ -122,7 +134,6 @@ function initAuthenticationRoutes(context) {
 
   context.app.get(
     '/api/v0/profile',
-    context.checkAuth,
     authenticationUtils.redirectToProfile.bind(null, context)
   );
 

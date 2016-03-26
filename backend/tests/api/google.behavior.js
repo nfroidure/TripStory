@@ -20,12 +20,6 @@ describe('OAuth Google endpoints', function() {
 
   before(function(done) {
     context = {};
-    context.checkAuth = function(req, res, next) {
-      if(context.mockAuthenticated) {
-        return next();
-      }
-      res.sendStatus(401);
-    };
     context.tokens = {
       createToken: sinon.stub().returns({
         contents: { fake: 'token' },
@@ -66,10 +60,6 @@ describe('OAuth Google endpoints', function() {
 
   afterEach(function(done) {
     context.db.collection('users').deleteMany({}, done);
-  });
-
-  beforeEach(function() {
-    context.mockAuthenticated = false;
   });
 
   describe('entry point', function() {
@@ -241,6 +231,16 @@ describe('OAuth Google endpoints', function() {
                   },
                 },
                 emailKeys: ['clown@fake.fr'],
+                rights: [{
+                  methods: 127,
+                  path: '/api/v0/users/:_id/?.*',
+                }, {
+                  methods: 7,
+                  path: '/api/v0/profile',
+                }, {
+                  methods: 8,
+                  path: '/api/v0/logout',
+                }],
               });
               done();
             }).catch(done);

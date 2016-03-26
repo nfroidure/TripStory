@@ -1,6 +1,7 @@
 'use strict';
 
 var transformsUtils = require('../utils/transforms');
+var YHTTPError = require('yhttperror');
 
 module.exports = initSystemController;
 
@@ -23,6 +24,11 @@ function initSystemController(context) {
   }
 
   function systemControllerCatchErrors(err, req, res, next) { // eslint-disable-line
+    // Cast reaccess errors to YHTTPError ones
+    if('E_UNAUTHORIZED' === err.message) {
+      err = YHTTPError.wrap(err, req.user ? 403 : 401, req._rights);
+    }
+
     context.logger.error(err.stack);
     res.status(err.status || err.httpCode || 500).send({
       code: err.code || 'E_UNEXPECTED',

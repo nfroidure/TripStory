@@ -7,18 +7,18 @@ module.exports = function initTripsRoutes(context) {
 
   context.app.get(
     '/api/v0/users/:user_id/trips',
-    context.checkAuth, tripController.list
+    tripController.list
   );
   context.app.get(
     '/api/v0/users/:user_id/trips/:trip_id',
-    context.checkAuth, tripController.get
+    tripController.get
   );
   context.app.put(
     '/api/v0/users/:user_id/trips/:trip_id',
-    context.checkAuth, tripController.put
+    tripController.put
   );
   context.app.delete(
     '/api/v0/users/:user_id/trips/:trip_id',
-    context.checkAuth, tripController.delete
+    tripController.delete
   );
 };
