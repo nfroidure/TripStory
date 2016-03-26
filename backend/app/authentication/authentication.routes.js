@@ -21,8 +21,14 @@ function initAuthenticationRoutes(context) {
   context.app.use(context.passport.initialize());
   context.app.use(context.passport.session());
   context.app.use(function setClientRights(req, res, next) {
-    req._rights = (req.user && req.user.rights ? req.user.rights : [])
-      .concat(authenticationUtils.createDefaultRights());
+    req._rights = authenticationUtils.createDefaultRights();
+    if(!req.user) {
+      return next();
+    }
+    if(!req.user.rights) {
+      return next(new YHTTPError('E_USER_WITHOUT_RIGHTS', req.user._id));
+    }
+    req._rights = req._rights.concat(req.user.rights);
     next();
   });
   context.app.use(reaccess({

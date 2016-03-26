@@ -59,7 +59,7 @@
     function doLogout() {
       AuthService.logout()
         .then(function(status) {
-          $state.go("login");
+          $state.go('login');
         })
         .catch(function(err){
           $scope.fail = err;

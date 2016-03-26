@@ -6,6 +6,7 @@
       'ionic',
       'app.menu',
       'app.profile',
+      'app.destroy',
       'app.cars',
       'app.friends',
       'app.trips',

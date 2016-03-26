@@ -36,6 +36,15 @@
           }
         },
       })
+      .state('app.destroy', {
+        url: '/destroy',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/destroy.html',
+            controller: 'DestroyCtrl'
+          }
+        },
+      })
       .state('app.cars', {
         url: '/cars',
         views: {

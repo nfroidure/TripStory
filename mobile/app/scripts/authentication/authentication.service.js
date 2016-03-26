@@ -12,6 +12,7 @@
     var service = {
       getProfile: getProfile,
       setProfile: setProfile,
+      deleteProfile: deleteProfile,
       log: log,
       signup: signup,
       logout: logout,
@@ -28,13 +29,23 @@
       return profileDeffered.promise;
     }
     function setProfile(profile) {
-      getProfile().then(function(profile) {
+      return getProfile().then(function(profile) {
         return $http.put(
           ENV.apiEndpoint + '/api/v0/users/' + profile._id,
           profile
         ).then(function(res) {
           profileDeffered = $q.defer();
           profileDeffered.resolve(res.data);
+        });
+      });
+    }
+    function deleteProfile(profile) {
+      return getProfile().then(function(profile) {
+        return $http.delete(
+          ENV.apiEndpoint + '/api/v0/users/' + profile._id
+        ).then(function(res) {
+          profileDeffered = $q.defer();
+          profileDeffered.reject();
         });
       });
     }

@@ -25,9 +25,9 @@ function initAuthenticationController(context) {
   });
   passport.deserializeUser(function passportDeserializeUser(id, done) {
     context.logger.debug('Deserialized user:', id);
-    context.db.collection('users').findOne({
+    Promise.resolve(context.db.collection('users').findOne({
       _id: castToObjectId(id),
-    })
+    }))
     .then(done.bind(null, null))
     .catch(done);
   });

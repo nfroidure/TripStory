@@ -72,9 +72,30 @@ function initUsersController(context) {
   }
 
   function userControllerDelete(req, res, next) {
-    context.db.collection('users').deleteOne({
-      _id: castToObjectId(req.params.user_id),
-    })
+    Promise.all([
+      context.db.collection('users').deleteOne({
+        _id: castToObjectId(req.params.user_id),
+      }),
+      context.db.collection('users').updateMany({
+        friends_ids: castToObjectId(req.params.user_id),
+      }, {
+        $pull: {
+          friends_ids: castToObjectId(req.params.user_id),
+        },
+      }),
+      context.db.collection('events').deleteMany({
+        owner_id: castToObjectId(req.params.user_id),
+      }),
+      context.db.collection('events').updateMany({
+        owner_id: { $nin: [castToObjectId(req.params.user_id)] },
+        'trip.friends_ids': castToObjectId(req.params.user_id),
+      }, {
+        $pull: {
+          'trip.friends_ids': castToObjectId(req.params.user_id),
+        },
+      }),
+    ])
+
     .then(function() {
       res.status(410).send();
     }).catch(next);

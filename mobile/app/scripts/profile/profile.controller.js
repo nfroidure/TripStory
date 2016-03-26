@@ -11,6 +11,7 @@
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.goUpdateProfile = goUpdateProfile;
+    $scope.goDestroy = goDestroy;
 
     activate();
 
@@ -23,6 +24,10 @@
 
     function goUpdateProfile() {
       AuthService.setProfile($scope.profile);
+    }
+
+    function goDestroy() {
+      $state.go('app.destroy');
     }
   }
 
