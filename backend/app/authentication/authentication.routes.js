@@ -74,7 +74,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'facebook', { failureRedirect: '/me' }
     ),
-    authenticationUtils.redirectToApp
+    authenticationUtils.redirectToApp.bind(null, context)
   );
 
   context.app.get(
@@ -88,7 +88,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'google', { failureRedirect: '/me' }
     ),
-    authenticationUtils.redirectToApp
+    authenticationUtils.redirectToApp.bind(null, context)
   );
 
   context.app.get(
@@ -101,7 +101,7 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'twitter', { failureRedirect: '/me' }
     ),
-    authenticationUtils.redirectToApp
+    authenticationUtils.redirectToApp.bind(null, context)
   );
 
   context.app.get(
@@ -117,19 +117,19 @@ function initAuthenticationRoutes(context) {
     authenticationUtils.checkStateObjectAndPassport(
       context, 'xee', { failureRedirect: '/me' }
     ),
-    authenticationUtils.redirectToApp
+    authenticationUtils.redirectToApp.bind(null, context)
   );
 
   context.app.get(
     '/api/v0/profile',
     context.checkAuth,
-    authenticationUtils.redirectToProfile
+    authenticationUtils.redirectToProfile.bind(null, context)
   );
 
   context.app.get(
     '/api/v0/me',
     context.passport.authenticate('basic', { session: false }),
-    authenticationUtils.redirectToProfile
+    authenticationUtils.redirectToProfile.bind(null, context)
   );
 
 }

@@ -98,7 +98,7 @@ function checkStateObjectAndPassport(context, type, options) {
   };
 }
 
-function authenticationUtilsRedirectToApp(req, res) {
+function authenticationUtilsRedirectToApp(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
@@ -106,7 +106,7 @@ function authenticationUtilsRedirectToApp(req, res) {
   res.sendStatus(301);
 }
 
-function authenticationUtilsRedirectToProfile(req, res) {
+function authenticationUtilsRedirectToProfile(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
