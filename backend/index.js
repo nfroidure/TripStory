@@ -1,5 +1,7 @@
 'use strict';
 
+var aac = require('@jbpionnier/api-analytics-client'); // eslint-disable-line
+
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 var express = require('express');

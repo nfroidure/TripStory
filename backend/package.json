@@ -13,6 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@jbpionnier/api-analytics-client": "^0.1.17",
     "bcrypt": "^0.8.5",
     "bluebird": "^3.0.5",
     "body-parser": "^1.14.1",
