@@ -21,9 +21,6 @@ module.exports = initRoutes;
 function initRoutes(context) {
 
   // Middlewares
-  if(context.analyticsAgent) {
-    context.app.use(context.analyticsAgent);
-  }
   if(context.env.CORS) {
     context.app.use(initCors(context));
   }
@@ -52,6 +49,10 @@ function initRoutes(context) {
   context.app.use(cookieParser(context.env.SESSION_SECRET));
   context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
 
+  if(context.analyticsAgent) {
+    context.app.use(context.analyticsAgent);
+  }
+  
   // API
   initAuthenticationRoutes(context);
   initUsersRoutes(context);
