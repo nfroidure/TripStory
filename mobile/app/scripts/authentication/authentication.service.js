@@ -109,7 +109,7 @@
           }
           profileDeffered = $q.defer();
           profileDeffered.resolve(res.data);
-        });;
+        });
     }
   }
 

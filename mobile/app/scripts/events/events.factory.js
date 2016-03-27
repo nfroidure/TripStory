@@ -21,6 +21,12 @@
         return AuthService.getProfile().then(function(profile){
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events/' + idTrip;
           return $http.get(url);
+        })
+        .then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
 
@@ -28,12 +34,25 @@
         return AuthService.getProfile().then(function(profile){
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events';
           return $http.get(url);
+        })
+        .then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
 
       function put(event) {
         return AuthService.getProfile().then(function(profile){
-          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events/' + createObjectId(), event);
+          event._id = event._id || createObjectId();
+          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events/' + event._id, event);
+        })
+        .then(function(response) {
+          if(201 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
   }

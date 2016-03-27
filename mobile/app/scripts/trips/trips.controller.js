@@ -79,10 +79,9 @@
     }
   }
 
-    TripsCtrl.$inject = [
-      '$scope', '$state', '$stateParams', '$ionicModal', '$q',
-      'tripsFactory', 'carsFactory', 'friendsFactory',
-    ];
+  StartTripCtrl.$inject = [
+    '$scope', 'tripsFactory',
+  ];
   /* @ngInject */
   function StartTripCtrl($scope, tripsFactory) {
     $scope.newTrip = {
@@ -109,7 +108,7 @@
             return;
           }
           $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });;
+        });
     }
 
   }

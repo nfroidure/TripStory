@@ -3,16 +3,17 @@
 
   angular
     .module('app.trips')
-    .controller('TripCtrl', TripCtrl);
+    .controller('TripCtrl', TripCtrl)
+    .controller('StopTripCtrl', StopTripCtrl);
 
   TripCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal',
-    'tripsFactory', 'eventsFactory',
+    'tripsFactory',
   ];
   /* @ngInject */
   function TripCtrl(
     $scope, $state, $stateParams, $ionicModal,
-    tripsFactory, eventsFactory
+    tripsFactory
   ) {
     $scope.trip = null;
     $scope.canStopTrip = false;
@@ -21,17 +22,9 @@
     $scope.goToMember = goToMember;
     $scope.mapClassEvent = mapClassEvent;
     $scope.goToMap = goToMap;
-    $scope.showStopTripModal = showStopTripModal;
-    $scope.closeStopTripModal = closeStopTripModal;
     $scope.stopTrip = stopTrip;
+    $scope.closeStopTrip = closeStopTrip;
     $scope.refresh = activate;
-
-    $ionicModal.fromTemplateUrl('./templates/stopTripModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
 
     activate();
 
@@ -67,25 +60,51 @@
       return classes[type];
     }
 
-    function showStopTripModal() {
-      $scope.tripStopEvent = {
-        contents: {
-          type: 'trip-stop',
-          trip_id: $stateParams.trip_id,
-        },
-      };
-      $scope.modal.show();
+    function stopTrip() {
+      $ionicModal.fromTemplateUrl('./templates/stopTripModal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.stopTripModal = modal;
+        modal.show();
+      });
     }
 
-    function closeStopTripModal() {
-      $scope.modal.hide();
+    function closeStopTrip() {
+      $scope.stopTripModal.remove();
+      delete $scope.stopTripModal;
     }
+  }
+
+  StopTripCtrl.$inject = [
+    '$scope', '$stateParams', 'eventsFactory',
+  ];
+  /* @ngInject */
+  function StopTripCtrl($scope, $stateParams, eventsFactory) {
+    $scope.tripStopEvent = {
+      contents: {
+        type: 'trip-stop',
+        trip_id: $stateParams.trip_id,
+      },
+    };
+    $scope.stopTrip = stopTrip;
 
     function stopTrip() {
+      if($scope.stopTripForm.$invalid) {
+        return;
+      }
+      $scope.fail = '';
       eventsFactory.put($scope.tripStopEvent)
         .then(function() {
-          $scope.closeStopTripModal();
-          activate();
+          $scope.closeStopTrip();
+          $scope.refresh();
+        })
+        .catch(function(err) {
+          if (0 >= err.status) {
+            $scope.fail = 'E_NETWORK';
+            return;
+          }
+          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
         });
     }
   }

@@ -2,16 +2,29 @@
   <ion-header-bar>
     <h1 class="title">End this trip?</h1>
     <div class="buttons">
-      <button class="button button-clear" ng-click="closeStopTripModal()">Close</button>
+      <button class="button button-clear" ng-click="closeStopTrip()">Close</button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <form ng-submit="stopTrip()">
+    <form name="stopTripForm" novalidate
+      ng-submit="stopTrip()" ng-controller="StopTripCtrl">
       <div class="list">
         <label class="item item-input">
-          <span class="input-label">End note</span>
-          <input type="text" ng-model="newTrip.contents.description" required>
+          <span class="input-label"
+            ng-class="{
+              'assertive' : stopTripForm.description.$invalid && stopTripForm.$submitted
+            }">End note</span>
+          <input type="text" name="description" required
+            ng-model="newTrip.contents.description">
         </label>
+        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Unexpected error! We are going to fix it soon!
+        </p>
+        <p class="item" ng-if="fail == 'E_NETWORK'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Looks like the network is bad, try later ;).
+        </p>
         <label class="item">
           <button class="button button-block button-positive" type="submit">
             End the trip
