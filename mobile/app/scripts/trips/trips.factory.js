@@ -18,20 +18,38 @@
       ////////////////
 
       function get(idTrip) {
-        return AuthService.getProfile().then(function(profile){
+        return AuthService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + idTrip;
           return $http.get(url);
+        })
+        .then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
       function list() {
-        return AuthService.getProfile().then(function(profile){
+        return AuthService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips';
           return $http.get(url);
+        })
+        .then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
       function put(trip) {
         return AuthService.getProfile().then(function(profile){
           return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + createObjectId(), trip);
+        })
+        .then(function(response) {
+          if(201 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
   }

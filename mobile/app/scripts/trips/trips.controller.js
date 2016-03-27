@@ -3,7 +3,8 @@
 
   angular
     .module('app.trips')
-    .controller('TripsCtrl', TripsCtrl);
+    .controller('TripsCtrl', TripsCtrl)
+    .controller('StartTripCtrl', StartTripCtrl);
 
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
@@ -20,19 +21,10 @@
     $scope.canStartTrip = false;
     $scope.state = 'loading';
 
-    $scope.newTrip = {};
-
-    $scope.showStartTripModal = showStartTripModal;
-    $scope.closeStartTripModal = closeStartTripModal;
+    $scope.createTrip = createTrip;
+    $scope.closeCreateTrip = closeCreateTrip;
     $scope.goToTrip = goToTrip;
-    $scope.submitTrip = submitTrip;
-
-    $ionicModal.fromTemplateUrl('./templates/startTripModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
+    $scope.refresh = activate;
 
     activate()
 
@@ -67,29 +59,58 @@
       });
     }
 
-    function goToTrip(tripId){
+    function createTrip() {
+      $ionicModal.fromTemplateUrl('./templates/startTripModal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.createTripModal = modal;
+        modal.show();
+      });
+    }
+
+    function closeCreateTrip() {
+      $scope.createTripModal.remove();
+      delete $scope.createTripModal;
+    }
+
+    function goToTrip(tripId) {
       $state.go('app.trip', { trip_id: tripId });
     }
+  }
 
-    function showStartTripModal(){
-      $scope.newTrip = {
-        contents: {
-          friends_ids: [],
-        },
-      };
-      $scope.modal.show();
-    }
+    TripsCtrl.$inject = [
+      '$scope', '$state', '$stateParams', '$ionicModal', '$q',
+      'tripsFactory', 'carsFactory', 'friendsFactory',
+    ];
+  /* @ngInject */
+  function StartTripCtrl($scope, tripsFactory) {
+    $scope.newTrip = {
+      contents: {
+        friends_ids: [],
+      },
+    };
+    $scope.submitTrip = submitTrip;
 
-    function closeStartTripModal(){
-      $scope.modal.hide();
-    }
-
-    function submitTrip(){
+    function submitTrip() {
+      if($scope.tripForm.$invalid) {
+        return;
+      }
+      $scope.fail = '';
       tripsFactory.put($scope.newTrip)
-        .then(function() {
-          activate();
-          $scope.closeStartTripModal();
-        });
+        .then(function(response) {
+          $scope.closeCreateTrip();
+          $scope.refresh();
+          $scope.goToTrip(response.data._id);
+        })
+        .catch(function(err) {
+          if (0 >= err.status) {
+            $scope.fail = 'E_NETWORK';
+            return;
+          }
+          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
+        });;
     }
+
   }
 })();

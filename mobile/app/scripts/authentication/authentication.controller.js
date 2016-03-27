@@ -57,7 +57,7 @@
             return;
           }
           $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });;
+        });
     }
   }
 })();

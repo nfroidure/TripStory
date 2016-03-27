@@ -2,23 +2,38 @@
   <ion-header-bar>
     <h1 class="title">Start a new trip</h1>
     <div class="buttons">
-      <button class="button button-clear" ng-click="closeCreateTripModal()">Close</button>
+      <button class="button button-clear" ng-click="closeCreateTrip()">Close</button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <form ng-submit="submitTrip()">
+    <form name="tripForm" novalidate
+      ng-submit="submitTrip()" ng-controller="StartTripCtrl">
       <div class="list">
         <label class="item item-input">
-          <span class="input-label">Title</span>
-          <input type="text" ng-model="newTrip.contents.title" required>
+          <span class="input-label"
+            ng-class="{
+              'assertive' : tripForm.title.$invalid && tripForm.$submitted
+            }">Title</span>
+          <input type="text" name="title" placeholder="ex: Very bad trip" required
+            ng-model="newTrip.contents.title">
        </label>
         <label class="item item-input">
-          <span class="input-label">Description</span>
-          <input type="text" ng-model="newTrip.contents.description" required>
+          <span class="input-label"
+            ng-class="{
+              'assertive' : tripForm.description.$invalid && tripForm.$submitted
+            }">Description</span>
+          <input type="text" name="description"
+            placeholder="ex: Let's trip to Las Vagas!" required
+            ng-model="newTrip.contents.description" required>
         </label>
         <label class="item item-input">
-          <span class="input-label">Hashtag</span>
-          <input type="text" ng-model="newTrip.contents.hash" required>
+          <span class="input-label"
+            ng-class="{
+              'assertive' : tripForm.hash.$invalid && tripForm.$submitted
+            }">Hashtag</span>
+          <i class="icon ion-pound placeholder-icon"></i>
+          <input type="text" name="hash" placeholder="ex: TheVegasCrew" required
+            ng-model="newTrip.contents.hash" required>
         </label>
         <label class="item item-input item-select" ng-if="cars.length">
           <span class="input-label">Car</span>
@@ -32,6 +47,18 @@
             ng-options="friend._id as friend.contents.name for friend in friends track by friend._id">
           </select>
         </label>
+        <p class="item" ng-if="fail == 'E_RESERVED_HASH'">
+          <i class="icon ion-alert-circled assertive"></i>
+          This hashtag is already taken.
+        </p>
+        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Unexpected error! We are going to fix it soon!
+        </p>
+        <p class="item" ng-if="fail == 'E_NETWORK'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Looks like the network is bad, try later ;).
+        </p>
         <label class="item">
           <button class="button button-block button-positive" type="submit">
             Start tripping
