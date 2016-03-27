@@ -43,7 +43,14 @@
       return getProfile().then(function(profile) {
         return $http.delete(
           ENV.apiEndpoint + '/api/v0/users/' + profile._id
-        ).then(function(res) {
+        )
+        .catch(function(response) {
+          if(410 !== response.status) {
+            throw response;
+          }
+          return response;
+        })
+        .then(function(res) {
           profileDeffered = $q.defer();
           profileDeffered.reject();
         });
