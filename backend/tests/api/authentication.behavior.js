@@ -59,7 +59,7 @@ describe('Authentication endpoints', function() {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe.only('for existing users', function() {
+  describe('for existing users', function() {
 
     beforeEach(function(done) {
       context.db.collection('users').insertOne({
@@ -93,7 +93,7 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it.only('should allow to log in', function(done) {
+    it('should allow to log in', function(done) {
       request(context.app).post('/api/v0/login')
         .send({
           email: 'popol@moon.u',
@@ -224,7 +224,7 @@ describe('Authentication endpoints', function() {
           },
         });
         assert.deepEqual(context.bus.trigger.args, [[{
-          exchange: 'A_LOCAL_LOGIN',
+          exchange: 'A_LOCAL_SIGNUP',
           contents: {
             user_id: userId,
           },

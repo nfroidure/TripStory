@@ -1,19 +1,24 @@
 <ion-view view-title="Profile">
   <ion-content>
-    <form ng-submit="goUpdateProfile()" class="profile-form">
+    <form name="profileForm" novalidate class="profile-form"
+      ng-submit="goUpdateProfile()">
       <div class="list">
         <div class="padding">
           <label class="item item-input">
-            <span class="input-label">Name</span>
-            <input type="text" ng-model="profile.contents.name" required="true">
+            <span class="input-label"
+              ng-class="{
+                'assertive' : profileForm.name.$invalid && profileForm.$submitted
+              }">Name</span>
+            <input type="text" name="name" placeholder="ex: John Doe" required
+              ng-model="profile.contents.name">
           </label>
           <label class="item item-input">
-            <span class="input-label">Email</span>
-            <input type="text" ng-model="profile.contents.email" required="true">
-          </label>
-          <label class="item item-input">
-            <span class="input-label">Avatar</span>
-            <input type="text" ng-model="profile.contents.photo" required="true">
+            <span class="input-label"
+              ng-class="{
+                'assertive' : profileForm.name.$invalid && profileForm.$submitted
+              }">Email</span>
+            <input type="email" name="email" placeholder="ex: john.doe@example.com" required
+              ng-model="profile.contents.email">
           </label>
           <button class="button button-block button-positive"
             type="submit">Update</button>

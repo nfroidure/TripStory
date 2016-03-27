@@ -3,6 +3,7 @@
 var castToObjectId = require('mongodb').ObjectId;
 var usersTransforms = require('./users.transforms');
 var controllersUtils = require('../utils/controllers');
+var YHTTPError = require('yhttperror');
 
 module.exports = initUsersController;
 
@@ -30,7 +31,7 @@ function initUsersController(context) {
     })
     .then(function(entry) {
       if(!entry) {
-        return res.sendStatus(404);
+        throw new YHTTPError(404, 'E_NOT_FOUND', req.params.user_id);
       }
       res.status(200).send(usersTransforms.fromCollection(entry));
     }).catch(next);
