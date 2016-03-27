@@ -14,7 +14,7 @@ function facebookSignupJob(context, event) {
   return context.db.collection('users').findOne({
     _id: event.contents.user_id,
   })
-  .then(pairFacebookFriends);
+  .then(pairFacebookFriends.bind(null, context));
 }
 
 function facebookLoginJob(context, event) {
@@ -37,30 +37,41 @@ function pairFacebookFriends(context, user) {
           return reject(new Error('E_BAD_RESPONSE'));
         }
         context.logger.debug('Retrieved facebook friends:', res.statusCode, body);
-        Promise.all((JSON.parse(body).data || []).map(function syncFriendUsers(friend) {
-          // Update friends that are know in the platform
-          return context.db.collection('users').findOneAndUpdate({
-            'auth.facebook.id': friend.id,
-          }, {
-            $addToSet: {
-              friends_ids: user._id,
-            },
-          }).then(function(result) {
-            return result.value._id;
+        // Update friends that are know in the platform
+        return context.db.collection('users').find({
+          'auth.facebook.id': { $in: JSON.parse(body).data.map(function(friend) {
+            return friend.id;
+          }) },
+        }, {
+          _id: '',
+        }).toArray().then(function(friends) {
+          var friendsIds = friends.map(function(friend) {
+            return friend._id;
           });
-        })).then(function syncUserFriends(friendsIds) {
-          friendsIds = friendsIds.filter(function(a) { return a; });
 
-          if(friendsIds.length) {
-            return context.db.collection('users').updateOne({
+          if(!friendsIds.length) {
+            return Promise.resolve();
+          }
+
+          return Promise.all([
+            context.db.collection('users').updateMany({
+              _id: { $in: friendsIds },
+            }, {
+              $addToSet: {
+                friends_ids: user._id,
+              },
+            }),
+            context.db.collection('users').updateOne({
               _id: user._id,
             }, {
               $addToSet: {
                 friends_ids: { $each: friendsIds },
               },
-            });
-          }
-        }).then(resolve).catch(reject);
+            }),
+          ]);
+        })
+        .then(resolve)
+        .catch(reject);
       }
     );
   });
