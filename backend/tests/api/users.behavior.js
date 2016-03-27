@@ -103,6 +103,47 @@ describe('Users endpoints', function() {
         });
     });
 
+      describe('with friends', function() {
+
+        beforeEach(function(done) {
+          context.db.collection('users').insertOne({
+            _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+            contents: {
+              name: 'Jean De La Fontaine',
+              email: 'jdlf@academie.fr',
+            },
+            friends_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
+          }, done);
+        });
+
+          beforeEach(function(done) {
+            context.db.collection('users').updateOne({
+              _id: castToObjectId('abbacacaabbacacaabbacaca'),
+            }, {
+              $set: {
+                friends_ids: [castToObjectId('b17eb17eb17eb17eb17eb17e')],
+              },
+            }, done);
+          });
+
+        it('should allow to list them', function(done) {
+          request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/friends')
+            .auth('popol@moon.u', 'test')
+            .expect(200)
+            .end(function(err, res) {
+              assert.deepEqual(res.body, [{
+                _id: 'b17eb17eb17eb17eb17eb17e',
+                contents: {
+                  name: 'Jean De La Fontaine',
+                  email: 'jdlf@academie.fr',
+                },
+              }]);
+              done(err);
+            });
+        });
+
+      });
+
     it('should disallow to get others profile', function(done) {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')
