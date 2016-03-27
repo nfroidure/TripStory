@@ -24,5 +24,7 @@
     "pm2": "^0.15.10"
   },
   "dependencies": {
+    "nodemailer": "^2.3.0",
+    "nodemailer-mailgun-transport": "^1.0.1"
   }
 }

@@ -54,6 +54,12 @@ function initAuthenticationRoutes(context) {
         if (err) {
           return next(YHTTPError.cast(err));
         }
+        context.bus.trigger({
+          exchange: 'A_LOCAL_LOGIN',
+          contents: {
+            user_id: user._id,
+          },
+        });
         res.status(200).send(usersTransforms.fromCollection(user));
       });
     })(req, res, next);
@@ -71,6 +77,12 @@ function initAuthenticationRoutes(context) {
         if (err) {
           return next(YHTTPError.cast(err));
         }
+        context.bus.trigger({
+          exchange: 'A_LOCAL_SIGNUP',
+          contents: {
+            user_id: user._id,
+          },
+        });
         res.status(201).send(usersTransforms.fromCollection(user));
       });
     })(req, res, next);

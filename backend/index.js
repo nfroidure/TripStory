@@ -12,11 +12,14 @@ var initRoutes = require('./app/routes');
 var Promise = require('bluebird');
 var winston = require('winston');
 var TokenService = require('sf-token');
+var nodemailer = require('nodemailer');
+var nodemailerMailgunTransport = require('nodemailer-mailgun-transport');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
 var initPSAWorker = require('./workers/psa/psa.bin.js');
 var initTwitterWorker = require('./workers/twitter/twitter.bin.js');
+var initEmailWorker = require('./workers/email/email.bin.js');
 
 var context = {};
 
@@ -58,6 +61,17 @@ Promise.all([
     });
   }
 
+  if(context.env.MAILGUN_KEY && context.env.MAILGUN_DOMAIN) {
+    context.mailer = nodemailer.createTransport(
+      nodemailerMailgunTransport({
+        auth: {
+          api_key: context.env.MAILGUN_KEY,
+          domain: context.env.MAILGUN_DOMAIN,
+        },
+      })
+    );
+  }
+
   context.protocol = context.env.PROTOCOL || 'http';
   context.host = context.env.HOST || 'localhost';
   context.domain = context.env.DOMAIN || '';
@@ -76,6 +90,7 @@ Promise.all([
   initFacebookWorker(context);
   initTwitterWorker(context);
   initXeeWorker(context);
+  initEmailWorker(context);
 
   // Routes
   initRoutes(context);
