@@ -18,8 +18,11 @@
       logout: logout,
     };
     $http.get(ENV.apiEndpoint + '/api/v0/profile')
-      .then(function(res) {
-        profileDeffered.resolve(res.data);
+      .then(function(response) {
+        if(200 !== response.status) {
+          throw response;
+        }
+        profileDeffered.resolve(response.data);
       }).catch(profileDeffered.reject);
     return service;
 
@@ -33,9 +36,12 @@
         return $http.put(
           ENV.apiEndpoint + '/api/v0/users/' + profile._id,
           profile
-        ).then(function(res) {
+        ).then(function(response) {
+          if(201 !== response.status) {
+            throw response;
+          }
           profileDeffered = $q.defer();
-          profileDeffered.resolve(res.data);
+          profileDeffered.resolve(response.data);
         });
       });
     }
@@ -44,13 +50,16 @@
         return $http.delete(
           ENV.apiEndpoint + '/api/v0/users/' + profile._id
         )
+        .then(function(response) {
+          throw response;
+        })
         .catch(function(response) {
           if(410 !== response.status) {
             throw response;
           }
           return response;
         })
-        .then(function(res) {
+        .then(function() {
           profileDeffered = $q.defer();
           profileDeffered.reject();
         });
@@ -58,22 +67,35 @@
     }
     function log(credentials) {
       return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
-        .then(function(res){
-          profileDeffered.promise = $q.when(res.data);
-          return profileDeffered.promise;
+        .then(function(res) {
+          if(200 !== res.status) {
+            throw res;
+          }
+          profileDeffered = $q.defer();
+          profileDeffered.resolve(res.data);
         });
     }
 
     function logout() {
       return $http.post(ENV.apiEndpoint + '/api/v0/logout')
-        .then(function() {
+        .then(function(response) {
+          if(204 !== response.status) {
+            throw response;
+          }
           profileDeffered = $q.defer();
           profileDeffered.reject();
         });
     }
 
     function signup(credentials) {
-      return $http.post(ENV.apiEndpoint + '/api/v0/signup', credentials);
+      return $http.post(ENV.apiEndpoint + '/api/v0/signup', credentials)
+        .then(function(res) {
+          if(201 !== res.status) {
+            throw res;
+          }
+          profileDeffered = $q.defer();
+          profileDeffered.resolve(res.data);
+        });;
     }
   }
 

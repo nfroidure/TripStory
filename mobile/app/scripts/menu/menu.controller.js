@@ -61,8 +61,8 @@
         .then(function(status) {
           $state.go('login');
         })
-        .catch(function(err){
-          $scope.fail = err;
+        .catch(function(err) {
+          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
         });
     }
   }

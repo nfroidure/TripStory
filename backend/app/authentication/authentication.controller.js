@@ -35,12 +35,12 @@ function initAuthenticationController(context) {
   // Local strategies
   passport.use('local', new LocalStrategy({
     passReqToCallback: true,
-    usernameField: 'username',
+    usernameField: 'email',
     passwordField: 'password',
   }, localLoginLogic));
   passport.use('local-signup', new LocalStrategy({
     passReqToCallback: true,
-    usernameField: 'username',
+    usernameField: 'email',
     passwordField: 'password',
   }, localSignupLogic));
   passport.use(new BasicStrategy({
@@ -95,16 +95,16 @@ function initAuthenticationController(context) {
     context.logger.error('No Xee ID!');
   }
 
-  function localLoginLogic(req, username, password, done) {
-    context.logger.debug('Authentication attempt:', username);
+  function localLoginLogic(req, email, password, done) {
+    context.logger.debug('Authentication attempt:', email);
     context.db.collection('users').findOne({
-      emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
+      emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
     }, function(err, user) {
       if (err) {
         return done(err);
       }
       if (!user) {
-        return done(null, false, { message: 'E_BAD_USERNAME' }, 400);
+        return done(null, false, { message: 'E_BAD_EMAIL' }, 400);
       }
 
       authenticationUtils.comparePasswordToHash(password, user.passwordHash)
@@ -118,32 +118,36 @@ function initAuthenticationController(context) {
     });
   }
 
-  function localSignupLogic(req, username, password, done) {
+  function localSignupLogic(req, email, password, done) {
     var upsertId = context.createObjectId();
+    var name = req.body.name;
 
-    context.logger.debug('Signup attempt:', req.body.username, upsertId);
+    context.logger.debug('Signup attempt:', email, name, upsertId);
     Promise.all([
       context.db.collection('users').findOne({
-        emailKeys: { $all: [authenticationUtils.normalizeEmail(username)] },
+        emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
       }),
       authenticationUtils.createPasswordHash(password),
     ]).spread(function(user, passwordHash) {
       if(user) {
         throw new YHTTPError(400, 'E_USER_EXISTS', user._id);
       }
-      if(!req.body.username) {
-        return done(null, false, { message: 'E_BAD_USERNAME' }, 400);
+      if(!email) {
+        return done(null, false, { message: 'E_BAD_EMAIL' }, 400);
       }
-      context.logger.info('Registered a new user', username);
+      if(!name) {
+        return done(null, false, { message: 'E_BAD_NAME' }, 400);
+      }
+      context.logger.info('Registered a new user', email);
       return context.db.collection('users').findOneAndUpdate({
-        emailKey: authenticationUtils.normalizeEmail(username),
+        emailKey: authenticationUtils.normalizeEmail(email),
       }, {
         $set: {
           contents: {
-            name: req.body.username,
-            email: username,
+            name: name,
+            email: email,
           },
-          emailKeys: [authenticationUtils.normalizeEmail(username)],
+          emailKeys: [authenticationUtils.normalizeEmail(email)],
         },
         $setOnInsert: {
           passwordHash: passwordHash,

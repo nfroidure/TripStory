@@ -1,21 +1,45 @@
-<form ng-submit="doSignup()">
+<form name="signupForm" ng-submit="doSignup()" novalidate>
   <div class="list">
     <label class="item item-input">
-      <span class="input-label">Username</span>
-      <input type="text" ng-model="loginData.username">
+      <span class="input-label"
+        ng-class="{
+          'assertive' : signupForm.name.$invalid && signupForm.$submitted
+        }">Name</span>
+      <input type="text" name="name" placeholder="ex: John Doe" required
+        ng-model="loginData.name">
     </label>
     <label class="item item-input">
-      <span class="input-label">Password</span>
-      <input type="password" ng-model="loginData.password">
+      <span class="input-label"
+        ng-class="{
+          'assertive' : signupForm.email.$invalid && signupForm.$submitted
+        }">Email</span>
+      <input type="email" name="email" placeholder="ex: john.doe@example.com" required
+       ng-model="loginData.email">
     </label>
+    <p class="item" ng-if="fail == 'E_USER_EXISTS'">
+      <i class="icon ion-alert-circled assertive"></i>
+      This user already exists!
+    </p>
     <label class="item item-input">
-      <span class="input-label">Password Confirmation</span>
-      <input type="password" ng-model="loginData.passwordConfirmation">
+      <span class="input-label"
+        ng-class="{
+          'assertive' : signupForm.password.$invalid && signupForm.$submitted
+        }">Password</span>
+      <input type="password" name="password" min="6" placeholder="6 chars passwords mininum" required
+        ng-model="loginData.password">
     </label>
-    <div class="padding">
-      <button class="button button-block button-positive"
+    <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+      <i class="icon ion-alert-circled assertive"></i>
+      Unexpected error! We are going to fix it soon!
+    </p>
+    <p class="item" ng-if="fail == 'E_NETWORK'">
+      <i class="icon ion-alert-circled assertive"></i>
+      Looks like the network is bad, try later ;).
+    </p>
+    <div class="item">
+      <button type="submit" class="button button-block button-positive"
         ng-class="{ 'button-assertive': fail }"
-        type="submit">Sign up {{ fail ? 'again' : '' }}</button>
+        signupForm>Sign up {{ fail ? 'again' : '' }}</button>
       <a class="button button-block" ui-sref="login">Log in</a>
     </div>
   </div>

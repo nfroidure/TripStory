@@ -40,9 +40,6 @@ describe('Authentication endpoints', function() {
         context.db = db;
         done();
       });
-    context.bus = {
-      trigger: sinon.spy(),
-    };
   });
 
   before(function(done) {
@@ -51,11 +48,18 @@ describe('Authentication endpoints', function() {
     done();
   });
 
+  beforeEach(function(done) {
+    context.bus = {
+      trigger: sinon.spy(),
+    };
+    done();
+  });
+
   afterEach(function(done) {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('for existing users', function() {
+  describe.only('for existing users', function() {
 
     beforeEach(function(done) {
       context.db.collection('users').insertOne({
@@ -89,10 +93,10 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should allow to log in', function(done) {
+    it.only('should allow to log in', function(done) {
       request(context.app).post('/api/v0/login')
         .send({
-          username: 'popol@moon.u',
+          email: 'popol@moon.u',
           password: 'test',
         })
         .expect(200)
@@ -104,6 +108,12 @@ describe('Authentication endpoints', function() {
               email: 'popol@moon.u',
             },
           });
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_LOCAL_LOGIN',
+            contents: {
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            },
+          }]]);
           done(err);
         });
     });
@@ -111,7 +121,7 @@ describe('Authentication endpoints', function() {
     it('should fail when loggin in with bad password', function(done) {
       request(context.app).post('/api/v0/login')
         .send({
-          username: 'popol@moon.u',
+          email: 'popol@moon.u',
           password: 'testouille',
         })
         .expect(400)
@@ -121,15 +131,15 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when loggin in with bad username', function(done) {
+    it('should fail when loggin in with bad email', function(done) {
       request(context.app).post('/api/v0/login')
         .send({
-          username: 'leon@moon.u',
+          email: 'leon@moon.u',
           password: 'testouille',
         })
         .expect(400)
         .end(function(err, res) {
-          assert.equal(res.body.code, 'E_BAD_USERNAME');
+          assert.equal(res.body.code, 'E_BAD_EMAIL');
           done(err);
         });
     });
@@ -163,6 +173,12 @@ describe('Authentication endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(204)
         .end(function(err) {
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_LOGOUT',
+            contents: {
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            },
+          }]]);
           done(err);
         });
     });
@@ -170,7 +186,8 @@ describe('Authentication endpoints', function() {
     it('should fail when signuping twice', function(done) {
       request(context.app).post('/api/v0/signup')
         .send({
-          username: 'popol@moon.u',
+          email: 'popol@moon.u',
+          name: 'Popol',
           password: 'test',
         })
         .expect(400)
@@ -190,7 +207,8 @@ describe('Authentication endpoints', function() {
 
     request(context.app).post('/api/v0/signup')
       .send({
-        username: 'popol@moon.u',
+        email: 'popol@moon.u',
+        name: 'Popol',
         password: 'test',
       })
       .expect(201)
@@ -202,9 +220,15 @@ describe('Authentication endpoints', function() {
           _id: userId.toString(),
           contents: {
             email: 'popol@moon.u',
-            name: 'popol@moon.u',
+            name: 'Popol',
           },
         });
+        assert.deepEqual(context.bus.trigger.args, [[{
+          exchange: 'A_LOCAL_LOGIN',
+          contents: {
+            user_id: userId,
+          },
+        }]]);
         context.db.collection('users').findOne({
           _id: userId,
         }).then(function(user) {

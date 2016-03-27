@@ -1,4 +1,4 @@
-<form ng-submit="doLogin()" class="auth-form">
+<form ng-submit="doLogin()" name="loginForm" class="auth-form" novalidate>
   <div class="list">
     <div style="text-align: center">
       <img src="images/logo.png" width="150px">
@@ -11,13 +11,37 @@
     </div>
     <div class="padding">
       <label class="item item-input">
-        <span class="input-label">Username</span>
-        <input type="text" ng-model="loginData.username">
+        <span class="input-label"
+          ng-class="{
+            'assertive' : loginForm.email.$invalid && loginForm.$submitted
+          }">Email</span>
+        <input type="email" name="email" placeholder="ex: john.doe@example.com" required
+          ng-model="loginData.email">
       </label>
+      <p class="item" ng-if="fail == 'E_BAD_EMAIL'">
+        <i class="icon ion-alert-circled assertive"></i>
+        Did not found any user with this email.
+      </p>
       <label class="item item-input">
-        <span class="input-label">Password</span>
-        <input type="password" ng-model="loginData.password">
+        <span class="input-label"
+          ng-class="{
+            'assertive' : loginForm.password.$invalid && loginForm.$submitted
+          }">Password</span>
+        <input type="password" name="password" required
+          ng-model="loginData.password">
       </label>
+      <p class="item" ng-if="fail == 'E_BAD_PASSWORD'">
+        <i class="icon ion-alert-circled assertive"></i>
+        This password do not match.
+      </p>
+      <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+        <i class="icon ion-alert-circled assertive"></i>
+        Unexpected error! We are going to fix it soon!
+      </p>
+      <p class="item" ng-if="fail == 'E_NETWORK'">
+        <i class="icon ion-alert-circled assertive"></i>
+        Looks like the network is bad, try later ;).
+      </p>
       <button class="button button-block button-positive"
         ng-class="{ 'button-assertive': fail }"
         type="submit">Log {{ fail ? 'again' : 'in' }}</button>

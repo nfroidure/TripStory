@@ -89,6 +89,12 @@ function initAuthenticationRoutes(context) {
   });
 
   context.app.post('/api/v0/logout', function authLogout(req, res) {
+    context.bus.trigger({
+      exchange: 'A_LOGOUT',
+      contents: {
+        user_id: req.user._id,
+      },
+    });
     req.logout();
     req.session.destroy();
     res.sendStatus(204);

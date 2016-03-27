@@ -26,21 +26,38 @@
     }
 
     function doLogin() {
+      if($scope.loginForm.$invalid) {
+        return;
+      }
       AuthService.log($scope.loginData)
-        .then(function(logResponse) {
+        .then(function() {
           $state.go('app.trips');
         })
-        .catch(function(err){ $scope.fail = err; });
+        .catch(function(err) {
+          if (0 >= err.status) {
+            $scope.fail = 'E_NETWORK';
+            return;
+          }
+          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
+        });
     }
 
     function doSignup() {
+      if($scope.signupForm.$invalid) {
+        return;
+      }
+      $scope.fail = '';
       AuthService.signup($scope.loginData)
-        .then(function(logResponse) {
-          if (logResponse.status === 200) {
-            $state.go("app.trips");
-          }
+        .then(function(response) {
+          $state.go("app.trips");
         })
-        .catch(function(err){ $scope.fail = err; });
+        .catch(function(err) {
+          if (0 >= err.status) {
+            $scope.fail = 'E_NETWORK';
+            return;
+          }
+          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
+        });;
     }
   }
 })();
