@@ -177,6 +177,8 @@ describe('OAuth XEE endpoints', function() {
                 contents: {
                   name: 'Nicolas Froidure',
                 },
+                friends_ids: [],
+                cars: [],
                 auth: {
                   xee: {
                     id: '1664',

@@ -15,6 +15,10 @@ function usersTransformsFromCollection(src) {
     contents: src.contents,
   };
 
+  if(src.avatar_url) {
+    dest.avatar_url = src.avatar_url;
+  }
+
   if(src.auth) {
     Object.keys(src.auth).forEach(function(provider) {
       dest[provider] = {

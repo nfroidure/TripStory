@@ -229,8 +229,10 @@ describe('OAuth Twitter endpoints', function() {
                 _id: newUserId,
                 contents: {
                   name: 'Nicolas Froidure',
-                  photo: 'https://robohash.org/lol',
                 },
+                avatar_url: 'https://robohash.org/lol',
+                friends_ids: [],
+                cars: [],
                 auth: {
                   twitter: {
                     id: '1664',
@@ -306,9 +308,9 @@ describe('OAuth Twitter endpoints', function() {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),
                 contents: {
                   name: 'Nicolas Froidure',
-                  photo: 'https://robohash.org/lol',
                   email: 'popol@moon.u',
                 },
+                avatar_url: 'https://robohash.org/lol',
                 auth: {
                   twitter: {
                     id: '1664',

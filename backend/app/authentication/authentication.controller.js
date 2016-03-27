@@ -178,7 +178,7 @@ function initAuthenticationController(context) {
       $set: {
         'contents.name': profile.displayName,
         'contents.email': profile.emails[0].value,
-        'contents.photo': profile.photos[0].value,
+        avatar_url: profile.photos[0].value,
         'auth.facebook': {
           id: profile.id,
           accessToken: accessToken,
@@ -212,6 +212,8 @@ function initAuthenticationController(context) {
       updateQuery.$setOnInsert = {
         _id: upsertId,
         rights: authenticationUtils.createRights(),
+        friends_ids: [],
+        cars: [],
       };
     }
 
@@ -262,7 +264,7 @@ function initAuthenticationController(context) {
       $set: {
         'contents.name': profile.displayName,
         'contents.email': profile.emails[0].value,
-        'contents.photo': profile.photos[0].value,
+        avatar_url: profile.photos[0].value,
         'auth.google': {
           id: profile.id,
           accessToken: accessToken,
@@ -297,6 +299,8 @@ function initAuthenticationController(context) {
       updateQuery.$setOnInsert = {
         _id: upsertId,
         rights: authenticationUtils.createRights(),
+        friends_ids: [],
+        cars: [],
       };
     }
 
@@ -343,7 +347,7 @@ function initAuthenticationController(context) {
     updateQuery = {
       $set: {
         'contents.name': profile.displayName,
-        'contents.photo': profile.photos[0].value,
+        avatar_url: profile.photos[0].value,
         'auth.twitter': {
           id: profile.id,
           accessToken: accessToken,
@@ -364,6 +368,8 @@ function initAuthenticationController(context) {
       updateQuery.$setOnInsert = {
         _id: upsertId,
         rights: authenticationUtils.createRights(),
+        friends_ids: [],
+        cars: [],
       };
     }
 
@@ -442,6 +448,8 @@ function initAuthenticationController(context) {
         updateQuery.$setOnInsert = {
           _id: upsertId,
           rights: authenticationUtils.createRights(),
+          friends_ids: [],
+          cars: [],
         };
       }
 

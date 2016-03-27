@@ -6,7 +6,7 @@
         <p>Currently no friends</p>
       </ion-item>
       <ion-item ng-repeat="friend in friends" class="item-avatar">
-        <img ng-if="friend.contents.photo" ng-src="{{friend.contents.photo}}">
+        <img ng-if="friend.avatar_url" ng-src="{{friend.avatar_url}}">
         <h2>{{friend.contents.name}}</h2>
         <p ng-if="friend.contents.email">{{friend.contents.email}}</p>
       </ion-item>

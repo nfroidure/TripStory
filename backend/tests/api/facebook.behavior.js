@@ -178,8 +178,10 @@ describe('OAuth Facebook endpoints', function() {
                 contents: {
                   name: 'Nicolas Froidure',
                   email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
                 },
+                avatar_url: 'https://robohash.org/lol',
+                friends_ids: [],
+                cars: [],
                 auth: {
                   facebook: {
                     id: '1664',
@@ -257,8 +259,8 @@ describe('OAuth Facebook endpoints', function() {
                 contents: {
                   name: 'Nicolas Froidure',
                   email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
                 },
+                avatar_url: 'https://robohash.org/lol',
                 auth: {
                   facebook: {
                     id: '1664',

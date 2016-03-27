@@ -15,8 +15,8 @@
   <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
     <div>
       <ion-content>
-        <div class="user__img" ng-click="goToProfile()" ng-if="user.contents.photo">
-          <img ng-src="{{user.contents.photo}}" class="user__photo" width="100%"/>
+        <div class="user__img" ng-click="goToProfile()" ng-if="user.contents.avatar_url">
+          <img ng-src="{{user.contents.avatar_url}}" class="user__photo" width="100%"/>
         </div>
         <ion-item menu-close class="user__name" ng-click="goToProfile()" ng-if="user.contents.name">
           Hi {{user.contents.name}}!

@@ -221,8 +221,10 @@ describe('OAuth Google endpoints', function() {
                 contents: {
                   name: 'Nicolas Froidure',
                   email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
                 },
+                avatar_url: 'https://robohash.org/lol',
+                friends_ids: [],
+                cars: [],
                 auth: {
                   google: {
                     id: '1664',
@@ -304,8 +306,8 @@ describe('OAuth Google endpoints', function() {
                 contents: {
                   name: 'Nicolas Froidure',
                   email: 'clown@fake.fr',
-                  photo: 'https://robohash.org/lol',
                 },
+                avatar_url: 'https://robohash.org/lol',
                 auth: {
                   google: {
                     id: '1664',
