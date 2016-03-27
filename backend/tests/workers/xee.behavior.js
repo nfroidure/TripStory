@@ -7,9 +7,9 @@ var assert = require('assert');
 var nock = require('nock');
 var initObjectIdStub = require('objectid-stub');
 
-var facebookJobs = require('../../workers/facebook/facebook.jobs.js');
+var xeeJobs = require('../../workers/xee/xee.jobs.js');
 
-describe('Facebook jobs', function() {
+describe('Xee jobs', function() {
   var context;
 
   before(function(done) {
@@ -46,7 +46,7 @@ describe('Facebook jobs', function() {
       emailKeys: ['popol@moon.u'],
       friends_ids: [],
       auth: {
-        facebook: {
+        xee: {
           id: '1664',
           accessToken: 'COMMON_BOY',
           refreshToken: null,
@@ -61,7 +61,7 @@ describe('Facebook jobs', function() {
       emailKeys: ['popol@moon.u'],
       friends_ids: [],
       auth: {
-        facebook: {
+        xee: {
           id: '10153532201272839',
           accessToken: 'COMMON_BOY',
           refreshToken: null,
@@ -70,61 +70,56 @@ describe('Facebook jobs', function() {
     }], done);
   });
 
-  describe('for Facebook friends sync', function() {
-    var friendsCall;
+  describe('for Xee cars sync', function() {
+    var carsCall;
+    var newCarId;
 
     beforeEach(function() {
-      friendsCall = nock('https://graph.facebook.com:443', {
+      newCarId = context.createObjectId.next();
+      carsCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
       })
-      .get('/1664/friends')
-      .query({ access_token: 'COMMON_BOY' })
-      .reply(200, {
-        data: [{
-          name: 'Jean De La Fontaine',
-          id: '10153532201272839',
-        }, {
-          name: 'Victor Hugo',
-          id: '10153874940679789',
-        }],
-        paging: {
-          next: 'https://graph.facebook.com/v2.5/10153768131704201/friends',
-        },
-        summary: {
-          total_count: 189,
-        },
-      }, {
-        'access-control-allow-origin': '*',
-        'content-type': 'text/javascript; charset=UTF-8',
-        'x-fb-trace-id': 'FJgxiLd+P4g',
-        'x-fb-rev': '2168097',
-        etag: '"0483d18750c66dbbaae0810e280e05ef50358008"',
-        pragma: 'no-cache',
-        'cache-control': 'private, no-cache, no-store, must-revalidate',
-        'facebook-api-version': 'v2.5',
-        expires: 'Sat, 01 Jan 2000 00:00:00 GMT',
-        vary: 'Accept-Encoding',
-        date: 'Sat, 06 Feb 2016 10:01:53 GMT',
+      .get('/v1/user/1664/car.json')
+      .query({
+        access_token: 'COMMON_BOY',
+      })
+      .reply(200, [{
+        id: 2321,
+        name: 'Opel Meriva',
+        brand: 'Opel',
+        model: 'Astra',
+        year: 0,
+        plateNumber: '',
+        cardbId: 79,
+      }], {
+        'content-type': 'application/json',
+        'transfer-encoding': 'chunked',
         connection: 'close',
+        'cache-control': 'no-cache',
+        date: 'Sat, 06 Feb 2016 12:09:14 GMT',
       });
     });
 
-    ['A_FB_SIGNUP', 'A_FB_LOGIN'].forEach(function(exchange) {
-      it('should pair friends', function(done) {
-        facebookJobs[exchange](context, {
+    ['A_XEE_SIGNUP', 'A_XEE_LOGIN'].forEach(function(exchange) {
+      it('should retrieve cars', function(done) {
+        xeeJobs[exchange](context, {
           exchange: exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
         })
         .then(function() {
-          friendsCall.done();
+          carsCall.done();
           return context.db.collection('users').findOne({
             _id: castToObjectId('abbacacaabbacacaabbacaca'),
           }).then(function(user) {
-            assert.deepEqual(user.friends_ids, [
-              castToObjectId('b17eb17eb17eb17eb17eb17e'),
-            ]);
+            assert.deepEqual(user.cars, [{
+              _id: newCarId,
+              xeeId: 2321,
+              name: 'Opel Meriva',
+              brand: 'Opel',
+              type: 'xee',
+            }]);
           });
         })
         .then(done.bind(null, null))
