@@ -6,9 +6,9 @@
   "scripts": {
     "start": "cd backend && npm run start && cd ..",
     "cli": "env NPM_RUN_CLI=1",
-    "test": "mocha tests/api/*.behavior.js",
+    "test": "mocha tests/**/*.behavior.js",
     "lint": "eslint app/*.js workers/*.js app/**/*.js workers/**/*.js",
-    "cover": "istanbul cover --report html _mocha -- tests/api/*.behavior.js -R spec -t 5000"
+    "cover": "istanbul cover --report html _mocha -- tests/**/*.behavior.js -R spec -t 5000"
   },
   "author": "",
   "license": "MIT",

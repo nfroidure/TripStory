@@ -1,15 +1,43 @@
-<ion-view view-title="Your friends">
-  <ion-content>
-    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <ion-list ng-show="'loaded' === state">
-      <ion-item ng-if="!friends.length">
-        <p>Currently no friends</p>
-      </ion-item>
-      <ion-item ng-repeat="friend in friends" class="item-avatar">
-        <img ng-if="friend.avatar_url" ng-src="{{friend.avatar_url}}">
-        <h2>{{friend.contents.name}}</h2>
-        <p ng-if="friend.contents.email">{{friend.contents.email}}</p>
-      </ion-item>
-    </ion-list>
-  </ion-content>
-</ion-view>
+<form name="inviteForm" novalidate
+  ng-submit="inviteFriend()">
+  <ion-view view-title="Your friends">
+    <ion-content>
+      <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
+      <ion-list ng-show="'loaded' === state">
+        <ion-item ng-if="!friends.length">
+          <p>Looks like you are an early adopter ;).</p>
+        </ion-item>
+        <ion-item ng-repeat="friend in friends" class="item-avatar">
+          <img ng-if="friend.avatar_url" ng-src="{{friend.avatar_url}}">
+          <h2>{{friend.contents.name}}</h2>
+          <p ng-if="friend.contents.email">{{friend.contents.email}}</p>
+        </ion-item>
+      </ion-list>
+      <div class="list">
+        <div class="item item-divider">
+          Invite
+        </div>
+        <label class="item item-input">
+          <span class="input-label"
+            ng-class="{
+              'assertive' : inviteForm.email.$invalid && inviteForm.$submitted
+            }">Email</span>
+          <input type="email" name="email" placeholder="ex: john.doe@example.com" required
+            ng-model="newFriend.email">
+        </label>
+        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Unexpected error! We are going to fix it soon!
+        </p>
+        <p class="item" ng-if="fail == 'E_NETWORK'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Looks like the network is bad, try later ;).
+        </p>
+        <div class="item">
+          <button class="button button-block button-positive"
+            type="submit">Update</button>
+        </div>
+      </div>
+    </ion-content>
+  </ion-view>
+</form>

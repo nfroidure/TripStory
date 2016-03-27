@@ -10,15 +10,33 @@
   function friendsFactory($http, createObjectId , $q, ENV, AuthService) {
       var service = {
         list: list,
+        invite: invite,
       };
 
       return service;
       ////////////////
 
       function list() {
-        return AuthService.getProfile().then(function(profile){
+        return AuthService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
           return $http.get(url);
+        }).then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          return response;
+        });
+      }
+
+      function invite(data) {
+        return AuthService.getProfile().then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
+          return $http.post(url, data);
+        }).then(function(response) {
+          if(204 !== response.status) {
+            throw response;
+          }
+          return response;
         });
       }
   }

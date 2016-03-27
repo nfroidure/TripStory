@@ -1,0 +1,7 @@
+{
+  "from": "mailer-daemon@cloud",
+  "to": "jdlf@academie.fr",
+  "subject": "[Trip Story] Invite from Popol!",
+  "html": "<p>Hi there!</p>\r\n<p>Popol thought you may want to join Trip Story!</p>\r\n<p><a href=\"http://localhost/\">Join us to share your trips experiences!</a></p>\r\n<p>See you soon, the Trip Story crew.</p>\r\n",
+  "text": "Hi!\r\n\r\nPopol thought you may want to join Trip Story!\r\n\r\nJoin us by browsing http://localhost/!\r\n"
+}

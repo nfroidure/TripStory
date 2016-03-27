@@ -144,6 +144,25 @@ describe('Users endpoints', function() {
 
     });
 
+    it('should allow to invite friends', function(done) {
+      request(context.app).post('/api/v0/users/abbacacaabbacacaabbacaca/friends')
+        .auth('popol@moon.u', 'test')
+        .send({
+          email: 'jdlf@academie.fr',
+        })
+        .expect(204)
+        .end(function(err, res) {
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_FRIEND_INVITE',
+            contents: {
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              friend_email: 'jdlf@academie.fr',
+            },
+          }]]);
+          done(err);
+        });
+    });
+
     it('should disallow to get others profile', function(done) {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')

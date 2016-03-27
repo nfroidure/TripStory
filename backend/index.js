@@ -62,14 +62,28 @@ Promise.all([
   }
 
   if(context.env.MAILGUN_KEY && context.env.MAILGUN_DOMAIN) {
-    context.mailer = nodemailer.createTransport(
-      nodemailerMailgunTransport({
-        auth: {
-          api_key: context.env.MAILGUN_KEY,
-          domain: context.env.MAILGUN_DOMAIN,
-        },
-      })
-    );
+
+    context.sendMail = function initSendMail() {
+      var mailer = nodemailer.createTransport(
+        nodemailerMailgunTransport({
+          auth: {
+            api_key: context.env.MAILGUN_KEY,
+            domain: context.env.MAILGUN_DOMAIN,
+          },
+        })
+      );
+
+      return function sendEmail(contents) {
+        return new Promise(function(resolve, reject) {
+          mailer.sendMail(contents, function sendMailHandler(err, info) {
+            if(err) {
+              return reject(err);
+            }
+            resolve(info);
+          });
+        });
+      };
+    }();
   }
 
   context.protocol = context.env.PROTOCOL || 'http';

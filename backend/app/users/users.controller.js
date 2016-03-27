@@ -13,6 +13,7 @@ function initUsersController(context) {
     get: userControllerGet,
     put: userControllerPut,
     delete: userControllerDelete,
+    inviteFriend: userControllerInviteFriend,
     listFriends: userControllerListFriends,
   };
 
@@ -92,10 +93,27 @@ function initUsersController(context) {
         },
       }),
     ])
-
     .then(function() {
       res.status(410).send();
     }).catch(next);
+  }
+
+  function userControllerInviteFriend(req, res, next) {
+    return Promise.resolve()
+    .then(function() {
+      if(!req.body.email) {
+        throw new YHTTPError(400, 'E_NO_EMAIL');
+      }
+      context.bus.trigger({
+        exchange: 'A_FRIEND_INVITE',
+        contents: {
+          user_id: castToObjectId(req.params.user_id),
+          friend_email: req.body.email,
+        },
+      });
+      res.sendStatus(204);
+    })
+    .catch(next);
   }
 
   function userControllerListFriends(req, res, next) {

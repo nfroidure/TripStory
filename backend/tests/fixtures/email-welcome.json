@@ -1,0 +1,7 @@
+{
+  "from": "mailer-daemon@cloud",
+  "to": "popol@moon.u",
+  "subject": "[Trip Story] Welcome on board!",
+  "html": "<p>Hi Popol!</p>\r\n<p>Welcome in the Trip Story community. Start tripping with friends!</p>\r\n<p>See you soon, the Trip Story crew.</p>\r\n",
+  "text": "Hi Popol!\r\n\r\nWelcome in the Trip Story community. Start tripping with friends!\r\n\r\nSee you soon, the Trip Story crew.\r\n"
+}
