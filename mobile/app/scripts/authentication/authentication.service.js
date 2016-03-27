@@ -8,7 +8,7 @@
   AuthService.$inject = ['$http', 'ENV', '$q'];
   /* @ngInject */
   function AuthService($http, ENV, $q) {
-    var profileDeffered = $q.defer();
+    var profileDeffered = null;
     var service = {
       getProfile: getProfile,
       setProfile: setProfile,
@@ -27,8 +27,9 @@
     function getProfile(options) {
       options = options || {};
 
-      if(options.force) {
-        return $http.get(ENV.apiEndpoint + '/api/v0/profile')
+      if(options.force || !profileDeffered) {
+        profileDeffered = $q.defer()
+        $http.get(ENV.apiEndpoint + '/api/v0/profile')
         .then(function(response) {
           if(200 !== response.status) {
             throw response;
