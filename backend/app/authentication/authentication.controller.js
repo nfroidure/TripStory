@@ -421,9 +421,7 @@ function initAuthenticationController(context) {
 
       updateQuery = {
         $set: {
-          contents: {
-            name: profile.firstName + ' ' + profile.name,
-          },
+          'contents.name': profile.firstName + ' ' + profile.name,
           'auth.xee': {
             id: profile.id,
             accessToken: accessToken,

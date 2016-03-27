@@ -47,14 +47,18 @@ describe('OAuth Twitter endpoints', function() {
         context.db = db;
         done();
       });
-    context.bus = {
-      trigger: sinon.spy(),
-    };
   });
 
   before(function(done) {
     context.app = express();
     initRoutes(context);
+    done();
+  });
+
+  beforeEach(function(done) {
+    context.bus = {
+      trigger: sinon.spy(),
+    };
     done();
   });
 
@@ -245,6 +249,12 @@ describe('OAuth Twitter endpoints', function() {
                   path: '/api/v0/logout',
                 }],
               });
+              assert.deepEqual(context.bus.trigger.args, [[{
+                exchange: 'A_TWITTER_SIGNUP',
+                contents: {
+                  user_id: newUserId,
+                },
+              }]]);
               done();
             }).catch(done);
           });
@@ -309,6 +319,12 @@ describe('OAuth Twitter endpoints', function() {
                 emailKeys: ['popol@moon.u'],
                 passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
               });
+              assert.deepEqual(context.bus.trigger.args, [[{
+                exchange: 'A_TWITTER_LOGIN',
+                contents: {
+                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                },
+              }]]);
               done();
             }).catch(done);
           });

@@ -49,13 +49,9 @@ function initUsersController(context) {
       $setOnInsert: {
         user_id: req.user._id,
         password: req.body.password,
-        // Setting the PSA test car
-        'auth.psa': {
-          vin: 'VF7NC9HD8DY611112',
-          contract: '620028501',
-          code: 'KNL347037',
-        },
         created: dateSeal,
+        cars: [],
+        friends_ids: [],
       },
       $push: {
         modified: {

@@ -47,14 +47,18 @@ describe('OAuth XEE endpoints', function() {
         context.db = db;
         done();
       });
-    context.bus = {
-      trigger: sinon.spy(),
-    };
   });
 
   before(function(done) {
     context.app = express();
     initRoutes(context);
+    done();
+  });
+
+  beforeEach(function(done) {
+    context.bus = {
+      trigger: sinon.spy(),
+    };
     done();
   });
 
@@ -191,6 +195,12 @@ describe('OAuth XEE endpoints', function() {
                   path: '/api/v0/logout',
                 }],
               });
+              assert.deepEqual(context.bus.trigger.args, [[{
+                exchange: 'A_XEE_SIGNUP',
+                contents: {
+                  user_id: newUserId,
+                },
+              }]]);
               done();
             }).catch(done);
           });
@@ -211,7 +221,7 @@ describe('OAuth XEE endpoints', function() {
           passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
           auth: {
             xee: {
-              id: '1664',
+              id: 1664,
               accessToken: 'COMMON_BOY',
               refreshToken: 'COME_AGAIN_MAN',
             },
@@ -241,12 +251,12 @@ describe('OAuth XEE endpoints', function() {
               assert.deepEqual(user, {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),
                 contents: {
-                  name: 'Popol',
+                  name: 'Nicolas Froidure',
                   email: 'popol@moon.u',
                 },
                 auth: {
                   xee: {
-                    id: '1664',
+                    id: 1664,
                     accessToken: 'COMMON_BOY',
                     refreshToken: 'COME_AGAIN_MAN',
                   },
@@ -254,6 +264,12 @@ describe('OAuth XEE endpoints', function() {
                 emailKeys: ['popol@moon.u'],
                 passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
               });
+              assert.deepEqual(context.bus.trigger.args, [[{
+                exchange: 'A_XEE_LOGIN',
+                contents: {
+                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                },
+              }]]);
               done();
             }).catch(done);
           });
