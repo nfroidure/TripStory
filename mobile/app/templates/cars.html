@@ -2,12 +2,26 @@
   <ion-content>
     <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
     <ion-list ng-show="'loaded' === state">
+      <div class="item item-divider">
+        Cars
+      </div>
       <ion-item ng-if="!cars.length">
-        <p>Currently no cars</p>
+        <p>No connected car. Roger, {{ year }} on air ;).</p>
       </ion-item>
       <ion-item ng-repeat="car in cars">
         <h2>{{car.contents.name}}</h2>
         <p ng-if="car.contents.brand">{{car.contents.brand}} {{car.contents.model}}</p>
+      </ion-item>
+      <div class="item item-divider" ng-if="!profile.xee">
+        Connect
+      </div>
+      <ion-item ng-if="!profile.xee">
+        <a class="button button-block"
+          href="{{apiEndpoint}}/auth/xee"
+          style="color: #97CA00; background:#474747;">Add one with Xee™</a>
+        <span class="item-note">
+          <a href="http://www.xee.com" target="_blank">Discover Xee™</a>
+        </span>
       </ion-item>
     </ion-list>
   </ion-content>

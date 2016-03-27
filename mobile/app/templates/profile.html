@@ -1,57 +1,96 @@
-<form name="profileForm" novalidate class="profile-form"
+<form name="profileForm" novalidate class="list"
   ng-submit="goUpdateProfile()">
   <ion-view view-title="Profile">
     <ion-content>
       <div class="list">
-        <div class="padding">
-          <label class="item item-input">
-            <span class="input-label"
-              ng-class="{
-                'assertive' : profileForm.name.$invalid && profileForm.$submitted
-              }">Name</span>
-            <input type="text" name="name" placeholder="ex: John Doe" required
-              ng-model="profile.contents.name">
-          </label>
-          <label class="item item-input">
-            <span class="input-label"
-              ng-class="{
-                'assertive' : profileForm.name.$invalid && profileForm.$submitted
-              }">Email</span>
-            <input type="email" name="email" placeholder="ex: john.doe@example.com" required
-              ng-model="profile.contents.email">
-          </label>
-          <p class="item" ng-if="fail == 'E_RESERVED_EMAIL'">
-            <i class="icon ion-alert-circled assertive"></i>
-            Strange! Another account already uses this email.
-          </p>
-          <p class="item" ng-if="fail == 'E_UNEXPECTED'">
-            <i class="icon ion-alert-circled assertive"></i>
-            Unexpected error! We are going to fix it soon!
-          </p>
-          <p class="item" ng-if="fail == 'E_NETWORK'">
-            <i class="icon ion-alert-circled assertive"></i>
-            Looks like the network is bad, try later ;).
-          </p>
+          <div class="item item-divider">
+          Infos
+        </div>
+        <label class="item item-input">
+          <span class="input-label"
+            ng-class="{
+              'assertive' : profileForm.name.$invalid && profileForm.$submitted
+            }">Name</span>
+          <input type="text" name="name" placeholder="ex: John Doe" required
+            ng-model="profile.contents.name">
+        </label>
+        <label class="item item-input">
+          <span class="input-label"
+            ng-class="{
+              'assertive' : profileForm.name.$invalid && profileForm.$submitted
+            }">Email</span>
+          <input type="email" name="email" placeholder="ex: john.doe@example.com" required
+            ng-model="profile.contents.email">
+        </label>
+        <p class="item" ng-if="fail == 'E_RESERVED_EMAIL'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Strange! Another account already uses this email.
+        </p>
+        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Unexpected error! We are going to fix it soon!
+        </p>
+        <p class="item" ng-if="fail == 'E_NETWORK'">
+          <i class="icon ion-alert-circled assertive"></i>
+          Looks like the network is bad, try later ;).
+        </p>
+        <div class="item">
           <button class="button button-block button-positive"
             type="submit">Update</button>
-        <div>
-        <div class="padding">
-          <a class="button button-block" ng-if="!profile.facebook"
-            href="{{apiEndpoint}}/auth/facebook"
-            style="color: white; background:#3B5998;">Link to Facebook</a>
-          <a class="button button-block" ng-if="!profile.twitter"
-            href="{{apiEndpoint}}/auth/twitter"
-            style="color: white; background:#55ACEE;">Link to Twitter</a>
-          <a class="button button-block" ng-if="!profile.google"
-            href="{{apiEndpoint}}/auth/google"
-            style="color: white; background:#DC4E41;">Link to Google</a>
-          <a class="button button-block" ng-if="!profile.xee"
-            href="{{apiEndpoint}}/auth/xee"
-            style="color: #97CA00; background:#474747;">Link to Xee</a>
         </div>
-        <div>
+      </div>
+      <div class="list">
+        <div class="item item-divider">
+          Integrations
+        </div>
+        <div class="item"
+          ng-class="{
+            'item-button-right': !profile.facebook,
+            'item-icon-right': profile.facebook,
+          }">
+          Facebook
+          <a class="button" href="{{apiEndpoint}}/auth/facebook"
+            style="color: white; background:#3B5998;"
+            ng-if="!profile.facebook">
+            <i class="icon ion-link"></i>&nbsp; Link account
+          </a>
+          <i class="icon ion-android-cloud-done"
+            ng-if="profile.facebook"></i>
+        </div>
+        <div class="item"
+          ng-class="{
+            'item-button-right': !profile.twitter,
+            'item-icon-right': profile.twitter,
+          }">
+          Twitter
+          <a class="button" href="{{apiEndpoint}}/auth/twitter"
+            style="color: white; background:#55ACEE;"
+            ng-if="!profile.twitter">
+            <i class="icon ion-link"></i>&nbsp; Link account
+          </a>
+          <i class="icon ion-android-cloud-done"
+            ng-if="profile.twitter"></i>
+        </div>
+        <div class="item"
+          ng-class="{
+            'item-button-right': !profile.google,
+            'item-icon-right': profile.google,
+          }">
+          Google
+          <a class="button" href="{{apiEndpoint}}/auth/google"
+            style="color: white; background:#DC4E41;"
+            ng-if="!profile.google">
+            <i class="icon ion-link"></i>&nbsp; Link account
+          </a>
+          <i class="icon ion-android-cloud-done"
+            ng-if="profile.google"></i>
+        </div>
+        <div class="item item-divider">
+          Privacy
+        </div>
+        <div class="item">
           <a class="button button-block button-assertive"
-            ng-click="goDestroy()">Destroy my account</a>
+            ng-click="goDestroy()">Erase my profile</a>
         </div>
       </div>
     </ion-content>
