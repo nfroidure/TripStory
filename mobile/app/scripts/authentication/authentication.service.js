@@ -34,6 +34,7 @@
             throw response;
           }
           profileDeffered.resolve(response.data);
+          return profileDeffered.promise;
         }).catch(profileDeffered.reject);
       }
 

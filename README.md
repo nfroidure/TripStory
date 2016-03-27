@@ -10,10 +10,10 @@ https://github.com/diegonetto/generator-ionic
 
 ## API
 
-### Configuration
+### Deployment
 ```sh
 # Create the app configuration from the sample config file
-cp app.sample.json app.json && vim app.json
+cp app.example.json app.prod.json && vim app.prod.json
 
 # Install cron jobs for GPS/Social Network syncs
 # note: replace admin:admin per valid credentials
@@ -37,16 +37,31 @@ cat "
 */10 * * * * tripstory curl -X POST http://localhost:8122/bus -u admin:admin -d \"exchange=A_FACEBOOK_SYNC\"
 
 " > /etc/cron.d/9999-tripstory
+
+// Start the backend
+npm run start
+
+// Build the front
+cd mobile/
+npm run cli -- grunt build --force
 ```
 
-### Running the back:
+### Running the back for development:
 
 ```sh
-npm run run
+cp app.example.json app.dev.json && vim app.dev.json
+
+npm run dev
+
+cd mobile/
+npm run cli -- grunt serve --force
 ```
 
 ### Auth:
 - Facebook: GET /auth/facebook
+- Twitter: GET /auth/twitter
+- XEE: GET /auth/xee
+- Google: GET /auth/google
 - Login: POST username, password to /api/v0/login
 - Logout: POST username, password to /api/v0/logout
 - Signup: POST username, password, name to /api/v0/signup
@@ -56,9 +71,8 @@ npm run run
 Resource:
 ```js
 {
-  "username": "jojo@ledemago.com",
-  "password": "notasecret", // Saved raw but don't give a shit
-  "name": "Popol" // Singup only
+  "email": "jojo@ledemago.com",
+  "name": "Popol" // Signup only
 }
 ```
 

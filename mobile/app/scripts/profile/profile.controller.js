@@ -25,11 +25,11 @@
     }
 
     function goUpdateProfile() {
-      if($scope.loginForm.$invalid) {
+      if($scope.profileForm.$invalid) {
         return;
       }
       AuthService.setProfile($scope.profile)
-      .then(function(res) {
+      .then(function(profile) {
         $scope.profile = profile;
       })
       .catch(function(err) {
