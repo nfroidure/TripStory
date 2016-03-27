@@ -16,14 +16,29 @@
     activate();
 
     function activate() {
-      AuthService.getProfile()
-        .then(function(profile){
-          $scope.profile = profile;
-        });
+      AuthService.getProfile({
+        force: true,
+      })
+      .then(function(profile) {
+        $scope.profile = profile;
+      });
     }
 
     function goUpdateProfile() {
-      AuthService.setProfile($scope.profile);
+      if($scope.loginForm.$invalid) {
+        return;
+      }
+      AuthService.setProfile($scope.profile)
+      .then(function(res) {
+        $scope.profile = profile;
+      })
+      .catch(function(err) {
+        if (0 >= err.status) {
+          $scope.fail = 'E_NETWORK';
+          return;
+        }
+        $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
+      });
     }
 
     function goDestroy() {

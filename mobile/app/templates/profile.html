@@ -20,6 +20,18 @@
             <input type="email" name="email" placeholder="ex: john.doe@example.com" required
               ng-model="profile.contents.email">
           </label>
+          <p class="item" ng-if="fail == 'E_RESERVED_EMAIL'">
+            <i class="icon ion-alert-circled assertive"></i>
+            Strange! Another account already uses this email.
+          </p>
+          <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+            <i class="icon ion-alert-circled assertive"></i>
+            Unexpected error! We are going to fix it soon!
+          </p>
+          <p class="item" ng-if="fail == 'E_NETWORK'">
+            <i class="icon ion-alert-circled assertive"></i>
+            Looks like the network is bad, try later ;).
+          </p>
           <button class="button button-block button-positive"
             type="submit">Update</button>
         <div>

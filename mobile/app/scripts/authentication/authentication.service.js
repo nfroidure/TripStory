@@ -13,24 +13,33 @@
       getProfile: getProfile,
       setProfile: setProfile,
       deleteProfile: deleteProfile,
-      log: log,
+      log: login,
       signup: signup,
       logout: logout,
     };
-    $http.get(ENV.apiEndpoint + '/api/v0/profile')
-      .then(function(response) {
-        if(200 !== response.status) {
-          throw response;
-        }
-        profileDeffered.resolve(response.data);
-      }).catch(profileDeffered.reject);
+
+    service.getProfile();
+
     return service;
 
     ////////////////
 
-    function getProfile() {
+    function getProfile(options) {
+      options = options || {};
+
+      if(options.force) {
+        return $http.get(ENV.apiEndpoint + '/api/v0/profile')
+        .then(function(response) {
+          if(200 !== response.status) {
+            throw response;
+          }
+          profileDeffered.resolve(response.data);
+        }).catch(profileDeffered.reject);
+      }
+
       return profileDeffered.promise;
     }
+
     function setProfile(profile) {
       return getProfile().then(function(profile) {
         return $http.put(
@@ -42,9 +51,11 @@
           }
           profileDeffered = $q.defer();
           profileDeffered.resolve(response.data);
+          return profileDeffered.promise;
         });
       });
     }
+
     function deleteProfile(profile) {
       return getProfile().then(function(profile) {
         return $http.delete(
@@ -65,7 +76,8 @@
         });
       });
     }
-    function log(credentials) {
+
+    function login(credentials) {
       return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
         .then(function(res) {
           if(200 !== res.status) {
