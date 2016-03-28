@@ -28,8 +28,12 @@
             'assertive' : loginForm.password.$invalid && loginForm.$submitted
           }">Password</span>
         <input type="password" name="password" required
-          ng-model="loginData.password">
+          ng-model="loginData.password" ng-minlength="6">
       </label>
+      <p class="item" ng-if="loginForm.password.$invalid && loginForm.$submitted">
+        <i class="icon ion-alert-circled assertive"></i>
+        Password must have a length of 6 chars.
+      </p>
       <p class="item" ng-if="fail == 'E_BAD_PASSWORD'">
         <i class="icon ion-alert-circled assertive"></i>
         This password do not match.

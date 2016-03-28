@@ -43,7 +43,7 @@ npm run start
 
 // Build the front
 cd mobile/
-npm run cli -- grunt build --force
+npm run cli -- grunt compress --force
 ```
 
 ### Running the back for development:

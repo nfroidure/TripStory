@@ -25,9 +25,13 @@
         ng-class="{
           'assertive' : signupForm.password.$invalid && signupForm.$submitted
         }">Password</span>
-      <input type="password" name="password" min="6" placeholder="6 chars passwords mininum" required
-        ng-model="loginData.password">
+      <input type="password" name="password" placeholder="6 chars passwords mininum" required
+        ng-model="loginData.password" ng-minlength="6">
     </label>
+    <p class="item" ng-if="signupForm.password.$invalid && signupForm.$submitted">
+      <i class="icon ion-alert-circled assertive"></i>
+      Password must have a length of 6 chars.
+    </p>
     <p class="item" ng-if="fail == 'E_UNEXPECTED'">
       <i class="icon ion-alert-circled assertive"></i>
       Unexpected error! We are going to fix it soon!
