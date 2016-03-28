@@ -12,16 +12,19 @@
         Cars
       </div>
       <ion-item ng-if="!cars.length">
-        <p>No connected car. Roger, {{ year }} on air ;).</p>
+        <p>No connected car. {{ year }} is calling ;).</p>
       </ion-item>
-      <ion-item ng-repeat="car in cars">
+      <ion-item class="item item-button-right" ng-repeat="car in cars">
         <h2>{{car.contents.name}}</h2>
         <p ng-if="car.contents.brand">{{car.contents.brand}} {{car.contents.model}}</p>
+        <button class="button button-assertive" ng-click="remove(car._id)">
+          <i class="icon ion-close"></i>
+        </button>
       </ion-item>
       <div class="item item-divider" ng-if="!profile.xee">
         Connect
       </div>
-      <ion-item ng-if="!profile.xee">
+      <ion-item ng-if="(!profile.xee) || !cars.length">
         <a class="button button-block"
           href="{{apiEndpoint}}/auth/xee"
           style="color: #97CA00; background:#474747;">Add one with Xee™</a>
