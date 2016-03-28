@@ -16,6 +16,7 @@
     $scope.cars = [];
     $scope.year = (new Date()).getFullYear();
     $scope.state = 'loading';
+    $scope.refresh = activate;
 
     activate();
 

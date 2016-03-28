@@ -1,6 +1,12 @@
 <form name="inviteForm" novalidate
   ng-submit="inviteFriend()">
   <ion-view view-title="Your friends">
+    <ion-nav-buttons side="right">
+      <button class="button" ng-click="refresh()" ng-if="'loading' !== state">
+        <i class="ion-refresh"></i>
+        Refresh
+      </button>
+    </ion-nav-buttons>
     <ion-content>
       <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
       <ion-list ng-show="'loaded' === state">
