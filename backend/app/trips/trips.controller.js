@@ -82,6 +82,14 @@ function initTripsController(context) {
       }),
     ])
     .spread(function(result) {
+      context.bus.trigger({
+        exchange: result.lastErrorObject.updatedExisting ?
+          'A_TRIP_UPDATED' :
+          'A_TRIP_CREATED',
+        contents: {
+          user_id: result.value._id,
+        },
+      });
       res.status(201).send(tripsTransforms.fromCollection(result.value));
     }).catch(next);
   }

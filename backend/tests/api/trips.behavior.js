@@ -111,12 +111,12 @@ describe.only('Trips endpoints', function() {
       created: {
         seal_date: new Date(context.time()),
         user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-        ip: '::1',
+        ip: '::ffff:127.0.0.1',
       },
       modified: [{
         seal_date: new Date(context.time()),
         user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-        ip: '::1',
+        ip: '::ffff:127.0.0.1',
       }],
     }, done);
   });
@@ -235,6 +235,124 @@ describe.only('Trips endpoints', function() {
         });
       });
 
+      it('should allow to update a trip', function(done) {
+        request(context.app).put(
+          '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
+        )
+        .auth('popol@moon.u', 'test')
+        .send({
+          _id: 'babababababababababababa',
+          contents: {
+            car_id: 'b17eb17eb17eb17eb17eb17e',
+            description: 'Kikooooolol',
+            friends_ids: [],
+            hash: 'kikooooolol',
+            title: 'Kikooooolol',
+          },
+        })
+        .expect(201)
+        .end(function(err, res) {
+            assert.deepEqual(context.bus.trigger.args, [[{
+              exchange: 'A_TRIP_UPDATED',
+              contents: {
+                user_id: castToObjectId('babababababababababababa'),
+              },
+            }]]);
+            context.db.collection('events').findOne({
+              _id: castToObjectId('babababababababababababa'),
+            }).then(function(event) {
+              assert.deepEqual(event, {
+                _id: castToObjectId('babababababababababababa'),
+                contents: {
+                  trip_id: castToObjectId('babababababababababababa'),
+                  type: 'trip-start',
+                },
+                owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                trip: {
+                  friends_ids: [],
+                  description: 'Kikooooolol',
+                  hash: 'kikooooolol',
+                  title: 'Kikooooolol',
+                  car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+                },
+                created: {
+                  seal_date: new Date(context.time()),
+                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                  ip: '::ffff:127.0.0.1',
+                },
+                modified: [{
+                  seal_date: new Date(context.time()),
+                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                  ip: '::ffff:127.0.0.1',
+                }, {
+                  seal_date: new Date(context.time()),
+                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                  ip: '::ffff:127.0.0.1',
+                }],
+              });
+              done(err);
+            })
+            .catch(done);
+        });
+      });
+
+    });
+
+    it('should allow to create a trip', function(done) {
+      request(context.app).put(
+        '/api/v0/users/abbacacaabbacacaabbacaca/trips/b0b0b0b0b0b0b0b0b0b0b0b0'
+      )
+      .auth('popol@moon.u', 'test')
+      .send({
+        _id: 'b0b0b0b0b0b0b0b0b0b0b0b0',
+        contents: {
+          car_id: 'b17eb17eb17eb17eb17eb17e',
+          description: 'Lol',
+          friends_ids: [],
+          hash: 'lol',
+          title: 'Lol',
+        },
+      })
+      .expect(201)
+      .end(function(err, res) {
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_CREATED',
+            contents: {
+              user_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+            },
+          }]]);
+          context.db.collection('events').findOne({
+            _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+              contents: {
+                trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+                type: 'trip-start',
+              },
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              trip: {
+                friends_ids: [],
+                title: 'Lol',
+                description: 'Lol',
+                hash: 'lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              created: {
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              },
+              modified: [{
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              }],
+            });
+            done(err);
+          })
+          .catch(done);
+      });
     });
 
   });

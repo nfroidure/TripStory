@@ -12,7 +12,7 @@ function controllersUtilsGetDateSeal(time, req) {
   };
 
   if(req && req.user) {
-    dateSeal.user_id = req.user_id;
+    dateSeal.user_id = req.user._id;
   }
   if(req && req.ip) {
     dateSeal.ip = req.ip;
