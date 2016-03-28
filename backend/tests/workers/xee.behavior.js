@@ -37,6 +37,11 @@ describe('Xee jobs', function() {
   });
 
   beforeEach(function(done) {
+    context.createObjectId.reset();
+    done();
+  });
+
+  beforeEach(function(done) {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -125,6 +130,174 @@ describe('Xee jobs', function() {
         .then(done.bind(null, null))
         .catch(done);
       });
+    });
+
+  });
+
+  describe('for Xee positions sync', function() {
+    var exchange = 'A_XEE_SYNC';
+
+    describe('when there are no trip', function() {
+
+      it('should do nothing', function(done) {
+        xeeJobs[exchange](context, {
+          exchange: exchange,
+          contents: {
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          },
+        })
+        .then(function() {
+          return context.db.collection('events').count({})
+          .then(function(count) {
+            assert.equal(count, 0);
+          })
+          .then(done.bind(null, null))
+          .catch(done);
+        });
+
+      });
+
+    });
+
+    describe('when there are runnng trips', function() {
+      var positionCall;
+      var newEventId;
+
+      beforeEach(function() {
+        newEventId = context.createObjectId.next();
+        positionCall = nock('https://cloud.xee.com:443', {
+          encodedQueryParams: true,
+        })
+        .get('/v1/car/1664/carstatus.json')
+        .query({
+          access_token: 'COMMON_BOY',
+        })
+        .reply(200, {
+          accelerometer: {
+            id: '0',
+            x: -8,
+            y: 0,
+            z: 0,
+            date: '2016-03-28 08:29:03',
+            driverId: null,
+          },
+          location: {
+            id: '0',
+            date: '2016-03-28 08:44:53',
+            longitude: 3.0614734,
+            latitude: 50.243942,
+            altitude: 41.5,
+            nbSat: 8,
+            driverId: null,
+            heading: 172.32,
+          },
+          signals: [{
+            id: '0',
+            name: 'IgnitionSts',
+            reportDate: '2016-03-28 08:43:53',
+            value: '0',
+            driverId: null,
+          }, {
+            id: '0',
+            name: 'VehiculeSpeed',
+            reportDate: '2016-03-28 08:43:33',
+            value: '0',
+            driverId: null,
+          }],
+        }, {
+          'content-type': 'application/json',
+          'transfer-encoding': 'chunked',
+          connection: 'close',
+          'cache-control': 'no-cache',
+          date: 'Sat, 06 Feb 2016 12:09:14 GMT',
+        });
+      });
+
+      beforeEach(function(done) {
+        context.db.collection('users').updateOne({
+          _id: castToObjectId('abbacacaabbacacaabbacaca'),
+        }, {
+          $set: {
+            cars: [{
+              _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              xeeId: 1664,
+              name: 'Opel Meriva',
+              brand: 'Opel',
+              type: 'xee',
+            }],
+          },
+        }, done);
+      });
+
+      beforeEach(function(done) {
+        context.db.collection('events').insertOne({
+          _id: castToObjectId('babababababababababababa'),
+          contents: {
+            trip_id: castToObjectId('babababababababababababa'),
+            type: 'trip-start',
+          },
+          owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          trip: {
+            friends_ids: [],
+            title: 'Lol',
+            description: 'Lol',
+            hash: 'lol',
+            car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+          },
+          created: {
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          },
+          modified: [{
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          }],
+        }, done);
+      });
+
+      it('should retrieve position', function(done) {
+        xeeJobs[exchange](context, {
+          exchange: exchange,
+          contents: {
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          },
+        })
+        .then(function() {
+          positionCall.done();
+          return context.db.collection('events').findOne({
+            _id: newEventId,
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: newEventId,
+              contents: {
+                trip_id: castToObjectId('babababababababababababa'),
+                type: 'xee-geo',
+                geo: [
+                  50.243942,
+                  3.0614734,
+                  41.5,
+                ],
+              },
+              trip: {
+                friends_ids: [],
+                title: 'Lol',
+                description: 'Lol',
+                hash: 'lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              created: {
+                seal_date: new Date('2016-03-28T06:44:53.000Z'),
+              },
+            });
+          });
+        })
+        .then(done.bind(null, null))
+        .catch(done);
+      });
+
     });
 
   });

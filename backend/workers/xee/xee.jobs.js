@@ -150,12 +150,13 @@ function xeeSyncJob(context) {
           return context.db.collection('events').findOneAndUpdate({
             'contents.type': 'xee-geo',
             'contents.trip_id': tripEvent._id,
-            'create.seal_date': new Date(data.location.date),
+            'created.seal_date': new Date(data.location.date),
           }, {
             $set: {
               'contents.geo': geo,
             },
             $setOnInsert: {
+              _id: context.createObjectId(),
               'contents.trip_id': tripEvent._id,
               'contents.type': 'xee-geo',
               trip: tripEvent.trip,
