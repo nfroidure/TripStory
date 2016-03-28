@@ -131,11 +131,13 @@ function xeeSyncJob(context) {
             return '';
           })
           .then(function(address) {
+            var locationDate = new Date(data.location.date.replace(' ', 'T') + '.000Z');
+
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({
               'contents.type': 'xee-geo',
               'contents.trip_id': tripEvent._id,
-              'created.seal_date': new Date(data.location.date),
+              'created.seal_date': locationDate,
             }, {
               $set: {
                 'contents.geo': geo,
@@ -147,7 +149,7 @@ function xeeSyncJob(context) {
                 'contents.type': 'xee-geo',
                 trip: tripEvent.trip,
                 owner_id: user._id,
-                created: controllersUtils.getDateSeal(data.location.date),
+                created: controllersUtils.getDateSeal(locationDate),
               },
             }, {
               upsert: true,

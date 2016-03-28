@@ -359,7 +359,7 @@ describe('Xee jobs', function() {
               },
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
               created: {
-                seal_date: new Date('2016-03-28T06:44:53.000Z'),
+                seal_date: new Date('2016-03-28T08:44:53.000Z'),
               },
             });
           });
