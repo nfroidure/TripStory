@@ -40,6 +40,10 @@ describe('System endpoints', function() {
     done();
   });
 
+  afterEach(function(done) {
+    context.db.collection('users').deleteMany({}, done);
+  });
+
   it('should allow to ping the server', function(done) {
     request(context.app).get('/ping')
       .expect(200)

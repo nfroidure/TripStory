@@ -39,5 +39,9 @@
     "XEE_SECRET": "",
     "PSA_ID": "",
     "PSA_SECRET": "",
+    "PUSHER_APP_ID": "",
+    "PUSHER_KEY": "",
+    "PUSHER_SECRET": "",
+    "PUSHER_CLUSTER": ""
   }
 }

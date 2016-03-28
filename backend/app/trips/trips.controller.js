@@ -87,7 +87,7 @@ function initTripsController(context) {
           'A_TRIP_UPDATED' :
           'A_TRIP_CREATED',
         contents: {
-          user_id: result.value._id,
+          trip_id: castToObjectId(req.params.trip_id),
         },
       });
       res.status(201).send(tripsTransforms.fromCollection(result.value));
@@ -110,7 +110,16 @@ function initTripsController(context) {
       .then(function() {
         res.sendStatus(410);
       });
-    }).catch(next);
+    })
+    .then(function() {
+      context.bus.trigger({
+        exchange: 'A_TRIP_DELETED',
+        contents: {
+          trip_id: castToObjectId(req.params.trip_id),
+        },
+      });
+    })
+    .catch(next);
   }
 }
 

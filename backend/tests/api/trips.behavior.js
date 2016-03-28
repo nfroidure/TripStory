@@ -11,7 +11,7 @@ var initObjectIdStub = require('objectid-stub');
 
 var initRoutes = require('../../app/routes');
 
-describe.only('Trips endpoints', function() {
+describe('Trips endpoints', function() {
   var context;
 
   before(function(done) {
@@ -225,13 +225,19 @@ describe.only('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
-            context.db.collection('events').find({
-              _id: castToObjectId('babababababababababababa'),
-            }).toArray().then(function(events) {
-              assert.deepEqual(events, []);
-              done(err);
-            })
-            .catch(done);
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_DELETED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+            },
+          }]]);
+          context.db.collection('events').find({
+            _id: castToObjectId('babababababababababababa'),
+          }).toArray().then(function(events) {
+            assert.deepEqual(events, []);
+            done(err);
+          })
+          .catch(done);
         });
       });
 
@@ -255,7 +261,7 @@ describe.only('Trips endpoints', function() {
             assert.deepEqual(context.bus.trigger.args, [[{
               exchange: 'A_TRIP_UPDATED',
               contents: {
-                user_id: castToObjectId('babababababababababababa'),
+                trip_id: castToObjectId('babababababababababababa'),
               },
             }]]);
             context.db.collection('events').findOne({
@@ -318,7 +324,7 @@ describe.only('Trips endpoints', function() {
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_CREATED',
             contents: {
-              user_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+              trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
             },
           }]]);
           context.db.collection('events').findOne({

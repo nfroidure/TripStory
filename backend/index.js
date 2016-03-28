@@ -14,12 +14,14 @@ var winston = require('winston');
 var TokenService = require('sf-token');
 var nodemailer = require('nodemailer');
 var nodemailerMailgunTransport = require('nodemailer-mailgun-transport');
+var Pusher = require('pusher');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
 var initPSAWorker = require('./workers/psa/psa.bin.js');
 var initTwitterWorker = require('./workers/twitter/twitter.bin.js');
 var initEmailWorker = require('./workers/email/email.bin.js');
+var initPusherWorker = require('./workers/pusher/pusher.bin.js');
 
 var context = {};
 
@@ -39,6 +41,16 @@ Promise.all([
       process.emit('bus-event', event);
     },
   };
+  if(context.env.PUSHER_APP_ID) {
+    context.pusher = new Pusher({
+      appId: context.env.PUSHER_APP_ID,
+      key: context.env.PUSHER_KEY,
+      secret: context.env.PUSHER_SECRET,
+      cluster: context.env.PUSHER_CLUSTER,
+      encrypted: true,
+    });
+  }
+
   context.app = express();
   context.createObjectId = ObjectId;
   context.logger = new (winston.Logger)({
@@ -104,7 +116,12 @@ Promise.all([
   initFacebookWorker(context);
   initTwitterWorker(context);
   initXeeWorker(context);
-  initEmailWorker(context);
+  if(context.env.MAILGUN_KEY && context.env.MAILGUN_DOMAIN) {
+    initEmailWorker(context);
+  }
+  if(context.env.PUSHER_APP_ID) {
+    initPusherWorker(context);
+  }
 
   // Routes
   initRoutes(context);

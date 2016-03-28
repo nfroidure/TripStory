@@ -8,13 +8,25 @@
 
   TripCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal',
-    'tripsFactory',
+    'tripsFactory', 'pusherService',
   ];
   /* @ngInject */
   function TripCtrl(
     $scope, $state, $stateParams, $ionicModal,
-    tripsFactory
+    tripsFactory, pusherService
   ) {
+    var channel = pusherService.subscribe('trips-' + $stateParams.trip_id);
+
+    channel.bind('A_TRIP_UPDATED', function() {
+      $scope.refresh();
+    });
+    channel.bind('A_TRIP_DELETED', function() {
+      $state.go('app.trips');
+    });
+    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
+    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
+
+
     $scope.trip = null;
     $scope.canStopTrip = false;
     $scope.state = 'loading';

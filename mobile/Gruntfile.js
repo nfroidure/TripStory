@@ -43,7 +43,9 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'development',
-            apiEndpoint: 'http://localhost:3000'
+            apiEndpoint: 'http://localhost:3000',
+            pusherKey: '67c63872cef9daddfedc',
+            pusherCluster: 'eu',
           }
         }
       },
@@ -51,7 +53,9 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'production',
-            apiEndpoint: 'https://tripstory.insertafter.com'
+            apiEndpoint: 'https://tripstory.insertafter.com',
+            pusherKey: '1142ca3c31b809234e2e',
+            pusherCluster: 'eu',
           }
         }
       }

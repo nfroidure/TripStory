@@ -28,7 +28,7 @@ function initBasicAuth(context) {
             context.logger.debug('Bad password:', data.username);
             return res.sendStatus(401);
           }
-          context.logger.info('Authenticated a user:', user._id, user.name);
+          context.logger.info('Authenticated a user:', user._id, user.contents.name);
           req.user = user;
           next();
         });

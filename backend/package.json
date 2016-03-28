@@ -34,6 +34,7 @@
     "passport-local": "git+ssh://git@github.com:nfroidure/passport-local#235fdb46ee75873be82afd616c2e224521677f85",
     "passport-oauth2": "git+ssh://git@github.com:nfroidure/passport-oauth2#patch/adapting_to_xee_api",
     "passport-twitter": "1.0.3",
+    "pusher": "^1.2.1",
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",
     "sf-token": "^1.0.0",

@@ -8,13 +8,24 @@
 
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
-    'tripsFactory', 'carsFactory', 'friendsFactory',
+    'tripsFactory', 'carsFactory', 'friendsFactory', 'pusherService',
   ];
   /* @ngInject */
   function TripsCtrl(
     $scope, $state, $stateParams, $ionicModal, $q,
-    tripsFactory, carsFactory, friendsFactory
+    tripsFactory, carsFactory, friendsFactory, pusherService
   ) {
+    var channel = pusherService.subscribe('trips');
+
+    channel.bind_all(function(data) {
+      if(-1 !== [
+        'A_TRIP_CREATED', 'A_TRIP_UPDATED', 'A_TRIP_DELETED'
+      ].indexOf(data.event)) {
+        $scope.refresh();
+      }
+    });
+    $scope.$on('$destroy', channel.unbind_all.bind(channel));
+
     $scope.trips = [];
     $scope.cars = [];
     $scope.friends = [];
