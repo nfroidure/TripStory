@@ -171,7 +171,7 @@ describe('Xee jobs', function() {
 
     });
 
-    describe('when there are runnng trips', function() {
+    describe('when there are running trips', function() {
       var positionCall;
       var addressCall;
       var newEventId;
