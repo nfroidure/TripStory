@@ -6,6 +6,10 @@ module.exports = function initTripsRoutes(context) {
   var tripController = initTripController(context);
 
   context.app.get(
+    '/api/v0/trips',
+    tripController.list
+  );
+  context.app.get(
     '/api/v0/users/:user_id/trips',
     tripController.list
   );

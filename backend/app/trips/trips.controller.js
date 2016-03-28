@@ -108,18 +108,23 @@ function initTripsController(context) {
 
 function createTripListAggregateStages(context, req) {
   return Promise.resolve().then(function() {
-    return [{
+    var matchStage = {
       $match: {
-        $or: [{
-          owner_id: castToObjectId(req.params.user_id),
-        }, {
-          'trip.friends_ids': castToObjectId(req.params.user_id),
-        }],
         'contents.type': {
           $in: ['trip-start', 'trip-stop'],
         },
       },
-    }, {
+    };
+
+    if(req.params.user_id) {
+      matchStage.$match.$or = [{
+        owner_id: castToObjectId(req.params.user_id),
+      }, {
+        'trip.friends_ids': castToObjectId(req.params.user_id),
+      }];
+    }
+
+    return [matchStage, {
       $sort: {
         'created.seal_date': 1,
       },

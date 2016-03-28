@@ -137,6 +137,10 @@ describe('Xee jobs', function() {
   describe('for Xee positions sync', function() {
     var exchange = 'A_XEE_SYNC';
 
+    afterEach(function(done) {
+      context.db.collection('events').deleteMany({}, done);
+    });
+
     describe('when there are no trip', function() {
 
       it('should do nothing', function(done) {
