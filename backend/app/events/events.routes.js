@@ -6,6 +6,10 @@ module.exports = function initEventsRoutes(context) {
   var eventController = initEventController(context);
 
   context.app.get(
+    '/api/v0/events',
+    eventController.list
+  );
+  context.app.get(
     '/api/v0/users/:user_id/events',
     eventController.list
   );

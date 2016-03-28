@@ -3,6 +3,8 @@
 var castToObjectId = require('mongodb').ObjectId;
 var eventsTransforms = require('./events.transforms');
 var controllersUtils = require('../utils/controllers');
+var Promise = require('bluebird');
+var YHTTPError = require('yhttperror');
 
 module.exports = initEventsController;
 
@@ -48,12 +50,18 @@ function initEventsController(context) {
   }
 
   function eventControllerPut(req, res, next) {
-    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    Promise.resolve().then(function() {
+      if(-1 !== ['trip-start'].indexOf(req.body.contents.type)) {
+        throw new YHTTPError(400, 'E_UNCREATABLE_EVENT', req.params.event_id);
+      }
 
-    context.db.collection('events').findOne({
-      'contents.type': 'trip-start',
-      'contents.trip_id': castToObjectId(req.body.contents.trip_id),
+      return context.db.collection('events').findOne({
+        'contents.type': 'trip-start',
+        'contents.trip_id': castToObjectId(req.body.contents.trip_id),
+      });
     }).then(function(startEvent) {
+      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+
       if(!startEvent) {
         return res.send(400);
       }
@@ -81,6 +89,13 @@ function initEventsController(context) {
         returnOriginal: false,
       })
       .then(function(result) {
+        context.bus.trigger({
+          exchange: 'A_TRIP_UPDATED',
+          contents: {
+            trip_id: result.value.contents.trip_id,
+            event_id: result.value._id,
+          },
+        });
         res.status(201).send(eventsTransforms.fromCollection(result.value));
       });
     })
@@ -88,11 +103,30 @@ function initEventsController(context) {
   }
 
   function eventControllerDelete(req, res, next) {
-    context.db.collection('events').deleteOne({
+    context.db.collection('events').findOne({
       _id: castToObjectId(req.params.event_id),
       owner_id: castToObjectId(req.params.user_id),
     })
-    .then(function() {
+    .then(function(event) {
+      if(!event) {
+        return Promise.resolve();
+      }
+      if(-1 !== ['trip-start', 'trip-stop'].indexOf(event.contents.type)) {
+        throw new YHTTPError(400, 'E_UNDELETABLE_EVENT', req.params.event_id);
+      }
+      return context.db.collection('events').deleteOne({
+        _id: castToObjectId(req.params.event_id),
+      })
+      .then(function() {
+        context.bus.trigger({
+          exchange: 'A_TRIP_UPDATED',
+          contents: {
+            trip_id: event.contents.trip_id,
+            event_id: castToObjectId(req.params.event_id),
+          },
+        });
+      });
+    }).then(function() {
       res.status(410).send();
     }).catch(next);
   }
