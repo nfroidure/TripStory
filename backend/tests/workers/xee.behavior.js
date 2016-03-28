@@ -161,6 +161,7 @@ describe('Xee jobs', function() {
 
     describe('when there are runnng trips', function() {
       var positionCall;
+      var addressCall;
       var newEventId;
 
       beforeEach(function() {
@@ -210,6 +211,73 @@ describe('Xee jobs', function() {
           connection: 'close',
           'cache-control': 'no-cache',
           date: 'Sat, 06 Feb 2016 12:09:14 GMT',
+        });
+        addressCall = nock('http://maps.googleapis.com:80', {
+          encodedQueryParams: true,
+        })
+        .get('/maps/api/geocode/json')
+        .query({ latlng: '50.243942,3.0614734' })
+        .reply(200, {
+          results: [{
+            address_components: [{
+              long_name: 207,
+              short_name: 207,
+              types: ['street_number'],
+            }, {
+              long_name: 'Rue Foch',
+              short_name: 'Rue Foch',
+              types: ['route'],
+            }, {
+              long_name: 'Rumaucourt',
+              short_name: 'Rumaucourt',
+              types: ['locality', 'political'],
+            }, {
+              long_name: 'Pas-de-Calais',
+              short_name: 'Pas-de-Calais',
+              types: ['administrative_area_level_2', 'political'],
+            }, {
+              long_name: 'France',
+              short_name: 'FR',
+              types: ['country', 'political'],
+            }, {
+              long_name: 62860,
+              short_name: 62860,
+              types: ['postal_code'],
+            }],
+            formatted_address: '207 Rue Foch, 62860 Rumaucourt, France',
+            geometry: {
+              location: {
+                lat: 50.2439507,
+                lng: 3.0612877,
+              },
+              location_type: 'ROOFTOP',
+              viewport: {
+                northeast: {
+                  lat: 50.2452996802915,
+                  lng: 3.062636680291502,
+                },
+                southwest: {
+                  lat: 50.2426017197085,
+                  lng: 3.059938719708499,
+                },
+              },
+            },
+            place_id: 'ChIJq-y1m6G2wkcRY2cVkIR2esM',
+            types: ['street_address'],
+          }],
+          status: 'OK',
+        }, {
+          'content-type': 'application/json; charset=UTF-8',
+          date: 'Mon, 28 Mar 2016 08:46:23 GMT',
+          expires: 'Tue, 29 Mar 2016 08:46:23 GMT',
+          'cache-control': 'public, max-age=86400',
+          'access-control-allow-origin': '*',
+          server: 'mafe',
+          'x-xss-protection': '1; mode=block',
+          'x-frame-options': 'SAMEORIGIN',
+          'accept-ranges': 'none',
+          vary: 'Accept-Language,Accept-Encoding',
+          connection: 'close',
         });
       });
 
@@ -266,6 +334,7 @@ describe('Xee jobs', function() {
         })
         .then(function() {
           positionCall.done();
+          addressCall.done();
           return context.db.collection('events').findOne({
             _id: newEventId,
           }).then(function(event) {
@@ -279,6 +348,7 @@ describe('Xee jobs', function() {
                   3.0614734,
                   41.5,
                 ],
+                address: '207 Rue Foch, 62860 Rumaucourt, France',
               },
               trip: {
                 friends_ids: [],

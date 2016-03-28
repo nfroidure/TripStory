@@ -11,8 +11,6 @@ var xeeJobs = {
   A_XEE_SIGNUP: xeeSignupJob,
   A_XEE_LOGIN: xeeSignupJob,
 };
-var lastLatitude;
-var lastLongitude;
 
 module.exports = xeeJobs;
 
@@ -115,57 +113,46 @@ function xeeSyncJob(context) {
             data.location.altitude,
           ];
 
-          if (lastLatitude !== data.location.latitude ||
-            lastLongitude !== data.location.longitude) {
-
+          return locationUtils.getFormatedAddress(
+            data.location.latitude,
+            data.location.longitude
+          )
+          .tap(function(address) {
             context.logger.debug(
-              'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s',
+              'Got #xee positions: %s http://maps.google.com/maps?q=%s,%s %s',
               geo.join(' '),
               data.location.latitude,
-              data.location.longitude
+              data.location.longitude,
+              address
             );
-
-            locationUtils
-              .getFormatedAddress(
-                data.location.latitude,
-                data.location.longitude,
-                function(err, address) {
-                  if(err) {
-                    context.logger.error('Geolocation error', err);
-                    return;
-                  }
-                  context.logger.debug(
-                    'Notre #xee est au : %s @hackthemobility',
-                    address
-                  );
-                }
-              )
-            ;
-          }
-
-          lastLatitude = data.location.latitude;
-          lastLongitude = data.location.longitude;
-
-          // Save the coordinates as an event
-          return context.db.collection('events').findOneAndUpdate({
-            'contents.type': 'xee-geo',
-            'contents.trip_id': tripEvent._id,
-            'created.seal_date': new Date(data.location.date),
-          }, {
-            $set: {
-              'contents.geo': geo,
-            },
-            $setOnInsert: {
-              _id: context.createObjectId(),
-              'contents.trip_id': tripEvent._id,
+          })
+          .catch(function(err) {
+            context.logger.error('Geolocation error', err);
+            return '';
+          })
+          .then(function(address) {
+            // Save the coordinates as an event
+            return context.db.collection('events').findOneAndUpdate({
               'contents.type': 'xee-geo',
-              trip: tripEvent.trip,
-              owner_id: user._id,
-              created: controllersUtils.getDateSeal(data.location.date),
-            },
-          }, {
-            upsert: true,
-            returnOriginal: false,
+              'contents.trip_id': tripEvent._id,
+              'created.seal_date': new Date(data.location.date),
+            }, {
+              $set: {
+                'contents.geo': geo,
+                'contents.address': address,
+              },
+              $setOnInsert: {
+                _id: context.createObjectId(),
+                'contents.trip_id': tripEvent._id,
+                'contents.type': 'xee-geo',
+                trip: tripEvent.trip,
+                owner_id: user._id,
+                created: controllersUtils.getDateSeal(data.location.date),
+              },
+            }, {
+              upsert: true,
+              returnOriginal: false,
+            });
           });
         });
       });
