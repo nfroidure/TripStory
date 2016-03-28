@@ -37,6 +37,13 @@ describe('Xee jobs', function() {
   });
 
   beforeEach(function(done) {
+    context.bus = {
+      trigger: sinon.spy(),
+    };
+    done();
+  });
+
+  beforeEach(function(done) {
     context.createObjectId.reset();
     done();
   });
@@ -151,6 +158,7 @@ describe('Xee jobs', function() {
           },
         })
         .then(function() {
+          assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
           .then(function(count) {
             assert.equal(count, 0);
@@ -339,6 +347,13 @@ describe('Xee jobs', function() {
         .then(function() {
           positionCall.done();
           addressCall.done();
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+              event_id: newEventId,
+            },
+          }]]);
           return context.db.collection('events').findOne({
             _id: newEventId,
           }).then(function(event) {

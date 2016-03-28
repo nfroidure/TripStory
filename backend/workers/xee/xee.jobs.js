@@ -155,6 +155,15 @@ function xeeSyncJob(context) {
               upsert: true,
               returnOriginal: false,
             });
+          })
+          .then(function(result) {
+            context.bus.trigger({
+              exchange: 'A_TRIP_UPDATED',
+              contents: {
+                trip_id: tripEvent._id,
+                event_id: result.value._id,
+              },
+            });
           });
         });
       });
