@@ -37,14 +37,20 @@
         </label>
         <label class="item item-input item-select" ng-if="cars.length">
           <span class="input-label">Car</span>
-          <select ng-model="newTrip.contents.car_id"
-            ng-options="car._id as car.contents.name for car in cars track by car._id">
+          <select ng-model="newTrip.contents.car_id">
+            <option value="?" selected>None</option>
+            <option ng-repeat="car in cars track by car._id" value="{{ car._id }}">
+              {{ car.contents.name}}
+            </option>
           </select>
         </label>
         <label class="item item-input item-select" ng-if="friends.length">
           <span class="input-label">Friends</span>
-          <select ng-model="newTrip.contents.friends_ids" multiple
-            ng-options="friend._id as friend.contents.name for friend in friends track by friend._id">
+          <select ng-model="newTrip.contents.friends_ids" multiple>
+              <option value="?" selected>None</option>
+              <option ng-repeat="friend in friends track by friend._id" value="{{ friend._id }}">
+                {{ friend.contents.name}}
+              </option>
           </select>
         </label>
         <p class="item" ng-if="fail == 'E_RESERVED_HASH'">
