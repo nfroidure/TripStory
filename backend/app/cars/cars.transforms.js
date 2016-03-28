@@ -17,6 +17,7 @@ function carsTransformsFromCollection(src) {
   };
 
   dest.contents.user_id = src.user_id;
+  delete dest.contents._id;
   return transformsUtils.fromCollection(dest);
 }
 

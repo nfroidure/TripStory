@@ -1,6 +1,7 @@
 'use strict';
 
 var castToObjectId = require('mongodb').ObjectId;
+var YHTTPError = require('yhttperror');
 var carsTransforms = require('./cars.transforms');
 
 module.exports = initCarsController;
@@ -8,27 +9,41 @@ module.exports = initCarsController;
 function initCarsController(context) {
   var carController = {
     list: carControllerList,
-    get: carControllerGet, /*
-    put: carControllerPut,
-    delete: carControllerDelete,*/
+    get: carControllerGet,
+    delete: carControllerDelete,
   };
 
   return carController;
 
   function carControllerList(req, res, next) {
-    context.db.collection('users').aggregate([{
-      $match: {
-        _id: castToObjectId(req.params.user_id),
-      },
-    }, {
-      $unwind: '$cars',
-    }, {
-      $project: {
-        _id: '$cars._id',
-        user_id: '$_id',
-        contents: '$cars',
-      },
-    }]).toArray()
+    Promise.resolve([])
+    .then(function(pipeline) {
+      if(req.params.user_id) {
+        pipeline.push({
+          $match: {
+            _id: castToObjectId(req.params.user_id),
+          },
+        });
+      }
+      return pipeline;
+    })
+    .catch(function castUserError(err) {
+      throw YHTTPError.wrap(err, 400, 'E_BAD_USER_ID', req.params.user_id);
+    })
+    .then(function(pipeline) {
+      return pipeline.concat({
+        $unwind: '$cars',
+      }, {
+        $project: {
+          _id: '$cars._id',
+          user_id: '$_id',
+          contents: '$cars',
+        },
+      });
+    })
+    .then(function(pipeline) {
+      return context.db.collection('users').aggregate(pipeline).toArray();
+    })
     .then(function(entries) {
       res.status(200).send(entries.map(carsTransforms.fromCollection));
     }).catch(next);
@@ -59,62 +74,19 @@ function initCarsController(context) {
       res.status(200).send(carsTransforms.fromCollection(entries[0]));
     }).catch(next);
   }
-/*
-  function carControllerPut(req, res, next) {
-    Promise.all([
-      context.db.collection('events').findOneAndUpdate({
-        owner_id: castToObjectId(req.params.user_id),
-        'contents.car_id': castToObjectId(req.params.car_id),
-        'contents.type': 'car-start',
-      }, {
-        $set: {
-          contents: {
-            car_id: castToObjectId(req.params.car_id),
-            type: 'car-start',
-            date: (new Date()).toISOString(),
-          },
-          car: req.body.contents || {},
-        },
-        $setOnInsert: {
+
+  function carControllerDelete(req, res, next) {
+    context.db.collection('users').updateOne({
+      _id: castToObjectId(req.params.user_id),
+    }, {
+      $pull: {
+        cars: {
           _id: castToObjectId(req.params.car_id),
-          owner_id: castToObjectId(req.params.user_id),
         },
-      }, {
-        upsert: true,
-        returnOriginal: false,
-      }),
-      context.db.collection('events').updateMany({
-        owner_id: castToObjectId(req.params.user_id),
-        'contents.car_id': castToObjectId(req.params.car_id),
-        'contents.type': { $ne: 'car-start' },
-      }, {
-        $set: {
-          car: req.body.contents || {},
-        },
-      }),
-    ])
-    .spread(function(result) {
-      res.status(201).send(carsTransforms.fromCollection(result.value));
+      },
+    }).then(function(result) {
+      res.sendStatus(410);
     }).catch(next);
   }
 
-  function carControllerDelete(req, res, next) {
-    context.db.collection('events').findOne({
-      owner_id: castToObjectId(req.params.user_id),
-      'contents.car_id': castToObjectId(req.params.car_id),
-      'contents.type': 'car-start',
-    }).then(function(startEvent) {
-      if(!startEvent) {
-        res.sendStatus(410);
-        return Promise.resolve();
-      }
-      return context.db.collection('events').deleteMany({
-        _id: castToObjectId(req.params.car_id),
-      })
-      .then(function() {
-        res.sendStatus(410);
-      });
-    }).catch(next);
-  }
-  */
 }
