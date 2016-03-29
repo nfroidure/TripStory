@@ -153,19 +153,17 @@ describe('Xee jobs', function() {
       it('should do nothing', function(done) {
         xeeJobs[exchange](context, {
           exchange: exchange,
-          contents: {
-            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-          },
+          contents: {},
         })
         .then(function() {
           assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
           .then(function(count) {
             assert.equal(count, 0);
-          })
-          .then(done.bind(null, null))
-          .catch(done);
-        });
+          });
+        })
+        .then(done.bind(null, null))
+        .catch(done);
 
       });
 
@@ -340,9 +338,7 @@ describe('Xee jobs', function() {
       it('should retrieve position', function(done) {
         xeeJobs[exchange](context, {
           exchange: exchange,
-          contents: {
-            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-          },
+          contents: {},
         })
         .then(function() {
           positionCall.done();

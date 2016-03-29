@@ -15,7 +15,10 @@ module.exports = twitterJobs;
 
 function twitterSyncJob(context) {
   return workersUtils.getCurrentTrips(context)
-  .then(function handleTwitterUsers(tripsEvents) {
+  .then(function handleCurrentTrips(tripsEvents) {
+    if(!tripsEvents) {
+      return Promise.resolve();
+    }
     return Promise.all(tripsEvents.map(function(tripEvent) {
       return new Promise(function(resolve, reject) {
         context.twitter.get(
@@ -27,8 +30,11 @@ function twitterSyncJob(context) {
             if(err) {
               return reject(err);
             }
+            if(!tweets.statuses.length) {
+              return Promise.resolve();
+            }
             context.logger.debug(JSON.stringify(tweets, null, 2));
-            resolve(Promise.all(tweets.statuses.map(function(status) {
+            Promise.all(tweets.statuses.map(function(status) {
               return context.db.collection('users').findOne({
                 'auth.twitter.id': status.user.id + '',
               }).then(function(author) {
@@ -37,21 +43,17 @@ function twitterSyncJob(context) {
                   return Promise.resolve();
                 }
                 return context.db.collection('events').findOneAndUpdate({
-                  'twitter.id': status.id,
+                  'contents.twitterId': status.id,
                 }, {
                   $set: {
-                    twitter: {
-                      id: status.id,
-                      text: status.text,
-                      geo: status.geo,
-                    },
+                    'contents.twitterId': status.id,
                     'contents.text': status.text,
-                    'contents.geo': status.geo,
-                    'contents.profile_image': status.profile_image_url_https,
-                    'contents.entities': status.entities,
+                    'contents.geo': status.geo || [],
+                    'contents.profile_image': status.profile_image_url_https || '',
                     'contents.user_name': status.user.name,
                   },
                   $setOnInsert: {
+                    _id: context.createObjectId(),
                     owner_id: author._id,
                     'contents.trip_id': tripEvent._id,
                     'contents.type': 'twitter-status',
@@ -61,9 +63,20 @@ function twitterSyncJob(context) {
                 }, {
                   upsert: true,
                   returnOriginal: false,
+                })
+                .then(function(result) {
+                  context.bus.trigger({
+                    exchange: 'A_TRIP_UPDATED',
+                    contents: {
+                      trip_id: tripEvent._id,
+                      event_id: result.value._id,
+                    },
+                  });
                 });
               });
-            })));
+            }))
+            .then(resolve)
+            .catch(reject);
           }
         );
       });
