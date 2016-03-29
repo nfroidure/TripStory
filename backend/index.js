@@ -15,6 +15,7 @@ var TokenService = require('sf-token');
 var nodemailer = require('nodemailer');
 var nodemailerMailgunTransport = require('nodemailer-mailgun-transport');
 var Pusher = require('pusher');
+var Twitter = require('twitter');
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
@@ -48,6 +49,14 @@ Promise.all([
       secret: context.env.PUSHER_SECRET,
       cluster: context.env.PUSHER_CLUSTER,
       encrypted: true,
+    });
+  }
+  if(context.env.TWITTER_ID) {
+    context.twitter = new Twitter({
+      consumer_key: process.env.TWITTER_ID,
+      consumer_secret: process.env.TWITTER_SECRET,
+      access_token_key: process.env.TWITTER_ACCESS_TOKEN,
+      access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
   }
 

@@ -11,7 +11,7 @@ var initObjectIdStub = require('objectid-stub');
 
 var initRoutes = require('../../app/routes');
 
-describe.only('Events endpoints', function() {
+describe('Events endpoints', function() {
   var context;
 
   before(function(done) {
