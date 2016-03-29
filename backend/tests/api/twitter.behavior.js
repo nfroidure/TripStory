@@ -74,19 +74,20 @@ describe('OAuth Twitter endpoints', function() {
     var requestTokenCall;
 
     beforeEach(function() {
-        requestTokenCall = nock('https://api.twitter.com:443', {
-          encodedQueryParams: true,
-        })
-        .post(
-          '/oauth/request_token'
-        )
-        .reply(
-          200,
-          'oauth_token=YOP' +
-          '&oauth_token_secret=POY' +
-          '&oauth_callback_confirmed=true', {
-            'content-type': 'text/plain; charset=UTF-8',
-          });
+      requestTokenCall = nock('https://api.twitter.com:443', {
+        encodedQueryParams: true,
+      })
+      .post(
+        '/oauth/request_token'
+      )
+      .reply(
+        200,
+        'oauth_token=YOP' +
+        '&oauth_token_secret=POY' +
+        '&oauth_callback_confirmed=true', {
+          'content-type': 'text/plain; charset=UTF-8',
+        }
+      );
     });
 
     it('should redirect to the OAuth page', function(done) {
@@ -155,48 +156,48 @@ describe('OAuth Twitter endpoints', function() {
         user_id: '1664',
       })
       .reply(200, {
-        "id": 1664,
-        "id_str": "1664",
-        "name": "Nicolas Froidure",
-        "screen_name": "nfroidure",
-        "location": "Lille, France.",
-        "profile_location": null,
-        "description": "Full-stack JavaScript developer @SimpliField, NodeJS early user, NPM flooder, GitHub fan.",
-        "url": "http://t.co/VYWWEzqULI",
-        "protected": false,
-        "followers_count": 1055,
-        "friends_count": 393,
-        "listed_count": 134,
-        "created_at": "Wed Jul 15 12:44:38 +0000 2009",
-        "favourites_count": 306,
-        "utc_offset": 3600,
-        "time_zone": "Paris",
-        "geo_enabled": true,
-        "verified": false,
-        "statuses_count": 9300,
-        "lang": "fr",
-        "contributors_enabled": false,
-        "is_translator": false,
-        "is_translation_enabled": false,
-        "profile_background_color": "008000",
-        "profile_background_image_url": "http://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png",
-        "profile_background_image_url_https": "https://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png",
-        "profile_background_tile": false,
-        "profile_image_url": "http://robohash.org/lol",
-        "profile_image_url_https": "https://robohash.org/lol",
-        "profile_link_color": "0099CC",
-        "profile_sidebar_border_color": "FFFFFF",
-        "profile_sidebar_fill_color": "DDEEF6",
-        "profile_text_color": "333333",
-        "profile_use_background_image": true,
-        "has_extended_profile": true,
-        "default_profile": false,
-        "default_profile_image": false,
-        "following": false,
-        "follow_request_sent": false,
-        "notifications": false,
-        "suspended": false,
-        "needs_phone_verification": false
+        id: 1664,
+        id_str: '1664',
+        name: 'Nicolas Froidure',
+        screen_name: 'nfroidure',
+        location: 'Lille, France.',
+        profile_location: null,
+        description: 'Full-stack JavaScript developer @SimpliField, NodeJS early user, NPM flooder, GitHub fan.',
+        url: 'http://t.co/VYWWEzqULI',
+        protected: false,
+        followers_count: 1055,
+        friends_count: 393,
+        listed_count: 134,
+        created_at: 'Wed Jul 15 12:44:38 +0000 2009',
+        favourites_count: 306,
+        utc_offset: 3600,
+        time_zone: 'Paris',
+        geo_enabled: true,
+        verified: false,
+        statuses_count: 9300,
+        lang: 'fr',
+        contributors_enabled: false,
+        is_translator: false,
+        is_translation_enabled: false,
+        profile_background_color: '008000',
+        profile_background_image_url: 'http://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png',
+        profile_background_image_url_https: 'https://pbs.twimg.com/profile_background_images/718389880/1eaccd03f55b56fd0d9ecb12d6115193.png',
+        profile_background_tile: false,
+        profile_image_url: 'http://robohash.org/lol',
+        profile_image_url_https: 'https://robohash.org/lol',
+        profile_link_color: '0099CC',
+        profile_sidebar_border_color: 'FFFFFF',
+        profile_sidebar_fill_color: 'DDEEF6',
+        profile_text_color: '333333',
+        profile_use_background_image: true,
+        has_extended_profile: true,
+        default_profile: false,
+        default_profile_image: false,
+        following: false,
+        follow_request_sent: false,
+        notifications: false,
+        suspended: false,
+        needs_phone_verification: false,
       }, {
         'content-type': 'text/javascript; charset=UTF-8',
       });
@@ -215,7 +216,7 @@ describe('OAuth Twitter endpoints', function() {
         )
           .set('Cookie', 'connect.sid=s%3Ax6L9CiWPF1pD4bIFyCFvV--sg7H2znNj.4eX1VfudnVnDiwRDUy0G0%2FeiG05doSmwDp5EUOEYcS0')
           .expect(301)
-          .end(function(err, res) {
+          .end(function(err) {
             if(err) {
               return done(err);
             }

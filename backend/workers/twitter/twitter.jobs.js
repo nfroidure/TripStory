@@ -89,6 +89,10 @@ function pairTwitterFriends(context, event) {
         .then(function(friends) {
           var friendsIds = friends.map(function(friend) { return friend._id; });
 
+          if(!friendsIds.length) {
+            return Promise.resolve();
+          }
+
           return Promise.all([
             context.db.collection('users').updateMany({
               _id: friendsIds,
