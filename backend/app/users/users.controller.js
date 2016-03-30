@@ -104,13 +104,46 @@ function initUsersController(context) {
       if(!req.body.email) {
         throw new YHTTPError(400, 'E_NO_EMAIL');
       }
-      context.bus.trigger({
-        exchange: 'A_FRIEND_INVITE',
-        contents: {
-          user_id: castToObjectId(req.params.user_id),
-          friend_email: req.body.email,
+      return context.db.collection('users').findOne({
+        emailKeys: {
+          $all: [req.body.email],
         },
+        friends_ids: { $not: {
+          $all: [castToObjectId(req.params.user_id)],
+        } },
+      }).then(function(friend) {
+        if(friend) {
+          return Promise.all([
+            context.db.collection('users').updateOne({
+              _id: friend._id,
+            }, {
+              $push: { friends_ids: castToObjectId(req.params.user_id) },
+            }),
+            context.db.collection('users').updateOne({
+              _id: castToObjectId(req.params.user_id),
+            }, {
+              $push: { friends_ids: friend._id },
+            }),
+          ]).then(function() {
+            context.bus.trigger({
+              exchange: 'A_FRIEND_ADD',
+              contents: {
+                user_id: castToObjectId(req.params.user_id),
+                friend_id: friend._id,
+              },
+            });
+          });
+        }
+        context.bus.trigger({
+          exchange: 'A_FRIEND_INVITE',
+          contents: {
+            user_id: castToObjectId(req.params.user_id),
+            friend_email: req.body.email,
+          },
+        });
       });
+    })
+    .then(function() {
       res.sendStatus(204);
     })
     .catch(next);

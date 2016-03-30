@@ -55,6 +55,47 @@ describe('Email jobs', function() {
     }, done);
   });
 
+  describe('for friend additions', function() {
+    var exchange = 'A_FRIEND_ADD';
+
+    beforeEach(function(done) {
+      context.db.collection('users').insertOne({
+        _id: castToObjectId('babababababababababababa'),
+        contents: {
+          name: 'Jean De La Fontaine',
+          email: 'jdlf@academie.fr',
+        },
+        emailKeys: ['jdlf@academie.fr'],
+        passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
+        rights: [{
+          path: '/.*',
+          methods: 127,
+        }],
+      }, done);
+    });
+
+    it('should send an email', function(done) {
+      context.sendMail.returns(Promise.resolve());
+      emailJobs[exchange](context, {
+        exchange: exchange,
+        contents: {
+          user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          friend_id: castToObjectId('babababababababababababa'),
+        },
+      })
+      .then(function() {
+        assert.equal(context.sendMail.callCount, 1);
+        assert.deepEqual(
+          context.sendMail.args[0][0],
+          require('../fixtures/email-friend-add') // eslint-disable-line
+        );
+      })
+      .then(done.bind(null, null))
+      .catch(done);
+    });
+
+  });
+
   describe('for friend invites', function() {
     var exchange = 'A_FRIEND_INVITE';
 

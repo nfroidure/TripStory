@@ -7,6 +7,7 @@ var MongoClient = require('mongodb').MongoClient;
 var castToObjectId = require('mongodb').ObjectId;
 var sinon = require('sinon');
 var assert = require('assert');
+var Promise = require('bluebird');
 var initObjectIdStub = require('objectid-stub');
 
 var initRoutes = require('../../app/routes');
@@ -68,6 +69,7 @@ describe('Users endpoints', function() {
           path: '/api/v0/users/:_id/?.*',
           methods: 127,
         }],
+        friends_ids: [],
       }, done);
     });
 
@@ -161,6 +163,63 @@ describe('Users endpoints', function() {
           }]]);
           done(err);
         });
+    });
+
+    describe('for signuped friends', function() {
+
+      beforeEach(function(done) {
+        context.db.collection('users').insertOne({
+          _id: castToObjectId('babababababababababababa'),
+          contents: {
+            name: 'Jean De La Fontaine',
+            email: 'jdlf@academie.fr',
+          },
+          emailKeys: ['jdlf@academie.fr'],
+          passwordHash: '$2a$10$s4FQh8WjiYQfx6gdO4AXAePe7tj4HXoo8fIcTsjD6YGkZ/B2oDDpW',
+          rights: [{
+            path: '/.*',
+            methods: 127,
+          }],
+          friends_ids: [],
+        }, done);
+      });
+
+      it('should allow to add friends', function(done) {
+        request(context.app).post('/api/v0/users/abbacacaabbacacaabbacaca/friends')
+          .auth('popol@moon.u', 'test')
+          .send({
+            email: 'jdlf@academie.fr',
+          })
+          .expect(204)
+          .end(function(err, res) {
+            assert.deepEqual(context.bus.trigger.args, [[{
+              exchange: 'A_FRIEND_ADD',
+              contents: {
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                friend_id: castToObjectId('babababababababababababa'),
+              },
+            }]]);
+            Promise.all([
+              context.db.collection('users').findOne({
+                _id: castToObjectId('abbacacaabbacacaabbacaca'),
+              }),
+              context.db.collection('users').findOne({
+                _id: castToObjectId('babababababababababababa'),
+              }),
+            ])
+            .spread(function(user, friend) {
+              assert.deepEqual(user.friends_ids, [
+                castToObjectId('babababababababababababa'),
+              ]);
+              assert.deepEqual(friend.friends_ids, [
+                castToObjectId('abbacacaabbacacaabbacaca'),
+              ]);
+            })
+            .then(done)
+            .catch(done);
+          });
+      });
+
     });
 
     it('should disallow to get others profile', function(done) {

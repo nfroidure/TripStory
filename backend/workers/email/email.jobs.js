@@ -1,6 +1,7 @@
 'use strict';
 
 var YError = require('yerror');
+var Promise = require('bluebird');
 
 var emailJobs = {
   A_LOCAL_SIGNUP: emailSignupJob,
@@ -8,7 +9,8 @@ var emailJobs = {
   A_GG_SIGNUP: emailSignupJob,
   A_TWITTER_SIGNUP: emailSignupJob,
   A_XEE_SIGNUP: emailSignupJob,
-  A_FRIEND_INVITE: emailInviteJob,
+  A_FRIEND_INVITE: emailFriendInviteJob,
+  A_FRIEND_ADD: emailFriendAddJob,
 };
 
 module.exports = emailJobs;
@@ -34,37 +36,67 @@ function emailSignupJob(context, event) {
   });
 }
 
-function emailInviteJob(context, event) {
-  return context.db.collection('users').findOne({
-    'contents.emails': {
-      $all: [event.contents.friend_email],
-    },
-    friends_ids: {
-      $nin: [event.contents.user_id],
-    },
-  }).then(function(friend) {
-    if(friend) {
-      return Promise.resolve();
-    }
-    return _getRecipient(context, event.contents.user_id).then(function(recipient) {
-      return context.sendMail({
-        from: context.env.EMAIL,
-        to: event.contents.friend_email,
-        subject: '[Trip Story] Invite from ' + recipient.contents.name + '!',
-        html:
-          '<p>Hi there!</p>\r\n' +
-          '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
-          '<p><a href="' + context.base + '">' +
-            'Join us to share your trips experiences!' +
-          '</a></p>\r\n' +
-          '<p>See you soon, the Trip Story crew.</p>\r\n',
-        text:
-          'Hi!\r\n' +
-          '\r\n' +
-          recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
-          '\r\n' +
-          'Join us by browsing ' + context.base + '!\r\n',
-      });
+function emailFriendAddJob(context, event) {
+  return Promise.all([
+    _getRecipient(context, event.contents.friend_id),
+    _getRecipient(context, event.contents.user_id),
+  ])
+  .spread(function(recipient, ccRecipient) {
+    var connectEndpoint = recipient.google ?
+      '/auth/google' :
+      recipient.facebook ?
+      '/auth/facebook' :
+      recipient.twitter ?
+      '/auth/twitter' :
+      recipient.xee ?
+      '/auth/xee' :
+      '';
+
+    return context.sendMail({
+      from: context.env.EMAIL,
+      to: recipient.contents.email,
+      cc: ccRecipient.contents.email,
+      subject: '[Trip Story] ' + ccRecipient.contents.name + ' is ready to trip!',
+      html:
+        '<p>Hi there!</p>\r\n' +
+        '<p>' +
+          recipient.contents.name + ' linked its account with you!' +
+          ' What a nice day to trip together :).' +
+        '</p>\r\n' +
+        '<p><a href="' + context.base + connectEndpoint + '">' +
+          'Come on!' +
+        '</a></p>\r\n' +
+        '<p>See you soon, the Trip Story crew.</p>\r\n',
+      text:
+        'Hi!\r\n' +
+        '\r\n' +
+        recipient.contents.name + ' linked its account with you!\r\n' +
+        ' What a nice day to trip together :).\r\n' +
+        '\r\n' +
+        'See you soon, the Trip Story crew.\r\n',
+    });
+  });
+}
+
+function emailFriendInviteJob(context, event) {
+  return _getRecipient(context, event.contents.user_id).then(function(recipient) {
+    return context.sendMail({
+      from: context.env.EMAIL,
+      to: event.contents.friend_email,
+      subject: '[Trip Story] Invite from ' + recipient.contents.name + '!',
+      html:
+        '<p>Hi there!</p>\r\n' +
+        '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
+        '<p><a href="' + context.base + '">' +
+          'Join us to share your trips experiences!' +
+        '</a></p>\r\n' +
+        '<p>See you soon, the Trip Story crew.</p>\r\n',
+      text:
+        'Hi!\r\n' +
+        '\r\n' +
+        recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
+        '\r\n' +
+        'Join us by browsing ' + context.base + '!\r\n',
     });
   });
 }
