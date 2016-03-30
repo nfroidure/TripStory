@@ -114,8 +114,11 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, []);
-          done(err);
+          done();
         });
       });
 
@@ -126,7 +129,10 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(404)
         .end(function(err, res) {
-          done(err);
+          if(err) {
+            return done(err);
+          }
+          done();
         });
       });
 
@@ -137,8 +143,11 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {});
-          done(err);
+          done();
         });
       });
 
@@ -151,6 +160,9 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, [{
             _id: 'b17eb17eb17eb17eb17eb17e',
             contents: {
@@ -161,7 +173,7 @@ describe('Cars endpoints', function() {
               type: 'xee',
             },
           }]);
-          done(err);
+          done();
         });
       });
 
@@ -172,6 +184,9 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'b17eb17eb17eb17eb17eb17e',
             contents: {
@@ -182,7 +197,7 @@ describe('Cars endpoints', function() {
               type: 'xee',
             },
           });
-          done(err);
+          done();
         });
       });
 
@@ -193,13 +208,16 @@ describe('Cars endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
-            context.db.collection('users').findOne({
-              _id: castToObjectId('abbacacaabbacacaabbacaca'),
-            }).then(function(user) {
-              assert.equal(user.cars.length, 0);
-              done(err);
-            })
-            .catch(done);
+          if(err) {
+            return done(err);
+          }
+          context.db.collection('users').findOne({
+            _id: castToObjectId('abbacacaabbacacaabbacaca'),
+          }).then(function(user) {
+            assert.equal(user.cars.length, 0);
+            done(err);
+          })
+          .catch(done);
         });
       });
 
@@ -214,6 +232,9 @@ describe('Cars endpoints', function() {
       .auth('jpb@marvello.us', 'test')
       .expect(200)
       .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
         assert.deepEqual(res.body, [{
           _id: 'b17eb17eb17eb17eb17eb17e',
           contents: {
@@ -233,7 +254,7 @@ describe('Cars endpoints', function() {
             type: 'xee',
           },
         }]);
-        done(err);
+        done();
       });
     });
 

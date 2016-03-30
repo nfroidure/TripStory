@@ -82,6 +82,9 @@ describe('Authentication endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'abbacacaabbacacaabbacaca',
             contents: {
@@ -101,6 +104,9 @@ describe('Authentication endpoints', function() {
         })
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'abbacacaabbacacaabbacaca',
             contents: {
@@ -126,6 +132,9 @@ describe('Authentication endpoints', function() {
         })
         .expect(400)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.equal(res.body.code, 'E_BAD_PASSWORD');
           done(err);
         });
@@ -139,6 +148,9 @@ describe('Authentication endpoints', function() {
         })
         .expect(400)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.equal(res.body.code, 'E_BAD_EMAIL');
           done(err);
         });
@@ -151,6 +163,9 @@ describe('Authentication endpoints', function() {
         })
         .expect(400)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.equal(res.body.code, 'E_BAD_CREDENTIALS');
           done(err);
         });
@@ -163,6 +178,9 @@ describe('Authentication endpoints', function() {
         })
         .expect(400)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.equal(res.body.code, 'E_BAD_CREDENTIALS');
           done(err);
         });
@@ -173,6 +191,9 @@ describe('Authentication endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(204)
         .end(function(err) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_LOGOUT',
             contents: {

@@ -84,6 +84,9 @@ describe('Users endpoints', function() {
         })
         .expect(201)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'abbacacaabbacacaabbacaca',
             contents: {
@@ -91,7 +94,7 @@ describe('Users endpoints', function() {
               email: 'popol@moon.u',
             },
           });
-          done(err);
+          done();
         });
     });
 
@@ -100,8 +103,11 @@ describe('Users endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {});
-          done(err);
+          done();
         });
     });
 
@@ -133,6 +139,9 @@ describe('Users endpoints', function() {
           .auth('popol@moon.u', 'test')
           .expect(200)
           .end(function(err, res) {
+            if(err) {
+              return done(err);
+            }
             assert.deepEqual(res.body, [{
               _id: 'b17eb17eb17eb17eb17eb17e',
               contents: {
@@ -140,7 +149,7 @@ describe('Users endpoints', function() {
                 email: 'jdlf@academie.fr',
               },
             }]);
-            done(err);
+            done();
           });
       });
 
@@ -154,6 +163,9 @@ describe('Users endpoints', function() {
         })
         .expect(204)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_FRIEND_INVITE',
             contents: {
@@ -161,7 +173,7 @@ describe('Users endpoints', function() {
               friend_email: 'jdlf@academie.fr',
             },
           }]]);
-          done(err);
+          done();
         });
     });
 
@@ -192,6 +204,9 @@ describe('Users endpoints', function() {
           })
           .expect(204)
           .end(function(err, res) {
+            if(err) {
+              return done(err);
+            }
             assert.deepEqual(context.bus.trigger.args, [[{
               exchange: 'A_FRIEND_ADD',
               contents: {
@@ -227,8 +242,11 @@ describe('Users endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(403)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body.code, 'E_UNAUTHORIZED');
-          done(err);
+          done();
         });
     });
 
@@ -237,8 +255,11 @@ describe('Users endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(403)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body.code, 'E_UNAUTHORIZED');
-          done(err);
+          done();
         });
     });
 
@@ -267,8 +288,11 @@ describe('Users endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(404)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body.code, 'E_NOT_FOUND');
-          done(err);
+          done();
         });
     });
 
@@ -277,6 +301,9 @@ describe('Users endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, [{
             _id: 'abbacacaabbacacaabbacaca',
             contents: {
@@ -284,7 +311,7 @@ describe('Users endpoints', function() {
               email: 'popol@moon.u',
             },
           }]);
-          done(err);
+          done();
         });
     });
 

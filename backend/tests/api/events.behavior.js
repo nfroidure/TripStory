@@ -169,8 +169,11 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, []);
-          done(err);
+          done();
         });
       });
 
@@ -181,7 +184,10 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(404)
         .end(function(err, res) {
-          done(err);
+          if(err) {
+            return done(err);
+          }
+          done();
         });
       });
 
@@ -192,8 +198,11 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {});
-          done(err);
+          done();
         });
       });
 
@@ -206,6 +215,9 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, [{
             _id: 'babababababababababababa',
             contents: {
@@ -227,7 +239,7 @@ describe('Events endpoints', function() {
             },
             created_date: '1970-01-01T00:00:01.665Z',
           }]);
-          done(err);
+          done();
         });
       });
 
@@ -238,6 +250,9 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'babababababababababababa',
             contents: {
@@ -246,7 +261,7 @@ describe('Events endpoints', function() {
             },
             created_date: '1970-01-01T00:00:01.664Z',
           });
-          done(err);
+          done();
         });
       });
 
@@ -257,6 +272,9 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(400)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.equal(res.body.code, 'E_UNDELETABLE_EVENT');
           done();
         });
@@ -269,6 +287,9 @@ describe('Events endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
             contents: {
@@ -306,54 +327,57 @@ describe('Events endpoints', function() {
         })
         .expect(201)
         .end(function(err, res) {
-            assert.deepEqual(context.bus.trigger.args, [[{
-              exchange: 'A_TRIP_UPDATED',
+          if(err) {
+            return done(err);
+          }
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+              event_id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
+            },
+          }]]);
+          context.db.collection('events').findOne({
+            _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
               contents: {
                 trip_id: castToObjectId('babababababababababababa'),
-                event_id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
+                type: 'xee-geo',
+                geo: [
+                  60.243942,
+                  9.0614734,
+                  20.5,
+                ],
+                address: '',
               },
-            }]]);
-            context.db.collection('events').findOne({
-              _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
-            }).then(function(event) {
-              assert.deepEqual(event, {
-                _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
-                contents: {
-                  trip_id: castToObjectId('babababababababababababa'),
-                  type: 'xee-geo',
-                  geo: [
-                    60.243942,
-                    9.0614734,
-                    20.5,
-                  ],
-                  address: '',
-                },
-                owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                trip: {
-                  friends_ids: [],
-                  description: 'Lol',
-                  hash: 'lol',
-                  title: 'Lol',
-                  car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
-                },
-                created: {
-                  seal_date: new Date(context.time() + 1),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                },
-                modified: [{
-                  seal_date: new Date(context.time() + 1),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                }, {
-                  seal_date: new Date(context.time()),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                }],
-              });
-              done(err);
-            })
-            .catch(done);
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              trip: {
+                friends_ids: [],
+                description: 'Lol',
+                hash: 'lol',
+                title: 'Lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              created: {
+                seal_date: new Date(context.time() + 1),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              },
+              modified: [{
+                seal_date: new Date(context.time() + 1),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              }, {
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              }],
+            });
+            done(err);
+          })
+          .catch(done);
         });
       });
 
@@ -379,50 +403,53 @@ describe('Events endpoints', function() {
       })
       .expect(201)
       .end(function(err, res) {
-          assert.deepEqual(context.bus.trigger.args, [[{
-            exchange: 'A_TRIP_UPDATED',
+        if(err) {
+          return done(err);
+        }
+        assert.deepEqual(context.bus.trigger.args, [[{
+          exchange: 'A_TRIP_UPDATED',
+          contents: {
+            trip_id: castToObjectId('babababababababababababa'),
+            event_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+          },
+        }]]);
+        context.db.collection('events').findOne({
+          _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+        }).then(function(event) {
+          assert.deepEqual(event, {
+            _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
-              event_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+              type: 'xee-geo',
+              geo: [
+                60.243942,
+                9.0614734,
+                20.5,
+              ],
+              address: '',
             },
-          }]]);
-          context.db.collection('events').findOne({
-            _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-          }).then(function(event) {
-            assert.deepEqual(event, {
-              _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-              contents: {
-                trip_id: castToObjectId('babababababababababababa'),
-                type: 'xee-geo',
-                geo: [
-                  60.243942,
-                  9.0614734,
-                  20.5,
-                ],
-                address: '',
-              },
-              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
-              trip: {
-                friends_ids: [],
-                title: 'Lol',
-                description: 'Lol',
-                hash: 'lol',
-                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
-              },
-              created: {
-                seal_date: new Date(context.time()),
-                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                ip: '::ffff:127.0.0.1',
-              },
-              modified: [{
-                seal_date: new Date(context.time()),
-                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                ip: '::ffff:127.0.0.1',
-              }],
-            });
-            done(err);
-          })
-          .catch(done);
+            owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            trip: {
+              friends_ids: [],
+              title: 'Lol',
+              description: 'Lol',
+              hash: 'lol',
+              car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+            },
+            created: {
+              seal_date: new Date(context.time()),
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              ip: '::ffff:127.0.0.1',
+            },
+            modified: [{
+              seal_date: new Date(context.time()),
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              ip: '::ffff:127.0.0.1',
+            }],
+          });
+          done(err);
+        })
+        .catch(done);
       });
 
     });
@@ -441,6 +468,9 @@ describe('Events endpoints', function() {
       })
       .expect(400)
       .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
         assert.equal(res.body.code, 'E_UNCREATABLE_EVENT');
         done();
       });
@@ -456,6 +486,9 @@ describe('Events endpoints', function() {
       .auth('jpb@marvello.us', 'test')
       .expect(200)
       .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
         assert.deepEqual(res.body, [{
           _id: 'babababababababababababa',
           contents: {
@@ -467,7 +500,7 @@ describe('Events endpoints', function() {
           },
           created_date: '1970-01-01T00:00:01.664Z',
         }]);
-        done(err);
+        done();
       });
     });
 

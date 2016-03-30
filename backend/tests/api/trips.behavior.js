@@ -136,8 +136,11 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, []);
-          done(err);
+          done();
         });
       });
 
@@ -148,7 +151,10 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(404)
         .end(function(err, res) {
-          done(err);
+          if(err) {
+            return done(err);
+          }
+          done();
         });
       });
 
@@ -159,8 +165,11 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {});
-          done(err);
+          done();
         });
       });
 
@@ -173,6 +182,9 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, [{
             _id: 'babababababababababababa',
             contents: {
@@ -184,7 +196,7 @@ describe('Trips endpoints', function() {
             },
             created_date: '1970-01-01T00:00:01.664Z',
           }]);
-          done(err);
+          done();
         });
       });
 
@@ -195,6 +207,9 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(200)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, {
             _id: 'babababababababababababa',
             contents: {
@@ -214,7 +229,7 @@ describe('Trips endpoints', function() {
             }],
             created_date: '1970-01-01T00:00:01.664Z',
           });
-          done(err);
+          done();
         });
       });
 
@@ -225,6 +240,9 @@ describe('Trips endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(410)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_DELETED',
             contents: {
@@ -258,47 +276,50 @@ describe('Trips endpoints', function() {
         })
         .expect(201)
         .end(function(err, res) {
-            assert.deepEqual(context.bus.trigger.args, [[{
-              exchange: 'A_TRIP_UPDATED',
+          if(err) {
+            return done(err);
+          }
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+            },
+          }]]);
+          context.db.collection('events').findOne({
+            _id: castToObjectId('babababababababababababa'),
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: castToObjectId('babababababababababababa'),
               contents: {
                 trip_id: castToObjectId('babababababababababababa'),
+                type: 'trip-start',
               },
-            }]]);
-            context.db.collection('events').findOne({
-              _id: castToObjectId('babababababababababababa'),
-            }).then(function(event) {
-              assert.deepEqual(event, {
-                _id: castToObjectId('babababababababababababa'),
-                contents: {
-                  trip_id: castToObjectId('babababababababababababa'),
-                  type: 'trip-start',
-                },
-                owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                trip: {
-                  friends_ids: [],
-                  description: 'Kikooooolol',
-                  hash: 'kikooooolol',
-                  title: 'Kikooooolol',
-                  car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
-                },
-                created: {
-                  seal_date: new Date(context.time()),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                },
-                modified: [{
-                  seal_date: new Date(context.time()),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                }, {
-                  seal_date: new Date(context.time()),
-                  user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                  ip: '::ffff:127.0.0.1',
-                }],
-              });
-              done(err);
-            })
-            .catch(done);
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              trip: {
+                friends_ids: [],
+                description: 'Kikooooolol',
+                hash: 'kikooooolol',
+                title: 'Kikooooolol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              created: {
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              },
+              modified: [{
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              }, {
+                seal_date: new Date(context.time()),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                ip: '::ffff:127.0.0.1',
+              }],
+            });
+            done(err);
+          })
+          .catch(done);
         });
       });
 
@@ -321,43 +342,46 @@ describe('Trips endpoints', function() {
       })
       .expect(201)
       .end(function(err, res) {
-          assert.deepEqual(context.bus.trigger.args, [[{
-            exchange: 'A_TRIP_CREATED',
+        if(err) {
+          return done(err);
+        }
+        assert.deepEqual(context.bus.trigger.args, [[{
+          exchange: 'A_TRIP_CREATED',
+          contents: {
+            trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+          },
+        }]]);
+        context.db.collection('events').findOne({
+          _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+        }).then(function(event) {
+          assert.deepEqual(event, {
+            _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
             contents: {
               trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+              type: 'trip-start',
             },
-          }]]);
-          context.db.collection('events').findOne({
-            _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-          }).then(function(event) {
-            assert.deepEqual(event, {
-              _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-              contents: {
-                trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-                type: 'trip-start',
-              },
-              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
-              trip: {
-                friends_ids: [],
-                title: 'Lol',
-                description: 'Lol',
-                hash: 'lol',
-                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
-              },
-              created: {
-                seal_date: new Date(context.time()),
-                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                ip: '::ffff:127.0.0.1',
-              },
-              modified: [{
-                seal_date: new Date(context.time()),
-                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
-                ip: '::ffff:127.0.0.1',
-              }],
-            });
-            done(err);
-          })
-          .catch(done);
+            owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            trip: {
+              friends_ids: [],
+              title: 'Lol',
+              description: 'Lol',
+              hash: 'lol',
+              car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+            },
+            created: {
+              seal_date: new Date(context.time()),
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              ip: '::ffff:127.0.0.1',
+            },
+            modified: [{
+              seal_date: new Date(context.time()),
+              user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              ip: '::ffff:127.0.0.1',
+            }],
+          });
+          done(err);
+        })
+        .catch(done);
       });
     });
 
@@ -370,6 +394,9 @@ describe('Trips endpoints', function() {
       .auth('jpb@marvello.us', 'test')
       .expect(200)
       .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
         assert.deepEqual(res.body, [{
           _id: 'babababababababababababa',
           contents: {

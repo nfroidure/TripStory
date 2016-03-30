@@ -49,7 +49,10 @@ describe('System endpoints', function() {
       .expect(200)
       .expect('pong')
       .end(function(err) {
-        done(err);
+        if(err) {
+          return done(err);
+        }
+        done();
       });
   });
 
@@ -81,10 +84,13 @@ describe('System endpoints', function() {
         .auth('popol@moon.u', 'test')
         .expect(201)
         .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
           assert.deepEqual(res.body, payload);
           assert.equal(context.bus.trigger.callCount, 1);
           assert.deepEqual(context.bus.trigger.args[0], [payload]);
-          done(err);
+          done();
         });
     });
   });
