@@ -77,7 +77,7 @@ Promise.all([
     context.analyticsAgent = analytics({
       apiKey: context.env.API_ANALYTICS_KEY,
       uuidResolver: function agentUuidResolver(req) {
-        return req.user ? req.user._id : null;
+        return req.user && req.user._id ? req.user._id.toString() : null;
       },
     });
   }
