@@ -383,6 +383,67 @@ describe('Xee jobs', function() {
         .catch(done);
       });
 
+      describe('for position retrieval with past date', function() {
+
+        beforeEach(function(done) {
+          context.db.collection('events').updateOne({
+            _id: castToObjectId('babababababababababababa'),
+          }, { $set: {
+            'created.seal_date': new Date('2016-03-28T08:45:53.000Z'),
+            'modified.0.seal_date': new Date('2016-03-28T08:45:53.000Z'),
+          } }, done);
+        });
+
+        it('should retrieve position', function(done) {
+          xeeJobs[exchange](context, {
+            exchange: exchange,
+            contents: {},
+          })
+          .then(function() {
+            positionCall.done();
+            addressCall.done();
+            assert.deepEqual(context.bus.trigger.args, [[{
+              exchange: 'A_TRIP_UPDATED',
+              contents: {
+                trip_id: castToObjectId('babababababababababababa'),
+                event_id: newEventId,
+              },
+            }]]);
+            return context.db.collection('events').findOne({
+              _id: newEventId,
+            }).then(function(event) {
+              assert.deepEqual(event, {
+                _id: newEventId,
+                contents: {
+                  trip_id: castToObjectId('babababababababababababa'),
+                  type: 'xee-geo',
+                  geo: [
+                    50.243942,
+                    3.0614734,
+                    41.5,
+                  ],
+                  address: '207 Rue Foch, 62860 Rumaucourt, France',
+                },
+                trip: {
+                  friends_ids: [],
+                  title: 'Lol',
+                  description: 'Lol',
+                  hash: 'lol',
+                  car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+                },
+                owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                created: {
+                  seal_date: new Date('2016-03-28T08:45:53.001Z'),
+                },
+              });
+            });
+          })
+          .then(done.bind(null, null))
+          .catch(done);
+        });
+
+      });
+
     });
 
   });

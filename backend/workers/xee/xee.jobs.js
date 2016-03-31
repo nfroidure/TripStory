@@ -133,6 +133,11 @@ function xeeSyncJob(context) {
           .then(function(address) {
             var locationDate = new Date(data.location.date.replace(' ', 'T') + '.000Z');
 
+            // Limit locations retrieval to the trip start date
+            if(locationDate.getTime() < tripEvent.created.seal_date.getTime()) {
+              locationDate = new Date(tripEvent.created.seal_date.getTime() + 1);
+            }
+
             // Save the coordinates as an event
             return context.db.collection('events').findOneAndUpdate({
               'contents.type': 'xee-geo',

@@ -20,13 +20,15 @@ function workersUtilsGetCurrentTrips(context, options) {
   return context.db.collection('events').aggregate([{
     $match: match,
   }, {
-    $sort: { 'contents.date': -1 },
+    $sort: { 'created.seal_date': -1 },
   }, {
     $group: {
       _id: '$contents.trip_id',
       trip: { $first: '$trip' },
       contents: { $first: '$contents' },
       owner_id: { $first: '$owner_id' },
+      created: { $first: '$created' },
+      modified: { $first: '$modified' },
     },
   }]).toArray()
   .then(function handleCurrentTrips(tripsEvents) {
