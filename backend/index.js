@@ -16,6 +16,7 @@ var nodemailer = require('nodemailer');
 var nodemailerMailgunTransport = require('nodemailer-mailgun-transport');
 var Pusher = require('pusher');
 var Twitter = require('twitter');
+var redis = require("redis");
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
@@ -43,18 +44,65 @@ Promise.all([
       process.emit('bus-event', event);
     },
   };
-  // Emulate a key/value store
-  context.store = (function initStore(store) {
-    return {
-      set: function storeSet(key, value) {
-        store[key] = value;
-        return Promise.resolve();
-      },
-      get: function storeGet(key) {
-        return Promise.resolve(store[key]);
-      },
-    };
-  }({}));
+  if(context.env.REDIS_HOST) {
+    // Use redis as the key/value store
+    context.store = (function initRedisStore() {
+      var client = redis.createClient(
+        context.env.REDIS_PORT,
+        context.env.REDIS_HOST, {
+          no_ready_check: true,
+        }
+      );
+      client.auth(context.env.REDIS_PASSWORD, function(err) {
+        if(err) {
+          context.logger.error('Redis error:', err.stack);
+        }
+      });
+
+      client.on('connect', function() {
+        context.logger.info('Connected to Redis');
+      });
+
+      client.on('error', function redisErrorHandler(err) {
+        context.logger.error('Redis error:', err.stack);
+      });
+      return {
+        set: function storeSet(key, value) {
+          return new Promise(function(resolve, reject) {
+            client.set(key, new Buffer(value.toString()), function(err) {
+              if(err) {
+                return reject(err);
+              }
+              resolve();
+            });
+          });
+        },
+        get: function storeGet(key) {
+          return new Promise(function(resolve, reject) {
+            client.get(key, function(err, buffer) {
+              if(err) {
+                return reject(err);
+              }
+              resolve(buffer ? buffer.toString('utf-8') : {}.undef);
+            });
+          });
+        },
+      };
+    }());
+  } else {
+    // Emulate a key/value store
+    context.store = (function initStore(store) {
+      return {
+        set: function storeSet(key, value) {
+          store[key] = value;
+          return Promise.resolve();
+        },
+        get: function storeGet(key) {
+          return Promise.resolve(store[key]);
+        },
+      };
+    }({}));
+  }
   if(context.env.PUSHER_APP_ID) {
     context.pusher = new Pusher({
       appId: context.env.PUSHER_APP_ID,

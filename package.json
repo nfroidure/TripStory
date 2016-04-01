@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "nodemailer": "^2.3.0",
-    "nodemailer-mailgun-transport": "^1.0.1"
+    "nodemailer-mailgun-transport": "^1.0.1",
+    "redis": "^2.6.0-0"
   }
 }

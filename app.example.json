@@ -42,6 +42,9 @@
     "PUSHER_APP_ID": "",
     "PUSHER_KEY": "",
     "PUSHER_SECRET": "",
-    "PUSHER_CLUSTER": ""
+    "PUSHER_CLUSTER": "",
+    "REDIS_HOST": "",
+    "REDIS_PORT": "",
+    "REDIS_PASSWORD": ""
   }
 }
