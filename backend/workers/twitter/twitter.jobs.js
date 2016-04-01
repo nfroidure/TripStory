@@ -2,6 +2,7 @@
 
 var workersUtils = require('../utils');
 var controllersUtils = require('../../app/utils/controllers');
+var SINCE_ID_STORE_PREFIX = 'twitter:since_id:';
 
 var twitterJobs = {
   A_TWITTER_SYNC: twitterSyncJob,
@@ -20,65 +21,77 @@ function twitterSyncJob(context) {
       return Promise.resolve();
     }
     return Promise.all(tripsEvents.map(function(tripEvent) {
-      return new Promise(function(resolve, reject) {
-        context.twitter.get(
-          'search/tweets', {
-            q: '#' + tripEvent.trip.hash,
-            lang: 'fr',
-          },
-          function twitterSearchHandler(err, tweets) {
-            if(err) {
-              return reject(err);
-            }
-            if(!tweets.statuses.length) {
-              return Promise.resolve();
-            }
-            context.logger.debug(JSON.stringify(tweets, null, 2));
-            Promise.all(tweets.statuses.map(function(status) {
-              return context.db.collection('users').findOne({
-                'auth.twitter.id': status.user.id + '',
-              }).then(function(author) {
-                if(!author) {
-                  context.logger.debug('No user found for ', status.user._id);
-                  return Promise.resolve();
-                }
-                return context.db.collection('events').findOneAndUpdate({
-                  'contents.twitterId': status.id,
-                }, {
-                  $set: {
+      return context.store.get(SINCE_ID_STORE_PREFIX + tripEvent._id.toString())
+      .then(function(sinceId) {
+        var newSinceId;
+
+        return new Promise(function(resolve, reject) {
+          context.twitter.get(
+            'search/tweets', {
+              q: '#' + tripEvent.trip.hash,
+              lang: 'fr',
+              since_id: sinceId,
+            },
+            function twitterSearchHandler(err, tweets) {
+              if(err) {
+                return reject(err);
+              }
+              if(!tweets.statuses.length) {
+                return Promise.resolve();
+              }
+              context.logger.debug(JSON.stringify(tweets, null, 2));
+              newSinceId = tweets.statuses[0].id;
+              Promise.all(tweets.statuses.map(function(status) {
+                return context.db.collection('users').findOne({
+                  'auth.twitter.id': status.user.id + '',
+                }).then(function(author) {
+                  if(!author) {
+                    context.logger.debug('No user found for ', status.user._id);
+                    return Promise.resolve();
+                  }
+                  return context.db.collection('events').findOneAndUpdate({
                     'contents.twitterId': status.id,
-                    'contents.text': status.text,
-                    'contents.geo': status.geo || [],
-                    'contents.profile_image': status.profile_image_url_https || '',
-                    'contents.user_name': status.user.name,
-                  },
-                  $setOnInsert: {
-                    _id: context.createObjectId(),
-                    owner_id: author._id,
-                    'contents.trip_id': tripEvent._id,
-                    'contents.type': 'twitter-status',
-                    trip: tripEvent.trip,
-                    created: controllersUtils.getDateSeal(status.created_at),
-                  },
-                }, {
-                  upsert: true,
-                  returnOriginal: false,
-                })
-                .then(function(result) {
-                  context.bus.trigger({
-                    exchange: 'A_TRIP_UPDATED',
-                    contents: {
-                      trip_id: tripEvent._id,
-                      event_id: result.value._id,
+                  }, {
+                    $set: {
+                      'contents.twitterId': status.id,
+                      'contents.text': status.text,
+                      'contents.geo': status.geo || [],
+                      'contents.profile_image': status.profile_image_url_https || '',
+                      'contents.user_name': status.user.name,
                     },
+                    $setOnInsert: {
+                      _id: context.createObjectId(),
+                      owner_id: author._id,
+                      'contents.trip_id': tripEvent._id,
+                      'contents.type': 'twitter-status',
+                      trip: tripEvent.trip,
+                      created: controllersUtils.getDateSeal(status.created_at),
+                    },
+                  }, {
+                    upsert: true,
+                    returnOriginal: false,
+                  })
+                  .then(function(result) {
+                    context.bus.trigger({
+                      exchange: 'A_TRIP_UPDATED',
+                      contents: {
+                        trip_id: tripEvent._id,
+                        event_id: result.value._id,
+                      },
+                    });
                   });
                 });
-              });
-            }))
-            .then(resolve)
-            .catch(reject);
-          }
-        );
+              }))
+              .then(context.store.set.bind(
+                  null,
+                  SINCE_ID_STORE_PREFIX + tripEvent._id.toString(),
+                  newSinceId
+                ))
+              .then(resolve)
+              .catch(reject);
+            }
+          );
+        });
       });
     }));
   });

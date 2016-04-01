@@ -43,6 +43,10 @@ describe('Twitter jobs', function() {
     context.bus = {
       trigger: sinon.spy(),
     };
+    context.store = {
+      get: sinon.stub(),
+      set: sinon.stub(),
+    };
     done();
   });
 
@@ -182,6 +186,8 @@ describe('Twitter jobs', function() {
       var newEventId;
 
       beforeEach(function() {
+        context.store.get.returns(Promise.resolve());
+        context.store.set.returns(Promise.resolve());
         newEventId = context.createObjectId.next();
         twitterSatusesCall = nock('https://api.twitter.com:443', {
           encodedQueryParams: true,

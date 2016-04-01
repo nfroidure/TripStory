@@ -34,6 +34,7 @@ Promise.all([
   // Services
   context.time = Date.now.bind(Date);
   context.db = db;
+  // Emulate a message queueing system
   context.bus = {
     consume: function busConsume(callback) {
       process.on('bus-event', callback);
@@ -42,6 +43,18 @@ Promise.all([
       process.emit('bus-event', event);
     },
   };
+  // Emulate a key/value store
+  context.store = (function initStore(store) {
+    return {
+      set: function storeSet(key, value) {
+        store[key] = value;
+        return Promise.resolve();
+      },
+      get: function storeGet(key) {
+        return Promise.resolve(store[key]);
+      },
+    };
+  }({}));
   if(context.env.PUSHER_APP_ID) {
     context.pusher = new Pusher({
       appId: context.env.PUSHER_APP_ID,
