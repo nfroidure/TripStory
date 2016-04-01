@@ -6,7 +6,7 @@ var jobs = require('./pusher.jobs.js');
 module.exports = function initPusherWorker(context) {
   context.bus.consume(function pusherConsumer(event) {
     if(jobs[event.exchange]) {
-      context.logger.debug('New Email Event', event);
+      context.logger.debug('New Pusher Event', event);
       jobs[event.exchange](context, event)
       .then(function pusherError() {
         context.logger.debug('Successfully processed event', event);
