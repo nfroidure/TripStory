@@ -1,13 +1,37 @@
-<form ng-submit="doLogin()" name="loginForm" class="auth-form" novalidate>
-  <div class="list">
-    <div style="text-align: center">
+<form ng-submit="doLogin()" name="loginForm" novalidate>
+  <ion-content class="auth-form">
+    <h1 style="text-align:center;">
       <img src="images/logo.png" width="150px">
-    </div>
-    <div class="padding">
-      <a class="button button-block" href="{{apiEndpoint}}/auth/facebook" style="color: white; background:#3B5998;">Log with Facebook</a>
-      <a class="button button-block" href="{{apiEndpoint}}/auth/twitter" style="color: white; background:#55ACEE;">Log with Twitter</a>
-      <a class="button button-block" href="{{apiEndpoint}}/auth/google" style="color: white; background:#DC4E41;">Log with Google</a>
-      <a class="button button-block" href="{{apiEndpoint}}/auth/xee" style="color: #97CA00; background:#474747;">Log with Xee</a>
+    </h1>
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-small icon-left ion-social-facebook"
+          href="{{apiEndpoint}}/auth/facebook"
+          style="color:white; background:#3B5998;">
+          Fb
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-small icon-left ion-social-twitter"
+          href="{{apiEndpoint}}/auth/twitter"
+          style="color:white; background:#55ACEE;">
+          Twitter
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-small icon-left icon ion-social-google"
+          href="{{apiEndpoint}}/auth/google"
+          style="color:white; background:#DC4E41;">
+          Google
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-small icon-left icon ion-model-s"
+          href="{{apiEndpoint}}/auth/xee"
+          style="color:#97CA00; background:#474747;">
+          Xee
+        </a>
+      </div>
     </div>
     <div class="padding">
       <label class="item item-input">
@@ -49,7 +73,9 @@
       <button class="button button-block button-positive"
         ng-class="{ 'button-assertive': fail }"
         type="submit">Log {{ fail ? 'again' : 'in' }}</button>
+    </div>
+    <div class="padding">
       <a class="button button-block" ui-sref="signup">Sign up</a>
-    <div>
-  </div>
+    </div>
+  </ion-content>
 </form>
