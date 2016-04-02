@@ -5,9 +5,13 @@
     .module('app.friends')
     .factory('friendsFactory', friendsFactory);
 
-  friendsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'authService'];
+  friendsFactory.$inject = [
+    '$http', 'createObjectId', '$q', 'ENV', 'authService', 'analyticsService'
+  ];
   /* @ngInject */
-  function friendsFactory($http, createObjectId , $q, ENV, authService) {
+  function friendsFactory(
+    $http, createObjectId , $q, ENV, authService, analyticsService
+  ) {
       var service = {
         list: list,
         invite: invite,
@@ -19,24 +23,27 @@
       function list() {
         return authService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
-          return $http.get(url);
-        }).then(function(response) {
-          if(200 !== response.status) {
-            throw response;
-          }
-          return response;
+
+          return $http.get(url).then(function(response) {
+            if(200 !== response.status) {
+              throw response;
+            }
+            return response;
+          });
         });
       }
 
       function invite(data) {
         return authService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
-          return $http.post(url, data);
-        }).then(function(response) {
-          if(204 !== response.status) {
-            throw response;
-          }
-          return response;
+
+          return $http.post(url, data).then(function(response) {
+            if(204 !== response.status) {
+              throw response;
+            }
+            analyticsService.trackEvent('friends', 'invite', profile._id);
+            return response;
+          });
         });
       }
   }

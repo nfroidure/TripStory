@@ -3,6 +3,7 @@
 
   angular
     .module('app', [
+      'app.utils',
       'ionic',
       'app.menu',
       'app.profile',
@@ -10,7 +11,6 @@
       'app.cars',
       'app.friends',
       'app.trips',
-      'app.utils',
       'config',
       'uiGmapgoogle-maps',
     ]);

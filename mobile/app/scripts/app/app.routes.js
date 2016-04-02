@@ -5,30 +5,47 @@
     .module('app')
     .config(Router);
 
-  Router.$inject = ['$stateProvider', '$urlRouterProvider', '$httpProvider'];
+  Router.$inject = [
+    '$stateProvider', '$urlRouterProvider', '$httpProvider',
+  ];
 
-  function Router($stateProvider, $urlRouterProvider, $httpProvider) {
+  function Router(
+    $stateProvider, $urlRouterProvider, $httpProvider
+  ) {
+    var resolveObject = {
+      gaTrackPage: gaTrackPage,
+    };
+
+    gaTrackPage.$inject = ['$q', 'analyticsService'];
+    function gaTrackPage($q, analyticsService) {
+      analyticsService.trackPage();
+      return $q.when({});
+    }
+
     $httpProvider.defaults.withCredentials = true;
     $stateProvider
       .state('login', {
         url: '/login',
         templateUrl: 'templates/login.html',
-        controller: 'AuthCtrl'
+        controller: 'AuthCtrl',
+        resolve: resolveObject,
       })
       .state('signup', {
         url: '/signup',
         templateUrl: 'templates/signup.html',
-        controller: 'AuthCtrl'
+        controller: 'AuthCtrl',
+        resolve: resolveObject,
       })
       .state('app', {
         url: '/app',
         cache: 'false',
         abstract: true,
         templateUrl: 'templates/menu.html',
-        controller: 'MenuCtrl',
+        controller: 'MenuCtrl'
       })
       .state('app.profile', {
         url: '/profile',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/profile.html',
@@ -38,6 +55,7 @@
       })
       .state('app.destroy', {
         url: '/destroy',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/destroy.html',
@@ -47,6 +65,7 @@
       })
       .state('app.cars', {
         url: '/cars',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/cars.html',
@@ -56,6 +75,7 @@
       })
       .state('app.friends', {
         url: '/friends',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/friends.html',
@@ -65,6 +85,7 @@
       })
       .state('app.trips', {
         url: '/trips',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/trips.html',
@@ -74,6 +95,7 @@
       })
       .state('app.trip', {
         url: '/trip/:trip_id',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/trip.html',
@@ -83,6 +105,7 @@
       })
       .state('app.tripMap', {
         url: '/trip/:trip_id/map',
+        resolve: resolveObject,
         views: {
           'menuContent': {
             templateUrl: 'templates/map.html',

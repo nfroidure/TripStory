@@ -5,9 +5,9 @@
     .module('app')
     .run(runBlock);
 
-  runBlock.$inject = ['$ionicPlatform'];
+  runBlock.$inject = ['$ionicPlatform', 'analyticsService'];
   /* @ngInject */
-  function runBlock($ionicPlatform) {
+  function runBlock($ionicPlatform, analyticsService) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)

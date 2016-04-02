@@ -46,6 +46,8 @@ module.exports = function (grunt) {
             apiEndpoint: 'http://localhost:3000',
             pusherKey: '67c63872cef9daddfedc',
             pusherCluster: 'eu',
+            analyticsAppId: 'UA-75859465-2',
+            analyticsAppTracker: 'none',
           }
         }
       },
@@ -56,6 +58,8 @@ module.exports = function (grunt) {
             apiEndpoint: 'https://tripstory.insertafter.com',
             pusherKey: '1142ca3c31b809234e2e',
             pusherCluster: 'eu',
+            analyticsAppId: 'UA-75859465-1',
+            analyticsAppTracker: 'auto',
           }
         }
       }

@@ -40,7 +40,7 @@
     function remove(id) {
       $scope.state = 'loading';
       carsFactory.remove(id)
-        .then(function(){
+        .then(function() {
           $scope.refresh();
         })
         .catch(function(err) {
