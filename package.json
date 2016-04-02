@@ -7,6 +7,7 @@
     "cli": "env NPM_RUN_CLI=1",
     "dev": "pm2 startOrRestart app.dev.json --no-daemon",
     "start": "pm2 startOrRestart app.prod.json",
+    "kill": "pm2 kill",
     "test": "cd backend; npm test; cd ..",
     "postinstall": "cd backend; npm i; cd ..; cd mobile; npm i; cd .."
   },

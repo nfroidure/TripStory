@@ -51,6 +51,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
+    "build": "grunt compress --force",
     "test": "grunt test",
     "postinstall": "bower install",
     "droid": "env PATH=$PATH:/usr/local/var/lib/android-sdk/",
