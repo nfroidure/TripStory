@@ -295,6 +295,7 @@ describe('Events endpoints', function() {
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
               event_id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
           }]]);
           context.db.collection('events').find({
@@ -335,6 +336,7 @@ describe('Events endpoints', function() {
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
               event_id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
           }]]);
           context.db.collection('events').findOne({
@@ -411,6 +413,7 @@ describe('Events endpoints', function() {
           contents: {
             trip_id: castToObjectId('babababababababababababa'),
             event_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+            users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
           },
         }]]);
         context.db.collection('events').findOne({

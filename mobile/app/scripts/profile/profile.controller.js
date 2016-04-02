@@ -7,9 +7,9 @@
     .controller('UpdateProfileCtrl', UpdateProfileCtrl)
     .controller('UpdateAvatarProfileCtrl', UpdateAvatarProfileCtrl);
 
-  ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'AuthService', 'ENV'];
+  ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'authService', 'ENV'];
   /* @ngInject */
-  function ProfileCtrl($scope, $state, $stateParams, AuthService, ENV) {
+  function ProfileCtrl($scope, $state, $stateParams, authService, ENV) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.goDestroy = goDestroy;
@@ -17,7 +17,7 @@
     activate();
 
     function activate() {
-      AuthService.getProfile({
+      authService.getProfile({
         force: true,
       })
       .then(function(profile) {
@@ -30,16 +30,16 @@
     }
   }
 
-  UpdateProfileCtrl.$inject = ['$scope', 'AuthService'];
+  UpdateProfileCtrl.$inject = ['$scope', 'authService'];
   /* @ngInject */
-  function UpdateProfileCtrl($scope, AuthService) {
+  function UpdateProfileCtrl($scope, authService) {
     $scope.updateProfile = updateProfile;
 
     function updateProfile() {
       if($scope.profileForm.$invalid) {
         return;
       }
-      AuthService.setProfile($scope.profile)
+      authService.setProfile($scope.profile)
       .then(function(profile) {
         $scope.profile = profile;
       })
@@ -53,16 +53,16 @@
     }
   }
 
-  UpdateAvatarProfileCtrl.$inject = ['$scope', '$window', 'AuthService'];
+  UpdateAvatarProfileCtrl.$inject = ['$scope', '$window', 'authService'];
   /* @ngInject */
-  function UpdateAvatarProfileCtrl($scope, $window, AuthService) {
+  function UpdateAvatarProfileCtrl($scope, $window, authService) {
     $scope.setAvatar = setAvatar;
 
     function setAvatar() {
       var fileInput = $window.document.getElementById('uploader');
 
       if(fileInput.files[0]) {
-        AuthService.setAvatar(fileInput.files[0]);
+        authService.setAvatar(fileInput.files[0]);
       }
     }
   }

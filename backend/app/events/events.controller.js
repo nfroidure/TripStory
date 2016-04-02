@@ -94,6 +94,7 @@ function initEventsController(context) {
           contents: {
             trip_id: result.value.contents.trip_id,
             event_id: result.value._id,
+            users_ids: result.value.trip.friends_ids.concat(result.value.owner_id),
           },
         });
         res.status(201).send(eventsTransforms.fromCollection(result.value));
@@ -123,6 +124,7 @@ function initEventsController(context) {
           contents: {
             trip_id: event.contents.trip_id,
             event_id: castToObjectId(req.params.event_id),
+            users_ids: event.trip.friends_ids.concat(event.owner_id),
           },
         });
       });

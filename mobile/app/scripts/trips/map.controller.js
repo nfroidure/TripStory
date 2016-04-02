@@ -5,10 +5,22 @@
     .module('app.trips')
     .controller('MapCtrl', MapCtrl);
 
-  MapCtrl.$inject = ['$scope', '$state', '$stateParams', 'tripsFactory'];
+  MapCtrl.$inject = [
+    '$scope', '$state', '$stateParams', 'tripsFactory', 'pusherService'
+  ];
   /* @ngInject */
-  function MapCtrl($scope, $state, $stateParams, tripsFactory) {
-    var tripId = $stateParams.trip_id;
+  function MapCtrl($scope, $state, $stateParams, tripsFactory, pusherService) {
+    var channel = pusherService.subscribe('trips-' + $stateParams.trip_id);
+
+    channel.bind('A_TRIP_UPDATED', function() {
+      $scope.refresh();
+    });
+    channel.bind('A_TRIP_DELETED', function() {
+      $state.go('app.trips');
+    });
+    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
+    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
+
     $scope.trip = [];
     $scope.map = {
       center: {
@@ -21,11 +33,10 @@
     $scope.markers = [];
     $scope.refresh = activate;
 
-
     activate()
 
     function activate() {
-      tripsFactory.get(tripId)
+      tripsFactory.get($stateParams.trip_id)
         .then(function(values) {
           $scope.trip = values.data;
           var events = $scope.trip.events;

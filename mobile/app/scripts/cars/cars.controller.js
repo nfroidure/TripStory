@@ -6,11 +6,11 @@
     .controller('CarsCtrl', CarsCtrl);
 
   CarsCtrl.$inject = [
-    '$scope', '$state', '$stateParams', 'carsFactory', 'AuthService', 'ENV',
+    '$scope', '$state', '$stateParams', 'carsFactory', 'authService', 'ENV',
   ];
   /* @ngInject */
   function CarsCtrl(
-    $scope, $state, $stateParams, carsFactory, AuthService, ENV
+    $scope, $state, $stateParams, carsFactory, authService, ENV
   ) {
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.cars = [];
@@ -23,7 +23,7 @@
 
     function activate() {
       $scope.state = 'loading';
-      AuthService.getProfile()
+      authService.getProfile()
       .then(function(profile) {
         $scope.profile = profile;
       });

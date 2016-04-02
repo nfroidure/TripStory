@@ -6,10 +6,10 @@
     .controller('AuthCtrl', AuthCtrl);
 
   AuthCtrl.$inject = [
-    '$scope', '$state', '$ionicModal', '$timeout', 'AuthService', 'ENV'
+    '$scope', '$state', '$ionicModal', '$timeout', 'authService', 'ENV'
   ];
   /* @ngInject */
-  function AuthCtrl($scope, $state, $ionicModal, $timeout, AuthService, ENV) {
+  function AuthCtrl($scope, $state, $ionicModal, $timeout, authService, ENV) {
     $scope.user = {};
     $scope.loginData = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
@@ -20,7 +20,7 @@
     activate();
 
     function activate() {
-      AuthService.getProfile().then(function(profile) {
+      authService.getProfile().then(function(profile) {
         $state.go('app.trips');
       });
     }
@@ -29,7 +29,7 @@
       if($scope.loginForm.$invalid) {
         return;
       }
-      AuthService.log($scope.loginData)
+      authService.log($scope.loginData)
         .then(function() {
           $state.go('app.trips');
         })
@@ -47,7 +47,7 @@
         return;
       }
       $scope.fail = '';
-      AuthService.signup($scope.loginData)
+      authService.signup($scope.loginData)
         .then(function(response) {
           $state.go("app.trips");
         })

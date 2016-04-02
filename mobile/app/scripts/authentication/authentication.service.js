@@ -3,7 +3,7 @@
 
   angular
     .module('app.authentication')
-    .factory('AuthService', AuthService);
+    .factory('authService', AuthService);
 
   AuthService.$inject = ['$http', '$q', '$rootScope', 'ENV'];
   /* @ngInject */

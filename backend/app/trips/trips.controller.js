@@ -88,6 +88,8 @@ function initTripsController(context) {
           'A_TRIP_CREATED',
         contents: {
           trip_id: castToObjectId(req.params.trip_id),
+          users_ids: result.value.trip.friends_ids
+            .concat(castToObjectId(req.params.user_id)),
         },
       });
       res.status(201).send(tripsTransforms.fromCollection(result.value));
@@ -109,14 +111,15 @@ function initTripsController(context) {
       })
       .then(function() {
         res.sendStatus(410);
-      });
-    })
-    .then(function() {
-      context.bus.trigger({
-        exchange: 'A_TRIP_DELETED',
-        contents: {
-          trip_id: castToObjectId(req.params.trip_id),
-        },
+      })
+      .then(function() {
+        context.bus.trigger({
+          exchange: 'A_TRIP_DELETED',
+          contents: {
+            trip_id: castToObjectId(req.params.trip_id),
+            users_ids: startEvent.trip.friends_ids.concat(startEvent.owner_id),
+          },
+        });
       });
     })
     .catch(next);

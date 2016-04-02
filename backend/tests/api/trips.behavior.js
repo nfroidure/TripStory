@@ -247,6 +247,7 @@ describe('Trips endpoints', function() {
             exchange: 'A_TRIP_DELETED',
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
           }]]);
           context.db.collection('events').find({
@@ -283,6 +284,7 @@ describe('Trips endpoints', function() {
             exchange: 'A_TRIP_UPDATED',
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
           }]]);
           context.db.collection('events').findOne({
@@ -349,6 +351,7 @@ describe('Trips endpoints', function() {
           exchange: 'A_TRIP_CREATED',
           contents: {
             trip_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+            users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
           },
         }]]);
         context.db.collection('events').findOne({

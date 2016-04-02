@@ -77,6 +77,7 @@ function twitterSyncJob(context) {
                       contents: {
                         trip_id: tripEvent._id,
                         event_id: result.value._id,
+                        users_ids: tripEvent.trip.friends_ids.concat([tripEvent.owner_id]),
                       },
                     });
                   });

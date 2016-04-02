@@ -348,6 +348,7 @@ describe('Xee jobs', function() {
             contents: {
               trip_id: castToObjectId('babababababababababababa'),
               event_id: newEventId,
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
           }]]);
           return context.db.collection('events').findOne({
@@ -407,6 +408,7 @@ describe('Xee jobs', function() {
               contents: {
                 trip_id: castToObjectId('babababababababababababa'),
                 event_id: newEventId,
+                users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
               },
             }]]);
             return context.db.collection('events').findOne({

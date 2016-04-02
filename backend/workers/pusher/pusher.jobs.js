@@ -9,11 +9,13 @@ var emailJobs = {
 module.exports = emailJobs;
 
 function tripChannelJob(context, event) {
-  context.pusher.trigger(
-    'trips',
-    event.exchange,
-    event.contents
-  );
+  event.contents.users_ids.forEach(function broadcastEvent(userId) {
+    context.pusher.trigger(
+      'users-' + userId.toString(),
+      event.exchange,
+      event.contents
+    );
+  });
   context.pusher.trigger(
     'trips-' + event.contents.trip_id.toString(),
     event.exchange,

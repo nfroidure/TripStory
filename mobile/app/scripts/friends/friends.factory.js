@@ -5,9 +5,9 @@
     .module('app.friends')
     .factory('friendsFactory', friendsFactory);
 
-  friendsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'AuthService'];
+  friendsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'authService'];
   /* @ngInject */
-  function friendsFactory($http, createObjectId , $q, ENV, AuthService) {
+  function friendsFactory($http, createObjectId , $q, ENV, authService) {
       var service = {
         list: list,
         invite: invite,
@@ -17,7 +17,7 @@
       ////////////////
 
       function list() {
-        return AuthService.getProfile().then(function(profile) {
+        return authService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
           return $http.get(url);
         }).then(function(response) {
@@ -29,7 +29,7 @@
       }
 
       function invite(data) {
-        return AuthService.getProfile().then(function(profile) {
+        return authService.getProfile().then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
           return $http.post(url, data);
         }).then(function(response) {

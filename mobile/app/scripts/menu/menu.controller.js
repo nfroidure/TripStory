@@ -7,12 +7,12 @@
 
   MenuCtrl.$inject = [
     '$scope', '$state', '$ionicHistory',
-    'AuthService'
+    'authService'
   ];
   /* @ngInject */
   function MenuCtrl(
     $scope, $state, $ionicHistory,
-    AuthService
+    authService
   ) {
     $ionicHistory.nextViewOptions({
       disableBack: true
@@ -32,7 +32,7 @@
     $scope.$on('profile:update', activate);
 
     function activate() {
-      AuthService.getProfile().then(function(profile) {
+      authService.getProfile().then(function(profile) {
         $scope.user = profile;
       }).catch(function(err) {
         $state.go('login');
@@ -57,7 +57,7 @@
     }
 
     function doLogout() {
-      AuthService.logout()
+      authService.logout()
         .then(function(status) {
           $state.go('login');
         })

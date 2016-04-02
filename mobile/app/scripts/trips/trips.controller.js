@@ -9,22 +9,30 @@
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
     'tripsFactory', 'carsFactory', 'friendsFactory', 'pusherService',
+    'authService',
   ];
   /* @ngInject */
   function TripsCtrl(
     $scope, $state, $stateParams, $ionicModal, $q,
-    tripsFactory, carsFactory, friendsFactory, pusherService
+    tripsFactory, carsFactory, friendsFactory, pusherService,
+    authService
   ) {
-    var channel = pusherService.subscribe('trips');
+    authService.getProfile().then(function(profile) {
+      var channel = pusherService.subscribe('users-' + profile._id);
 
-    channel.bind_all(function(data) {
-      if(-1 !== [
-        'A_TRIP_CREATED', 'A_TRIP_UPDATED', 'A_TRIP_DELETED'
-      ].indexOf(data.event)) {
+      channel.bind('A_TRIP_CREATED', function() {
         $scope.refresh();
-      }
+      });
+      channel.bind('A_TRIP_UPDATED', function() {
+        $scope.refresh();
+      });
+      channel.bind('A_TRIP_DELETED', function() {
+        $state.go('app.trips');
+      });
+      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_CREATED'));
+      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
+      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
     });
-    $scope.$on('$destroy', channel.unbind_all.bind(channel));
 
     $scope.trips = [];
     $scope.cars = [];

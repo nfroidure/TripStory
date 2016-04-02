@@ -5,9 +5,9 @@
     .module('app.cars')
     .factory('carsFactory', carsFactory);
 
-  carsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'AuthService'];
+  carsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'authService'];
   /* @ngInject */
-  function carsFactory($http, createObjectId , $q, ENV, AuthService) {
+  function carsFactory($http, createObjectId , $q, ENV, authService) {
       var service = {
         list: list,
         get: get,
@@ -18,7 +18,7 @@
       ////////////////
 
       function list() {
-        return AuthService.getProfile().then(function(profile){
+        return authService.getProfile().then(function(profile){
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars';
           return $http.get(url).then(function(response) {
             if(200 !== response.status) {
@@ -30,7 +30,7 @@
       }
 
       function get(id) {
-        return AuthService.getProfile().then(function(profile){
+        return authService.getProfile().then(function(profile){
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars/' + id;
           return $http.get(url).then(function(response) {
             if(200 !== response.status) {
@@ -42,7 +42,7 @@
       }
 
       function remove(id) {
-        return AuthService.getProfile().then(function(profile){
+        return authService.getProfile().then(function(profile){
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars/' + id;
           return $http.delete(url).then(function(response) {
             throw response;
