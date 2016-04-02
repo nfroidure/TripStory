@@ -217,8 +217,6 @@ function initAuthenticationController(context) {
       };
     }
 
-    context.logger.info('findQuery', findQuery);
-
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,

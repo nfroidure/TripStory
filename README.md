@@ -20,6 +20,7 @@ The SAAS service used here:
 - [CloudAMQP](http://api.cloudamqp.com)
 - [Cloudinary](https://cloudinary.com)
 - [Pusher](https://pusher.com)
+- [Loggly](https://loggly.com)
 
 ## API
 

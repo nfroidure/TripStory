@@ -29,8 +29,29 @@ var initPusherWorker = require('./workers/pusher/pusher.bin.js');
 
 var context = {};
 
+require('winston-loggly');
+
 // Preparing services
 context.env = process.env;
+context.logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      level: context.env.LOG_LEVEL,
+    }),
+  ].concat(
+    context.env.LOGGLY_TOKEN ?
+    [new winston.transports.Loggly({
+      level: context.env.LOGGLY_LEVEL || context.env.LOG_LEVEL,
+      token: context.env.LOGGLY_TOKEN,
+      subdomain: context.env.LOGGLY_SUBDOMAIN,
+      auth: {
+        username: context.env.LOGGLY_USERNAME,
+        password: context.env.LOGGLY_PASSWORD,
+      },
+    })] :
+    []
+  ),
+});
 Promise.all([
   MongoClient.connect(context.env.MONGODB_URL),
 ]).spread(function handleServerServices(db) {
@@ -128,9 +149,6 @@ Promise.all([
 
   context.app = express();
   context.createObjectId = ObjectId;
-  context.logger = new (winston.Logger)({
-    transports: [new (winston.transports.Console)({ level: 'silly' })],
-  });
   context.tokens = new TokenService({
     uniqueId: function createTokenUniqueId() {
       return context.createObjectId().toString();
