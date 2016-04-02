@@ -58,9 +58,9 @@ function emailFriendAddJob(context, event) {
       cc: ccRecipient.contents.email,
       subject: '[Trip Story] ' + ccRecipient.contents.name + ' is ready to trip!',
       html:
-        '<p>Hi there!</p>\r\n' +
+        '<p>Hi ' + recipient.contents.name + '!</p>\r\n' +
         '<p>' +
-          recipient.contents.name + ' linked its account with you!' +
+          ccRecipient.contents.name + ' linked its account with you!' +
           ' What a nice day to trip together :).' +
         '</p>\r\n' +
         '<p><a href="' + context.base + connectEndpoint + '">' +
