@@ -11,12 +11,15 @@ https://github.com/diegonetto/generator-ionic
 ## SAAS
 
 The SAAS service used here:
+- [TravisCI](travis-ci.org)
+- [GitHub](https://github.com)
 - [Mongo Lab](https://mlab.com)
 - [Redis Lab](http://app.redislabs.com)
 - [MailGun](http://mailgun.com)
 - [API Analytics](https://api-analytics.jbpionnier.fr)
 - [CloudAMQP](http://api.cloudamqp.com)
 - [Cloudinary](https://cloudinary.com)
+- [Pusher](https://pusher.com)
 
 ## API
 
