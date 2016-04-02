@@ -12,6 +12,7 @@ function initUsersController(context) {
     list: userControllerList,
     get: userControllerGet,
     put: userControllerPut,
+    putAvatar: userControllerPutAvatar,
     delete: userControllerDelete,
     inviteFriend: userControllerInviteFriend,
     listFriends: userControllerListFriends,
@@ -66,6 +67,40 @@ function initUsersController(context) {
     })
     .then(function(result) {
       res.status(201).send(usersTransforms.fromCollection(result.value));
+    }).catch(next);
+  }
+
+  function userControllerPutAvatar(req, res, next) {
+    new Promise(function(resolve, reject) {
+      req.pipe(context.cloudinary.uploader.upload_stream(function(result) {
+        console.log('result', result)
+        resolve(context.cloudinary.url(
+          result.public_id + '.' + result.format, {
+            width: 300, height: 300,
+            crop: 'thumb', gravity: 'face',
+            secure: true,
+          }));
+      })).on('error', reject);
+    })
+    .then(function(url) {
+      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+
+      return context.db.collection('users').updateOne({
+        _id: castToObjectId(req.params.user_id),
+      }, {
+        $set: {
+          avatar_url: url,
+        },
+        $push: {
+          modified: {
+            $each: [dateSeal],
+            $slice: -10,
+          },
+        },
+      });
+    })
+    .then(function() {
+      res.sendStatus(201);
     }).catch(next);
   }
 

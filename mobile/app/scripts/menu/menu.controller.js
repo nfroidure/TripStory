@@ -29,12 +29,12 @@
     $scope.goToTrips = goToTrips;
 
     activate();
+    $scope.$on('profile:update', activate);
 
     function activate() {
       AuthService.getProfile().then(function(profile) {
         $scope.user = profile;
       }).catch(function(err) {
-        console.log('No profile', err);
         $state.go('login');
       });
     }

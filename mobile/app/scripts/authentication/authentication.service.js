@@ -5,13 +5,14 @@
     .module('app.authentication')
     .factory('AuthService', AuthService);
 
-  AuthService.$inject = ['$http', 'ENV', '$q'];
+  AuthService.$inject = ['$http', '$q', '$rootScope', 'ENV'];
   /* @ngInject */
-  function AuthService($http, ENV, $q) {
+  function AuthService($http, $q, $rootScope, ENV) {
     var profileDeffered = null;
     var service = {
       getProfile: getProfile,
       setProfile: setProfile,
+      setAvatar: setAvatar,
       deleteProfile: deleteProfile,
       log: login,
       signup: signup,
@@ -53,7 +54,30 @@
           }
           profileDeffered = $q.defer();
           profileDeffered.resolve(response.data);
+          $rootScope.$broadcast('profile:update');
           return profileDeffered.promise;
+        });
+      });
+    }
+
+    function setAvatar(file) {
+      return getProfile().then(function(profile) {
+        return $http.put(
+          ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/avatar',
+          file, {
+            headers: {'Content-Type': undefined},
+            transformRequest: angular.identity,
+          }
+        ).then(function(response) {
+          var updatedProfilePromise;
+          if(201 !== response.status) {
+            throw response;
+          }
+          updatedProfilePromise = getProfile({
+            force: true,
+          });
+          $rootScope.$broadcast('profile:update');
+          return updatedProfilePromise;
         });
       });
     }

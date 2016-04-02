@@ -8,6 +8,16 @@ Currently the frontend is in fact an Ionic app mounted as a simple web mobile
  application. Here is the generator used to create it for reference:
 https://github.com/diegonetto/generator-ionic
 
+## SAAS
+
+The SAAS service used here:
+- [Mongo Lab](https://mlab.com)
+- [Redis Lab](http://app.redislabs.com)
+- [MailGun](http://mailgun.com)
+- [API Analytics](https://api-analytics.jbpionnier.fr)
+- [CloudAMQP](http://api.cloudamqp.com)
+- [Cloudinary](https://cloudinary.com)
+
 ## API
 
 ### Deployment

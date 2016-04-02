@@ -17,6 +17,8 @@ var nodemailerMailgunTransport = require('nodemailer-mailgun-transport');
 var Pusher = require('pusher');
 var Twitter = require('twitter');
 var redis = require("redis");
+var cloudinary = require("cloudinary");
+
 
 var initFacebookWorker = require('./workers/facebook/facebook.bin.js');
 var initXeeWorker = require('./workers/xee/xee.bin.js');
@@ -44,6 +46,9 @@ Promise.all([
       process.emit('bus-event', event);
     },
   };
+  if(context.env.CLOUDINARY_URL) {
+    context.cloudinary = cloudinary;
+  }
   if(context.env.REDIS_HOST) {
     // Use redis as the key/value store
     context.store = (function initRedisStore() {

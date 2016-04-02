@@ -1,7 +1,8 @@
-<form name="profileForm" novalidate class="list"
-  ng-submit="goUpdateProfile()">
-  <ion-view view-title="Profile">
-    <ion-content>
+<ion-view view-title="Profile">
+  <ion-content>
+    <form name="profileForm" novalidate class="list"
+      ng-controller="UpdateProfileCtrl"
+      ng-submit="updateProfile()">
       <div class="list">
           <div class="item item-divider">
           Infos
@@ -39,60 +40,73 @@
             type="submit">Update</button>
         </div>
       </div>
+    </form>
+    <form name="profileForm" novalidate class="list"
+      ng-controller="UpdateAvatarProfileCtrl"
+      ng-submit="setAvatar()">
       <div class="list">
         <div class="item item-divider">
-          Integrations
-        </div>
-        <div class="item"
-          ng-class="{
-            'item-button-right': !profile.facebook,
-            'item-icon-right': profile.facebook,
-          }">
-          Facebook
-          <a class="button" href="{{apiEndpoint}}/auth/facebook"
-            style="color: white; background:#3B5998;"
-            ng-if="!profile.facebook">
-            <i class="icon ion-link"></i>&nbsp; Link account
-          </a>
-          <i class="icon ion-android-cloud-done"
-            ng-if="profile.facebook"></i>
-        </div>
-        <div class="item"
-          ng-class="{
-            'item-button-right': !profile.twitter,
-            'item-icon-right': profile.twitter,
-          }">
-          Twitter
-          <a class="button" href="{{apiEndpoint}}/auth/twitter"
-            style="color: white; background:#55ACEE;"
-            ng-if="!profile.twitter">
-            <i class="icon ion-link"></i>&nbsp; Link account
-          </a>
-          <i class="icon ion-android-cloud-done"
-            ng-if="profile.twitter"></i>
-        </div>
-        <div class="item"
-          ng-class="{
-            'item-button-right': !profile.google,
-            'item-icon-right': profile.google,
-          }">
-          Google
-          <a class="button" href="{{apiEndpoint}}/auth/google"
-            style="color: white; background:#DC4E41;"
-            ng-if="!profile.google">
-            <i class="icon ion-link"></i>&nbsp; Link account
-          </a>
-          <i class="icon ion-android-cloud-done"
-            ng-if="profile.google"></i>
-        </div>
-        <div class="item item-divider">
-          Privacy
+          Avatar
         </div>
         <div class="item">
-          <a class="button button-block button-assertive"
-            ng-click="goDestroy()">Erase my profile</a>
+          <input type="file" id="uploader" class="button button-block" /><br />
+          <button class="button button-block button-positive">Upload</button>
         </div>
       </div>
-    </ion-content>
-  </ion-view>
-</form>
+    </form>
+    <div class="list">
+      <div class="item item-divider">
+        Integrations
+      </div>
+      <div class="item"
+        ng-class="{
+          'item-button-right': !profile.facebook,
+          'item-icon-right': profile.facebook,
+        }">
+        Facebook
+        <a class="button" href="{{apiEndpoint}}/auth/facebook"
+          style="color: white; background:#3B5998;"
+          ng-if="!profile.facebook">
+          <i class="icon ion-link"></i>&nbsp; Link account
+        </a>
+        <i class="icon ion-android-cloud-done"
+          ng-if="profile.facebook"></i>
+      </div>
+      <div class="item"
+        ng-class="{
+          'item-button-right': !profile.twitter,
+          'item-icon-right': profile.twitter,
+        }">
+        Twitter
+        <a class="button" href="{{apiEndpoint}}/auth/twitter"
+          style="color: white; background:#55ACEE;"
+          ng-if="!profile.twitter">
+          <i class="icon ion-link"></i>&nbsp; Link account
+        </a>
+        <i class="icon ion-android-cloud-done"
+          ng-if="profile.twitter"></i>
+      </div>
+      <div class="item"
+        ng-class="{
+          'item-button-right': !profile.google,
+          'item-icon-right': profile.google,
+        }">
+        Google
+        <a class="button" href="{{apiEndpoint}}/auth/google"
+          style="color: white; background:#DC4E41;"
+          ng-if="!profile.google">
+          <i class="icon ion-link"></i>&nbsp; Link account
+        </a>
+        <i class="icon ion-android-cloud-done"
+          ng-if="profile.google"></i>
+      </div>
+      <div class="item item-divider">
+        Privacy
+      </div>
+      <div class="item">
+        <a class="button button-block button-assertive"
+          ng-click="goDestroy()">Erase my profile</a>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

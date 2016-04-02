@@ -3,14 +3,15 @@
 
   angular
     .module('app.profile')
-    .controller('ProfileCtrl', ProfileCtrl);
+    .controller('ProfileCtrl', ProfileCtrl)
+    .controller('UpdateProfileCtrl', UpdateProfileCtrl)
+    .controller('UpdateAvatarProfileCtrl', UpdateAvatarProfileCtrl);
 
   ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'AuthService', 'ENV'];
   /* @ngInject */
   function ProfileCtrl($scope, $state, $stateParams, AuthService, ENV) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
-    $scope.goUpdateProfile = goUpdateProfile;
     $scope.goDestroy = goDestroy;
 
     activate();
@@ -24,7 +25,17 @@
       });
     }
 
-    function goUpdateProfile() {
+    function goDestroy() {
+      $state.go('app.destroy');
+    }
+  }
+
+  UpdateProfileCtrl.$inject = ['$scope', 'AuthService'];
+  /* @ngInject */
+  function UpdateProfileCtrl($scope, AuthService) {
+    $scope.updateProfile = updateProfile;
+
+    function updateProfile() {
       if($scope.profileForm.$invalid) {
         return;
       }
@@ -40,9 +51,19 @@
         $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
       });
     }
+  }
 
-    function goDestroy() {
-      $state.go('app.destroy');
+  UpdateAvatarProfileCtrl.$inject = ['$scope', '$window', 'AuthService'];
+  /* @ngInject */
+  function UpdateAvatarProfileCtrl($scope, $window, AuthService) {
+    $scope.setAvatar = setAvatar;
+
+    function setAvatar() {
+      var fileInput = $window.document.getElementById('uploader');
+
+      if(fileInput.files[0]) {
+        AuthService.setAvatar(fileInput.files[0]);
+      }
     }
   }
 

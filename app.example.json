@@ -45,6 +45,10 @@
     "PUSHER_CLUSTER": "",
     "REDIS_HOST": "",
     "REDIS_PORT": "",
-    "REDIS_PASSWORD": ""
+    "REDIS_PASSWORD": "",
+    "AMQP_URL": "",
+    "CLOUDINARY_DELIVERY_URL": "",
+    "CLOUDINARY_API_URL": "",
+    "CLOUDINARY_URL": ""
   }
 }
