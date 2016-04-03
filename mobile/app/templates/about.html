@@ -1,0 +1,33 @@
+<ion-view view-title="About Us">
+  <ion-content>
+    <div class="padding">
+      <h2>About us</h2>
+      <p>
+        Trip Story is an application created during an hackathon by the now
+        famously known Team6.
+      </p>
+      <p>
+        Its <a href="https://github.com/nfroidure/TripStory">source code</a> is
+        freely available for everyone use. It still avolves as a side project,
+        you can <a href="https://github.com/nfroidure/TripStory/issues">ask
+        features or submit bugs</a> or even send a pull request to us we will
+        do our best to take it in count.
+      </p>
+      <div class="padding-vertical">
+        <h4>
+          <i class="icon ion-person-stalker"></i>
+          The Team6
+        </h4>
+        <ion-list>
+          <ion-item ng-repeat="credit in credits track by credit.name">
+            {{ credit.name }}<br />
+            <a class="button button-icon ion-home" href="{{ credit.home_url }}"></a>
+            <a class="button button-icon ion-social-twitter" href="{{ credit.twitter_url }}"></a>
+            <a class="button button-icon ion-social-octocat" href="{{ credit.github_url }}"></a>
+            <a class="button button-icon ion-social-linkedin" href="{{ credit.linkedin_url }}"></a>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

@@ -11,6 +11,7 @@
       'app.cars',
       'app.friends',
       'app.trips',
+      'app.about',
       'config',
       'uiGmapgoogle-maps',
     ]);

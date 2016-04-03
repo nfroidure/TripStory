@@ -112,6 +112,16 @@
             controller: 'MapCtrl',
           },
         },
+      })
+      .state('app.about', {
+        url: '/about',
+        resolve: resolveObject,
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/about.html',
+            controller: 'AboutCtrl',
+          },
+        },
       });
     $urlRouterProvider.otherwise('/login');
   }

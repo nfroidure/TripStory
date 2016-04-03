@@ -27,6 +27,7 @@
     $scope.goToCars = goToCars;
     $scope.goToFriends = goToFriends;
     $scope.goToTrips = goToTrips;
+    $scope.goToAbout = goToAbout;
 
     activate();
     $scope.$on('profile:update', activate);
@@ -54,6 +55,9 @@
     }
     function goToTrips() {
       $state.go('app.trips', {});
+    }
+    function goToAbout() {
+      $state.go('app.about', {});
     }
 
     function doLogout() {

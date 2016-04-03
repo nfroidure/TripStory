@@ -10,7 +10,7 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <ion-list ng-show="'loaded' === state && !trips.length">
+    <ion-list ng-show="'loaded' === state && trips.length">
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
         <p>
