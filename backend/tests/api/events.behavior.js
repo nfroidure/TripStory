@@ -484,8 +484,8 @@ describe('Events endpoints', function() {
 
   describe('for root users', function() {
 
-    it('should allow to get all trips', function(done) {
-      request(context.app).get('/api/v0/trips')
+    it('should allow to get all events', function(done) {
+      request(context.app).get('/api/v0/events')
       .auth('jpb@marvello.us', 'test')
       .expect(200)
       .end(function(err, res) {
@@ -495,13 +495,23 @@ describe('Events endpoints', function() {
         assert.deepEqual(res.body, [{
           _id: 'babababababababababababa',
           contents: {
-            car_id: 'b17eb17eb17eb17eb17eb17e',
-            description: 'Lol',
-            friends_ids: [],
-            hash: 'lol',
-            title: 'Lol',
+            trip_id: 'babababababababababababa',
+            type: 'trip-start',
           },
           created_date: '1970-01-01T00:00:01.664Z',
+        }, {
+          _id: 'bbbbbbbbbbbbbbbbbbbbbbbb',
+          contents: {
+            trip_id: 'babababababababababababa',
+            type: 'xee-geo',
+            geo: [
+              50.243942,
+              3.0614734,
+              41.5,
+            ],
+            address: '207 Rue Foch, 62860 Rumaucourt, France',
+          },
+          created_date: '1970-01-01T00:00:01.665Z',
         }]);
         done();
       });

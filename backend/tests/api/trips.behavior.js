@@ -194,6 +194,7 @@ describe('Trips endpoints', function() {
               hash: 'lol',
               title: 'Lol',
             },
+            owner_id: 'abbacacaabbacacaabbacaca',
             created_date: '1970-01-01T00:00:01.664Z',
           }]);
           done();
@@ -219,6 +220,7 @@ describe('Trips endpoints', function() {
               hash: 'lol',
               title: 'Lol',
             },
+            owner_id: 'abbacacaabbacacaabbacaca',
             events: [{
               _id: 'babababababababababababa',
               contents: {
@@ -409,6 +411,7 @@ describe('Trips endpoints', function() {
             hash: 'lol',
             title: 'Lol',
           },
+          owner_id: 'abbacacaabbacacaabbacaca',
           created_date: '1970-01-01T00:00:01.664Z',
         }]);
         done(err);

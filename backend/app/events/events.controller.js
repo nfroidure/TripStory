@@ -19,13 +19,16 @@ function initEventsController(context) {
   return eventController;
 
   function eventControllerList(req, res, next) {
-    context.db.collection('events').find({
-      $or: [{
+    var query = {};
+
+    if(req.params.user_id) {
+      query.$or = [{
         owner_id: castToObjectId(req.params.user_id),
       }, {
         'trip.friends_ids': castToObjectId(req.params.user_id),
-      }],
-    }).sort({ 'created.seal_date': 1 }).toArray()
+      }];
+    }
+    context.db.collection('events').find(query).sort({ 'created.seal_date': 1 }).toArray()
     .then(function(entries) {
       context.logger.debug('Sending:', entries);
       res.status(200).send(entries.map(eventsTransforms.fromCollection));

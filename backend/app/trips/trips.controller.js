@@ -152,6 +152,7 @@ function createTripListAggregateStages(context, req) {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
+        owner_id: '$owner_id',
         created: '$created',
         ended: { $cond: {
           if: { $eq: ['trip-stop', '$contents.type'] },
@@ -163,6 +164,7 @@ function createTripListAggregateStages(context, req) {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
+        owner_id: { $first: '$owner_id' },
         created: { $first: '$created' },
         modified: { $last: '$created' },
         ended: { $last: '$ended' },
@@ -198,6 +200,7 @@ function createTripGetAggregateStages(context, req) {
       $project: {
         _id: '$contents.trip_id',
         contents: '$trip',
+        owner_id: '$owner_id',
         created: '$created',
         ended: { $cond: {
           if: { $eq: ['trip-stop', '$contents.type'] },
@@ -218,6 +221,7 @@ function createTripGetAggregateStages(context, req) {
       $group: {
         _id: '$_id',
         contents: { $first: '$contents' },
+        owner_id: { $first: '$owner_id' },
         events: { $push: '$event' },
         created: { $first: '$created' },
         modified: { $last: '$created' },

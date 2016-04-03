@@ -15,6 +15,7 @@ function tripsTransformsFromCollection(src) {
     contents: src.contents,
   };
 
+  dest.owner_id = src.owner_id;
   dest.created_date = src.created.seal_date;
   if(src.modified && src.modified.length) {
     dest.modified_date = src.modified[0].seal_date;
