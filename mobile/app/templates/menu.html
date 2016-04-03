@@ -15,12 +15,16 @@
   <ion-side-menu side="left" expose-aside-when="large" class="side-panel">
     <div>
       <ion-content>
-        <div class="user__img" ng-click="goToProfile()" ng-if="user.avatar_url">
+        <div menu-close class="user__img" ng-click="goToProfile()" ng-if="user.avatar_url">
           <img ng-src="{{user.avatar_url}}" class="user__photo" width="100%"/>
         </div>
-        <ion-item menu-close class="user__name" ng-click="goToProfile()" ng-if="user.contents.name">
-          Hi {{user.contents.name}}!
-        </ion-item>
+        <div class="user__name">
+          Hi {{user.contents.name}}! <br />
+          <a href="" menu-close ng-click="doLogout()">
+            <i class="icon ion-log-out"></i>
+            Logout
+          </a>
+        </div>
 
         <ion-list>
           <ion-item menu-close class="item-icon-left" ng-click="goToProfile()">
@@ -28,8 +32,8 @@
             Profile
           </ion-item>
           <ion-item menu-close class="centered item-icon-left" ng-click="goToTrips()">
-            <i class="icon ion-plane"></i>
-            Trips
+            <i class="icon ion-map"></i>
+            Stories
           </ion-item>
           <ion-item menu-close class="centered item-icon-left" ng-click="goToFriends()">
             <i class="icon ion-person-stalker"></i>
@@ -38,10 +42,6 @@
           <ion-item menu-close class="centered item-icon-left" ng-click="goToCars()">
             <i class="icon ion-model-s"></i>
             Cars
-          </ion-item>
-          <ion-item menu-close class="centered item-icon-left" ng-click="doLogout()">
-            <i class="icon ion-log-out"></i>
-            Logout
           </ion-item>
         </ion-list>
       </ion-content>

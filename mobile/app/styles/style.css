@@ -1,11 +1,11 @@
 /* MENU */
-.btn-add{
+.btn-add {
   background-color: #1abc9c;
   color: #2c3e50;
 }
 
 /* TripPage */
-.headerPage{
+.headerPage {
   color: white;
   text-align: center;
   height: 250px;
@@ -15,22 +15,22 @@
   background: url("https://d13yacurqjgara.cloudfront.net/users/58267/screenshots/1779481/attachments/291187/Perkse-Pattern.png") no-repeat center center fixed;
 }
 
-.headerPage__infos{
+.headerPage__infos {
   background-color: rgba(0,0,0,0.6);
   width: 100%;
   height: 100%;
   padding: 20px 25px 50px 25px;
 }
-.headerPage__label{
+.headerPage__label {
   color: white;
 }
 
-.headerPage__description{
+.headerPage__description {
   display: block;
   margin-top: 30px;
 }
 
-.headerPage__coverPicture{
+.headerPage__coverPicture {
   width: 100%;
 }
 
@@ -40,11 +40,11 @@
   margin-top: 30px;
 }
 
-.member{
+.member {
   margin: 0 10px;
 }
 
-.member__picture{
+.member__picture {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -117,6 +117,7 @@
 
 .side-panel .user__name {
   font-weight: bold;
+  color: #fff;
   padding: 0;
   padding: 20px 0px 20px 0px;
   text-align: center;
@@ -124,19 +125,29 @@
   border-bottom: none;
 }
 
-.side-panel .logout__link{
+.side-panel .user__name a, .side-panel .user__name a:visited {
+  font-weight: bold;
+  color: #fff;
+  padding: 0;
+  padding: 20px 0px 20px 0px;
+  text-align: center;
+  border-top: none;
+  border-bottom: none;
+}
+
+.side-panel .logout__link {
   text-align: center;
   padding-left: 0px;
 }
 
-.card{
+.card {
   padding: 0 15px 15px 15px;
   border: none;
   box-shadow: none;
   border-bottom: 1px solid #F1F1F1;
 }
 
-.event__icon{
+.event__icon {
   font-size: 1.2em;
   color: #000000;
   margin-right: 10px;
@@ -144,33 +155,33 @@
   margin-bottom: 5px;
 }
 
-.event__icon i{
+.event__icon i {
   display: inline-block;
   width: 22px;
 }
 
-.ion-social-twitter{
+.ion-social-twitter {
   color: #3b94d9;
 }
 
-.event__icon em{
+.event__icon em {
   font-size: 0.8em;
   color: #707070;
 }
 
-.event .date{
+.event .date {
   float: right;
   color: #666666;
   font-size: 0.6em;
 }
-.event{
+.event {
   border: none;
   justify-content: center;
   border: none;
   width: 100%;
 }
 
-.event p{
+.event p {
   color: #000000;
   font-size: 1em;
 }
@@ -179,14 +190,14 @@
   width: 100%;
   height: 100%;
 }
-.scroll{
+.scroll {
   height: 100%;
 }
-.angular-google-map-container{
+.angular-google-map-container {
   height: 100%;
 }
 
-.angular-google-map{
+.angular-google-map {
   width: 100%;
   height: 100%;
 }
@@ -194,6 +205,6 @@
   background-color: #073D69;
 }
 
-.button-block{
+.button-block {
   border :none;
 }

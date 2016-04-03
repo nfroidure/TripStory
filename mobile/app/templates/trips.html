@@ -1,20 +1,16 @@
-<ion-view view-title="Your trips">
+<ion-view view-title="Stories">
   <ion-nav-buttons side="right">
     <button class="button" ng-click="refresh()" ng-if="'loading' !== state">
       <i class="ion-refresh"></i>
-      Refresh
     </button>
     <button class="button" ng-click="createTrip()" ng-if="canStartTrip && !createTripModal">
       <i class="ion-plus"></i>
-      New trip
+      New
     </button>
   </ion-nav-buttons>
   <ion-content>
     <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <ion-list ng-show="'loaded' === state">
-      <ion-item ng-if="!trips.length">
-        <p>Currently no trips</p>
-      </ion-item>
+    <ion-list ng-show="'loaded' === state && !trips.length">
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
         <p>
@@ -25,5 +21,67 @@
         </p>
       </ion-item>
     </ion-list>
+    <div class="padding" ng-show="'loaded' === state && !trips.length">
+      <h2>Welcome!</h2>
+      <p>
+        Looks like you are about to record your first Trip Story ;).
+      </p>
+      <div class="padding-vertical" ng-if="!(profile.google || profile.twitter || profile.facebook)">
+        <h4>
+          <i class="icon ion-android-person"></i>
+          Prepare your account
+        </h4>
+        <p>
+          Stories are made of interactions, to get best results, go to your
+          profile page and link your account with social networks.
+        </p>
+        <button class="button button-small"
+          ng-click="goToProfile()">
+          Link my account
+        </button>
+      </div>
+      <div class="padding-vertical" ng-if="!(profile.xee)">
+        <h4>
+          <i class="icon ion-model-s"></i>
+          Set you car
+        </h4>
+        <p>
+          Cars are connected nowadays, retrieving you car position will
+          provide the best experience.
+        </p>
+        <button class="button button-small"
+          ng-click="goToCars()">
+          Connect my car
+        </button>
+      </div>
+      <div class="padding-vertical" ng-if="!(profile.friends_ids.length)">
+        <h4>
+          <i class="icon ion-person-stalker"></i>
+          Invite friends
+        </h4>
+        <p>
+          Get your friends involved in your trips, let's get them onboard !
+        </p>
+        <button class="button button-small"
+          ng-click="goToFriends()">
+          Invite friends
+        </button>
+      </div>
+      <div class="padding-vertical" ng-if="!(profile.friends_ids.length)">
+        <h4>
+          <i class="icon ion-map"></i>
+          Start tripping
+        </h4>
+        <p>
+          Create your first Trip Story and enhance your journeys memories!
+          Every event happenning during your trip will be recorded and displayed
+          in a nice live page.
+        </p>
+        <button class="button button-small"
+          ng-click="createTrip()">
+          Start tripping
+        </button>
+      </div>
+    </div>
   </ion-content>
 </ion-view>

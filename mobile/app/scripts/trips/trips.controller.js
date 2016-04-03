@@ -32,6 +32,7 @@
       $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_CREATED'));
       $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
       $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
+      $scope.profile = profile;
     });
 
     $scope.trips = [];
