@@ -25,7 +25,8 @@
             <i class="ion-map"></i>
             See on map
           </button>
-          <button ng-click="stopTrip()" ng-show="!trip.ended_date" class="button button-energized">
+          <button class="button button-energized"
+            ng-click="stopTrip()" ng-show="canStopTrip">
             <i class="ion-trophy"></i>
             The end!
           </button>

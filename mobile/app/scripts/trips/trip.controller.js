@@ -7,13 +7,13 @@
     .controller('StopTripCtrl', StopTripCtrl);
 
   TripCtrl.$inject = [
-    '$scope', '$state', '$stateParams', '$ionicModal',
-    'tripsFactory', 'pusherService',
+    '$scope', '$state', '$stateParams', '$q', '$ionicModal',
+    'tripsFactory', 'pusherService', 'authService',
   ];
   /* @ngInject */
   function TripCtrl(
-    $scope, $state, $stateParams, $ionicModal,
-    tripsFactory, pusherService
+    $scope, $state, $stateParams, $q, $ionicModal,
+    tripsFactory, pusherService, authService
   ) {
     var channel = pusherService.subscribe('trips-' + $stateParams.trip_id);
 
@@ -43,17 +43,20 @@
     function activate() {
       $scope.state = 'loading';
       $scope.canStopTrip = false;
-      tripsFactory.get($stateParams.trip_id)
-        .then(function(trip) {
-          $scope.trip = trip.data;
-          $scope.state = 'loaded';
-          $scope.canStopTrip = $scope.trip.ended_date;
-        })
-        .catch(function(err) {
-          $scope.state = 'errored';
-        });
-      // $scope.startEvent = $scope.trip.events.filter(isPsaGeo)[0];
-      // function isPsaGeo(event){ return event.contents.type === 'psa-geo'; }
+      $q.all({
+        profile: authService.getProfile(),
+        trip: tripsFactory.get($stateParams.trip_id),
+      })
+      .then(function(result) {
+        $scope.profile = result.profile;
+        $scope.trip = result.trip.data;
+        $scope.state = 'loaded';
+        $scope.canStopTrip = $scope.trip.owner_id === result.profile._id &&
+          !$scope.trip.ended_date;
+      })
+      .catch(function(err) {
+        $scope.state = 'errored';
+      });
     }
     function goToMember(member) {
       $state.go('app.member', { memberId: member.id });
