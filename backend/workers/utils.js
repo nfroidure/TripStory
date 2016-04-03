@@ -35,6 +35,5 @@ function workersUtilsGetCurrentTrips(context, options) {
     return tripsEvents.filter(function filterCurrentTrips(tripEvent) {
       return 'trip-start' === tripEvent.contents.type;
     });
-    // context.logger.debug(JSON.stringify(tripsEvents, null, 2));
   });
 }
