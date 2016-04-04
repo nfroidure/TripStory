@@ -6,22 +6,43 @@
     .service('pusherService', PusherService);
 
     PusherService.$inject = [
-      'ENV', '$log',
+      '$log', '$window', 'ENV',
     ];
     /* @ngInject */
-    function PusherService(ENV, $log) {
+    function PusherService($log, $window, ENV) {
+      var pusher;
+
+      if(!$window.Pusher) {
+        return {
+          subscribe: angular.noop,
+        };
+      }
       // Enable pusher logging - don't include this in production
       if('development' === ENV.name) {
         Pusher.log = $log.debug;
       }
 
-      var pusher = new Pusher(ENV.pusherKey, {
+      var pusher = new $window.Pusher(ENV.pusherKey, {
         appId: ENV.pusherAppId,
         cluster: ENV.pusherCluster,
         encrypted: true
       });
 
-      return pusher;
+      return {
+        subscribe: subscribe,
+      };
+
+      //
+      function subscribeToChannel($scope, channel, actions) {
+        var channel = pusherService.subscribe(channel);
+
+        Object.keys(actions).forEach(function(eventName) {
+          channel.bind(eventName, function() {
+            actions[eventName].apply(null, arguments);
+          });
+          $scope.$on('$destroy', channel.unbind.bind(channel, eventName));
+        });
+      }
     }
 
   }());

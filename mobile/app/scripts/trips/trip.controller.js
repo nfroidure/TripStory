@@ -15,17 +15,6 @@
     $scope, $state, $stateParams, $q, $ionicModal,
     tripsFactory, pusherService, authService
   ) {
-    var channel = pusherService.subscribe('trips-' + $stateParams.trip_id);
-
-    channel.bind('A_TRIP_UPDATED', function() {
-      $scope.refresh();
-    });
-    channel.bind('A_TRIP_DELETED', function() {
-      $state.go('app.trips');
-    });
-    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
-    $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
-
 
     $scope.trip = null;
     $scope.canStopTrip = false;
@@ -38,6 +27,10 @@
     $scope.closeStopTrip = closeStopTrip;
     $scope.refresh = activate;
 
+    pusherService.subscribe( $scope, 'trips-' + $stateParams.trip_id, {
+      A_TRIP_UPDATED: $scope.refresh.bind($scope),
+      A_TRIP_DELETED: $state.go.bind($state, 'app.trips'),
+    });
     activate();
 
     function activate() {

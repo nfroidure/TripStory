@@ -18,20 +18,12 @@
     authService
   ) {
     authService.getProfile().then(function(profile) {
-      var channel = pusherService.subscribe('users-' + profile._id);
 
-      channel.bind('A_TRIP_CREATED', function() {
-        $scope.refresh();
+      pusherService.subscribe( $scope, 'users-' + profile._id, {
+        A_TRIP_UPDATED: $scope.refresh.bind($scope),
+        A_TRIP_CREATED: $scope.refresh.bind($scope),
+        A_TRIP_DELETED: $scope.refresh.bind($scope),
       });
-      channel.bind('A_TRIP_UPDATED', function() {
-        $scope.refresh();
-      });
-      channel.bind('A_TRIP_DELETED', function() {
-        $state.go('app.trips');
-      });
-      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_CREATED'));
-      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_UPDATED'));
-      $scope.$on('$destroy', channel.unbind.bind(channel, 'A_TRIP_DELETED'));
       $scope.profile = profile;
     });
 

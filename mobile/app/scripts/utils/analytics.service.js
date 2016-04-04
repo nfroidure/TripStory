@@ -60,7 +60,6 @@
       if(!$window.ga) {
         deferred.reject();
       }
-        console.log('plop', ENV.analyticsAppId, ENV.analyticsAppTracker, ENV.name);
       $window.ga('create', ENV.analyticsAppId, ENV.analyticsAppTracker);
       if('development' !== ENV.name) {
         $window.ga('set', 'forceSSL', true);

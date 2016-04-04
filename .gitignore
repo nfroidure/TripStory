@@ -1,5 +1,6 @@
 # Config
 app.dev.json
+app.offline.json
 app.prod.json
 # Logs
 logs
