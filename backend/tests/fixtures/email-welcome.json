@@ -1,7 +1,7 @@
 {
   "from": "mailer-daemon@cloud",
   "to": "popol@moon.u",
-  "subject": "[Trip Story] Welcome on board!",
-  "html": "<p>Hi Popol!</p>\r\n<p>Welcome in the Trip Story community. Start tripping with friends!</p>\r\n<p>See you soon, the Trip Story crew.</p>\r\n",
-  "text": "Hi Popol!\r\n\r\nWelcome in the Trip Story community. Start tripping with friends!\r\n\r\nSee you soon, the Trip Story crew.\r\n"
+  "subject": "Welcome to Trip Story",
+  "html": "<p>Welcome to Trip Story!</p>\r\n<p>We’re on a mission : <strong>help you to share amazing stories with friends</strong>. This should be easy.</p>\r\n<p>Use Trip Story to connect all your social media and communicate with your friends.</p>\r\n<p>We welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.</p>\r\n<p>Thanks!</p>\r\n<p>— The Trip Story crew</p>\r\n",
+  "text": "Welcome to Trip Story!\r\n\r\nWe’re on a mission : help you to share amazing stories with friends. This should be easy.\r\n\r\nUse Trip Story to connect all your social media and communicate with your friends.\r\n\r\nWe welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.\r\n\r\nThanks!\r\n\r\n— The Trip Story crew\r\n"
 }

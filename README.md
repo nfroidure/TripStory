@@ -17,7 +17,7 @@ The SAAS service used here:
 - [Redis Lab](http://app.redislabs.com)
 - [MailGun](http://mailgun.com)
 - [API Analytics](https://api-analytics.jbpionnier.fr)
-- [CloudAMQP](http://api.cloudamqp.com)
+- [CloudAMQP](http://cloudamqp.com)
 - [Cloudinary](https://cloudinary.com)
 - [Pusher](https://pusher.com)
 - [Loggly](https://loggly.com)
