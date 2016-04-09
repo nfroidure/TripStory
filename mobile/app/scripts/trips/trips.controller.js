@@ -46,14 +46,16 @@
       $scope.state = 'loading';
       $scope.canStartTrip = false;
       $q.all([
-        tripsFactory.list()
+        authService.getProfile().then(function(profile) {
+          return tripsFactory.list()
           .then(function(values) {
             $scope.trips = values.data;
             $scope.state = 'loaded';
             canStartTrip = values.data.every(function(trip) {
-              return trip.ended_date;
+              return trip.owner_id !== result.profile._id && trip.ended_date;
             });
-          }),
+          });
+        }),
         carsFactory.list()
           .then(function(values) {
             $scope.cars = values.data;

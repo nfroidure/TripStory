@@ -29,12 +29,12 @@
       });
 
       return {
-        subscribe: subscribe,
+        subscribe: subscribeToChannel,
       };
 
       //
       function subscribeToChannel($scope, channel, actions) {
-        var channel = pusherService.subscribe(channel);
+        var channel = pusher.subscribe(channel);
 
         Object.keys(actions).forEach(function(eventName) {
           channel.bind(eventName, function() {
