@@ -52,7 +52,7 @@
             $scope.trips = values.data;
             $scope.state = 'loaded';
             canStartTrip = values.data.every(function(trip) {
-              return trip.owner_id !== result.profile._id && trip.ended_date;
+              return trip.owner_id !== result.profile._id || trip.ended_date;
             });
           });
         }),
