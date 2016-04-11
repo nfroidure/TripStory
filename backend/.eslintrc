@@ -1,7 +1,8 @@
 {
   "extends": "eslint-config-simplifield",
   "plugins": [
-    "mongodb"
+    "mongodb",
+    "promise",
   ],
   "settings": {
     "mongodb": {
@@ -41,6 +42,8 @@
   },
   "rules": {
     "strict": [2, "global"],
-    "mongodb/check-deprecated-calls": 2
+    "mongodb/check-deprecated-calls": 2,
+    "promise/param-names": 2,
+    "promise/catch-or-return": 2
   }
 }

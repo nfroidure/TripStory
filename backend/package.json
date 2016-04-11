@@ -52,6 +52,7 @@
     "eslint": "^1.9.0",
     "eslint-config-simplifield": "^1.1.0",
     "eslint-plugin-mongodb": "^0.2.3",
+    "eslint-plugin-promise": "^1.1.0",
     "express-reaccess": "^1.0.1",
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
