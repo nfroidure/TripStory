@@ -4,6 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var castToObjectId = require('mongodb').ObjectId;
 var sinon = require('sinon');
 var assert = require('assert');
+var Promise = require('bluebird');
 var nock = require('nock');
 var Twitter = require('twitter');
 var initObjectIdStub = require('objectid-stub');
@@ -138,15 +139,24 @@ describe('Twitter jobs', function() {
         })
         .then(function() {
           friendsCall.done();
-          return context.db.collection('users').findOne({
-            _id: castToObjectId('abbacacaabbacacaabbacaca'),
-          }).then(function(user) {
+          return Promise.all([
+            context.db.collection('users').findOne({
+              _id: castToObjectId('abbacacaabbacacaabbacaca'),
+            }),
+            context.db.collection('users').findOne({
+              _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+            }),
+          ]).spread(function(user, friend) {
             assert.deepEqual(user.friends_ids, [
               castToObjectId('b17eb17eb17eb17eb17eb17e'),
+            ]);
+            assert.deepEqual(friend.friends_ids, [
+              castToObjectId('abbacacaabbacacaabbacaca'),
             ]);
           });
         })
         .then(done.bind(null, null))
+        .catch(console.log.bind(console))
         .catch(done);
       });
     });

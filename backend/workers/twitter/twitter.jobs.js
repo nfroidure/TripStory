@@ -85,7 +85,7 @@ function twitterSyncJob(context) {
                         'contents.trip_id': tripEvent._id,
                         'contents.type': 'twitter-status',
                         trip: tripEvent.trip,
-                        created: controllersUtils.getDateSeal(status.created_at),
+                        created: controllersUtils.getDateSeal(tweetDate.getTime()),
                       },
                     }, {
                       upsert: true,
@@ -154,7 +154,7 @@ function pairTwitterFriends(context, event) {
 
             return Promise.all([
               context.db.collection('users').updateMany({
-                _id: friendsIds,
+                _id: { $in: friendsIds },
               }, {
                 $addToSet: {
                   friends_ids: event.contents.user_id,
