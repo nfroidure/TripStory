@@ -117,7 +117,7 @@
             throw res;
           }
           profileDeffered = $q.defer();
-          analyticsService.trackEvent('auth', 'login', profile._id);
+          analyticsService.trackEvent('auth', 'login', res.data._id);
           profileDeffered.resolve(res.data);
         });
     }
