@@ -111,7 +111,6 @@ describe('Facebook jobs', function() {
         'content-type': 'text/javascript; charset=UTF-8',
         'x-fb-trace-id': 'FJgxiLd+P4g',
         'x-fb-rev': '2168097',
-        etag: '"0483d18750c66dbbaae0810e280e05ef50358008"',
         pragma: 'no-cache',
         'cache-control': 'private, no-cache, no-store, must-revalidate',
         'facebook-api-version': 'v2.5',
@@ -194,6 +193,7 @@ describe('Facebook jobs', function() {
           context.createObjectId.next(),
           context.createObjectId.next(1),
           context.createObjectId.next(2),
+          context.createObjectId.next(3),
         ];
 
         facebookSatusesCall = nock('https://graph.facebook.com:443', {
@@ -209,6 +209,26 @@ describe('Facebook jobs', function() {
         })
         .reply(200, {
           data: [{
+            created_time: '2016-04-11T06:01:27+0000',
+            id: '1664_125519447848804',
+            from: {
+              name: 'Popol',
+              id: '1664',
+            },
+            message: 'Plop',
+            place: {
+              id: '144713192208788',
+              name: 'Gare de Douai',
+              location: {
+                latitude: 50.371666666667,
+                longitude: 3.0905555555556,
+                street: 'Place de la gare',
+                zip: '59500',
+              },
+            },
+            status_type: 'mobile_status_update',
+            type: 'status',
+          }, {
             caption: 'tripstory.insertafter.com',
             link: 'https://tripstory.insertafter.com/',
             created_time: '2016-04-10T10:41:27+0000',
@@ -267,7 +287,6 @@ describe('Facebook jobs', function() {
           'content-type': 'text/javascript; charset=UTF-8',
           'x-fb-trace-id': 'FJgxiLd+P4g',
           'x-fb-rev': '2168097',
-          etag: '"0483d18750c66dbbaae0810e280e05ef50358008"',
           pragma: 'no-cache',
           'cache-control': 'private, no-cache, no-store, must-revalidate',
           'facebook-api-version': 'v2.5',
@@ -334,6 +353,13 @@ describe('Facebook jobs', function() {
               event_id: newEventsIds[2],
               users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
             },
+          }], [{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+              event_id: newEventsIds[3],
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
+            },
           }]]);
           return Promise.all([
             context.db.collection('events').findOne({
@@ -345,9 +371,34 @@ describe('Facebook jobs', function() {
             context.db.collection('events').findOne({
               _id: newEventsIds[2],
             }),
-          ]).spread(function(event1, event2, event3) {
+            context.db.collection('events').findOne({
+              _id: newEventsIds[3],
+            }),
+          ]).spread(function(event1, event2, event3, event4) {
             assert.deepEqual(event1, {
               _id: newEventsIds[0],
+              contents: {
+                facebookId: '1664_125519447848804',
+                trip_id: castToObjectId('babababababababababababa'),
+                type: 'facebook-status',
+                geo: [],
+                text: 'Plop',
+                user_name: 'Popol',
+              },
+              trip: {
+                friends_ids: [],
+                title: 'Lol',
+                description: 'Lol',
+                hash: 'lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              created: {
+                seal_date: new Date('2016-04-11T06:01:27.000Z'),
+              },
+            });
+            assert.deepEqual(event2, {
+              _id: newEventsIds[1],
               contents: {
                 facebookId: '1664_124039517996797',
                 trip_id: castToObjectId('babababababababababababa'),
@@ -368,8 +419,8 @@ describe('Facebook jobs', function() {
                 seal_date: new Date('2016-04-10T10:41:27.000Z'),
               },
             });
-            assert.deepEqual(event2, {
-              _id: newEventsIds[1],
+            assert.deepEqual(event3, {
+              _id: newEventsIds[2],
               contents: {
                 facebookId: '1664_124030871330995',
                 trip_id: castToObjectId('babababababababababababa'),
@@ -390,8 +441,8 @@ describe('Facebook jobs', function() {
                 seal_date: new Date('2016-04-10T10:33:42.000Z'),
               },
             });
-            assert.deepEqual(event3, {
-              _id: newEventsIds[2],
+            assert.deepEqual(event4, {
+              _id: newEventsIds[3],
               contents: {
                 facebookId: '1664_124028311331251',
                 trip_id: castToObjectId('babababababababababababa'),
