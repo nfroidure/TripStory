@@ -60,7 +60,7 @@ function emailFriendAddJob(context, event) {
       from: context.env.EMAIL,
       to: recipient.contents.email,
       cc: ccRecipient.contents.email,
-      subject: ccRecipient.contents.name + ' is ready to trip share memories with Trip Story',
+      subject: ccRecipient.contents.name + ' is ready to trip ✈ share memories with Trip Story',
       html:
         '<p>Hi ' + recipient.contents.name + '!</p>\r\n' +
         '<p>' +
