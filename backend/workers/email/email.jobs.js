@@ -90,10 +90,10 @@ function emailFriendInviteJob(context, event) {
       subject: recipient.contents.name + ' has invited you to join Trip Story',
       html:
         '<p>Hi there!</p>\r\n' +
-        '<p>You’ve been invited to join Trip Story by ' + recipient.contents.name + ' (' + context.env.EMAIL + ').</p>\r\n' +
+        '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
         '<p><a href="' + context.base + '">' +
           'Join us to share your trips experiences!' +
-        '</p>\r\n' +
+        '</a></p>\r\n' +
         '<p><small>You may copy/paste this link into your browser: ' + context.base + '</small></p>\r\n' +
         '<p>See you soon</p>\r\n' +
         '<p>— The Trip Story crew</p>\r\n',
@@ -102,7 +102,7 @@ function emailFriendInviteJob(context, event) {
         '\r\n' +
         recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
         '\r\n' +
-        'Join us by browsing ' + context.base + '!\r\n',
+        'Join us by browsing ' + context.base + '\u200B!\r\n',
     });
   });
 }
