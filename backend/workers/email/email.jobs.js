@@ -24,14 +24,14 @@ function emailSignupJob(context, event) {
       subject: 'Welcome to Trip Story',
       html:
         '<p>Welcome to Trip Story!</p>\r\n' +
-        '<p>We’re on a mission : <strong>help you to share amazing stories with friends</strong>. This should be easy.</p>\r\n' +
+        '<p>We’re on a mission: <strong>help you to share amazing stories with friends</strong>. This should be easy.</p>\r\n' +
         '<p>Use Trip Story to connect all your social media and communicate with your friends.</p>\r\n' +
         '<p>We welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.</p>\r\n' +
         '<p>Thanks!</p>\r\n' +
         '<p>— The Trip Story crew</p>\r\n',
       text:
         'Welcome to Trip Story!\r\n\r\n' +
-        'We’re on a mission : help you to share amazing stories with friends. This should be easy.\r\n\r\n' +
+        'We’re on a mission: help you to share amazing stories with friends. This should be easy.\r\n\r\n' +
         'Use Trip Story to connect all your social media and communicate with your friends.\r\n\r\n' +
         'We welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.\r\n\r\n' +
         'Thanks!\r\n\r\n' +
@@ -102,7 +102,7 @@ function emailFriendInviteJob(context, event) {
         '\r\n' +
         recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
         '\r\n' +
-        'Join us by browsing ' + context.base + ' !\r\n',
+        'Join us by browsing ' + context.base + '!\r\n',
     });
   });
 }
