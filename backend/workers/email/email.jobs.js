@@ -21,17 +21,21 @@ function emailSignupJob(context, event) {
     return context.sendMail({
       from: context.env.EMAIL,
       to: recipient.contents.email,
-      subject: '[Trip Story] Welcome on board!',
+      subject: 'Welcome to Trip Story',
       html:
-        '<p>Hi ' + recipient.contents.name + '!</p>\r\n' +
-        '<p>Welcome in the Trip Story community. Start tripping with friends!</p>\r\n' +
-        '<p>See you soon, the Trip Story crew.</p>\r\n',
+        '<p>Welcome to Trip Story!</p>\r\n' +
+        '<p>We’re on a mission: <strong>help you to share amazing stories with friends</strong>. This should be easy.</p>\r\n' +
+        '<p>Use Trip Story to connect all your social media and communicate with your friends.</p>\r\n' +
+        '<p>We welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.</p>\r\n' +
+        '<p>Thanks!</p>\r\n' +
+        '<p>— The Trip Story crew</p>\r\n',
       text:
-        'Hi ' + recipient.contents.name + '!\r\n' +
-        '\r\n' +
-        'Welcome in the Trip Story community. Start tripping with friends!\r\n' +
-        '\r\n' +
-        'See you soon, the Trip Story crew.\r\n',
+        'Welcome to Trip Story!\r\n\r\n' +
+        'We’re on a mission: help you to share amazing stories with friends. This should be easy.\r\n\r\n' +
+        'Use Trip Story to connect all your social media and communicate with your friends.\r\n\r\n' +
+        'We welcome your feedback, ideas and suggestions. We really want to make your life easier, so if we’re falling short or should be doing something different, we want to hear about it. Just reply to this email.\r\n\r\n' +
+        'Thanks!\r\n\r\n' +
+        '— The Trip Story crew\r\n',
     });
   });
 }
@@ -56,7 +60,7 @@ function emailFriendAddJob(context, event) {
       from: context.env.EMAIL,
       to: recipient.contents.email,
       cc: ccRecipient.contents.email,
-      subject: '[Trip Story] ' + ccRecipient.contents.name + ' is ready to trip!',
+      subject: ccRecipient.contents.name + ' is ready to trip share memories with Trip Story',
       html:
         '<p>Hi ' + recipient.contents.name + '!</p>\r\n' +
         '<p>' +
@@ -83,14 +87,16 @@ function emailFriendInviteJob(context, event) {
     return context.sendMail({
       from: context.env.EMAIL,
       to: event.contents.friend_email,
-      subject: '[Trip Story] Invite from ' + recipient.contents.name + '!',
+      subject: recipient.contents.name + ' has invited you to join Trip Story',
       html:
         '<p>Hi there!</p>\r\n' +
-        '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
+        '<p>You’ve been invited to join Trip Story by ' + recipient.contents.name + ' (' + context.env.EMAIL + ').</p>\r\n' +
         '<p><a href="' + context.base + '">' +
           'Join us to share your trips experiences!' +
-        '</a></p>\r\n' +
-        '<p>See you soon, the Trip Story crew.</p>\r\n',
+        '</p>\r\n' +
+        '<p><small>You may copy/paste this link into your browser: ' + context.base + '</small></p>\r\n' +
+        '<p>See you soon</p>\r\n' +
+        '<p>— The Trip Story crew</p>\r\n',
       text:
         'Hi!\r\n' +
         '\r\n' +
