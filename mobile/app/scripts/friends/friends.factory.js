@@ -6,11 +6,13 @@
     .factory('friendsFactory', friendsFactory);
 
   friendsFactory.$inject = [
-    '$http', 'createObjectId', '$q', 'ENV', 'authService', 'analyticsService'
+    '$http', 'createObjectId', '$q',
+    'ENV', 'authService', 'analyticsService', 'loadService',
   ];
   /* @ngInject */
   function friendsFactory(
-    $http, createObjectId , $q, ENV, authService, analyticsService
+    $http, createObjectId , $q,
+    ENV, authService, analyticsService, loadService
   ) {
       var service = {
         list: list,
@@ -21,28 +23,24 @@
       ////////////////
 
       function list() {
-        return authService.getProfile().then(function(profile) {
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/friends';
 
-          return $http.get(url).then(function(response) {
-            if(200 !== response.status) {
-              throw response;
-            }
-            return response;
-          });
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
       function invite(data) {
-        return authService.getProfile().then(function(profile) {
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/friends';
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/friends';
 
-          return $http.post(url, data).then(function(response) {
-            if(204 !== response.status) {
-              throw response;
-            }
+          return loadService.wrapHTTPCall($http.post(url, data), 201)
+          .then(function() {
             analyticsService.trackEvent('friends', 'invite', profile._id);
-            return response;
           });
         });
       }

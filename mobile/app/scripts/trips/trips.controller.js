@@ -9,29 +9,18 @@
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
     'tripsFactory', 'carsFactory', 'friendsFactory', 'pusherService',
-    'authService',
+    'authService', 'loadService',
   ];
   /* @ngInject */
   function TripsCtrl(
     $scope, $state, $stateParams, $ionicModal, $q,
     tripsFactory, carsFactory, friendsFactory, pusherService,
-    authService
+    authService, loadService
   ) {
-    authService.getProfile().then(function(profile) {
-
-      pusherService.subscribe( $scope, 'users-' + profile._id, {
-        A_TRIP_UPDATED: $scope.refresh.bind($scope),
-        A_TRIP_CREATED: $scope.refresh.bind($scope),
-        A_TRIP_DELETED: $scope.refresh.bind($scope),
-      });
-      $scope.profile = profile;
-    });
-
     $scope.trips = [];
     $scope.cars = [];
     $scope.friends = [];
     $scope.canStartTrip = false;
-    $scope.state = 'loading';
 
     $scope.createTrip = createTrip;
     $scope.closeCreateTrip = closeCreateTrip;
@@ -40,36 +29,31 @@
 
     activate()
 
-    function activate() {
-      var canStartTrip = false;
+    authService.getProfile().then(function(profile) {
+      pusherService.subscribe( $scope, 'users-' + profile._id, {
+        A_TRIP_UPDATED: $scope.refresh.bind($scope),
+        A_TRIP_CREATED: $scope.refresh.bind($scope),
+        A_TRIP_DELETED: $scope.refresh.bind($scope),
+      });
+      $scope.profile = profile;
+    });
 
-      $scope.state = 'loading';
+    function activate() {
       $scope.canStartTrip = false;
-      $q.all([
-        authService.getProfile().then(function(profile) {
-          return tripsFactory.list()
-          .then(function(values) {
-            $scope.trips = values.data;
-            $scope.state = 'loaded';
-            canStartTrip = values.data.every(function(trip) {
-              return trip.owner_id !== profile._id || trip.ended_date;
-            });
-          });
-        }),
-        carsFactory.list()
-          .then(function(values) {
-            $scope.cars = values.data;
-          }),
-        friendsFactory.list()
-          .then(function(values) {
-            $scope.friends = values.data;
-          }),
-      ])
-      .then(function() {
-        $scope.canStartTrip = canStartTrip;
-      })
-      .catch(function(err) {
-        $scope.state = 'errored';
+      $q.all(loadService.loadState($scope, {
+        profile: authService.getProfile(),
+        trips: tripsFactory.list(),
+        cars: carsFactory.list(),
+        friends: friendsFactory.list(),
+      }))
+      .then(function(data) {
+        $scope.canStartTrip = data.trips.data.every(function(trip) {
+          return trip.owner_id !== data.profile._id || trip.ended_date;
+        });
+        $scope.trips = data.trips.data;
+        $scope.profile = data.profile;
+        $scope.cars = data.cars.data;
+        $scope.friends = data.friends.data;
       });
     }
 

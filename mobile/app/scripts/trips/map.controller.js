@@ -6,10 +6,14 @@
     .controller('MapCtrl', MapCtrl);
 
   MapCtrl.$inject = [
-    '$scope', '$state', '$stateParams', 'tripsFactory', 'pusherService'
+    '$scope', '$state', '$stateParams', '$q',
+    'tripsFactory', 'pusherService', 'loadService', 'authService',
   ];
   /* @ngInject */
-  function MapCtrl($scope, $state, $stateParams, tripsFactory, pusherService) {
+  function MapCtrl(
+    $scope, $state, $stateParams, $q,
+    tripsFactory, pusherService, loadService, authService
+  ) {
     $scope.trip = [];
     $scope.map = {
       center: {
@@ -30,26 +34,34 @@
     activate()
 
     function activate() {
-      tripsFactory.get($stateParams.trip_id)
-        .then(function(values) {
-          $scope.trip = values.data;
-          var events = $scope.trip.events;
-          $scope.markers = events
-            .filter(whoAreGPSEvents)
-            .map(makeGMapMarker);
-            function whoAreGPSEvents(eventData){
-              return eventData.contents.geo;
-            }
-            function makeGMapMarker(eventData, i){
-              return {
-                id: i,
-                latitude: parseFloat(eventData.contents.geo[0]),
-                longitude: parseFloat(eventData.contents.geo[1]),
-              };
-            }
-        });
+      $scope.canStopTrip = false;
+      $q.all(loadService.loadState($scope, {
+        profile: authService.getProfile(),
+        trip: tripsFactory.get($stateParams.trip_id),
+      }))
+      .then(function(data) {
+        $scope.profile = data.profile;
+        $scope.trip = data.trip.data;
+        $scope.canStopTrip = $scope.trip.owner_id === data.profile._id &&
+          !$scope.trip.ended_date;
+        $scope.markers = $scope.trip.events
+          .filter(isLocatedEvent)
+          .map(locatedEventToMapMarker);
+      });
     }
 
+  }
+
+  function isLocatedEvent(event){
+    return event.contents.geo;
+  }
+
+  function locatedEventToMapMarker(event, i){
+    return {
+      id: i,
+      latitude: parseFloat(event.contents.geo[0]),
+      longitude: parseFloat(event.contents.geo[1]),
+    };
   }
 
 })();

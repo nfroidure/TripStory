@@ -1,6 +1,6 @@
 <ion-view view-title="Stories">
   <ion-nav-buttons side="right">
-    <button class="button" ng-click="refresh()" ng-if="'loading' !== state">
+    <button class="button" ng-click="refresh()" ng-if="!states._all.loading">
       <i class="ion-refresh"></i>
     </button>
     <button class="button" ng-click="createTrip()" ng-if="canStartTrip && !createTripModal">
@@ -9,8 +9,8 @@
     </button>
   </ion-nav-buttons>
   <ion-content>
-    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <ion-list ng-show="'loaded' === state && trips.length">
+    <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
+    <ion-list ng-show="states._all.loaded && trips.length">
       <ion-item ng-repeat="trip in trips" ng-click="goToTrip(trip._id)">
         <h2>{{trip.contents.title}}</h2>
         <p>
@@ -21,7 +21,7 @@
         </p>
       </ion-item>
     </ion-list>
-    <div class="padding" ng-show="'loaded' === state && !trips.length">
+    <div class="padding" ng-show="states._all.loaded && !trips.length">
       <h2>Welcome!</h2>
       <p>
         Looks like you are about to record your first Trip Story ;).

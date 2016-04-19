@@ -5,54 +5,50 @@
     .module('app.events')
     .factory('eventsFactory', eventsFactory);
 
-  eventsFactory.$inject = ['$http', 'createObjectId', '$q', 'ENV', 'authService'];
+  eventsFactory.$inject = [
+    '$http', '$q',
+    'ENV', 'createObjectId', 'authService', 'loadService',
+  ];
   /* @ngInject */
-  function eventsFactory($http, createObjectId , $q, ENV, authService) {
+  function eventsFactory(
+    $http, $q,
+    ENV, createObjectId, authService, loadService
+  ) {
       var service = {
-        get: get,
         list: list,
+        get: get,
         put: put,
       };
 
       return service;
       ////////////////
 
-      function get(idTrip) {
+      function list() {
         return authService.getProfile().then(function(profile){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events/' + idTrip;
-          return $http.get(url);
-        })
-        .then(function(response) {
-          if(200 !== response.status) {
-            throw response;
-          }
-          return response;
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/events';
+
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
-      function list() {
-        return authService.getProfile().then(function(profile){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events';
-          return $http.get(url);
-        })
-        .then(function(response) {
-          if(200 !== response.status) {
-            throw response;
-          }
-          return response;
+      function get(id) {
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/events/' + id;
+
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
       function put(event) {
         return authService.getProfile().then(function(profile){
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/events/' + event._id;
+
           event._id = event._id || createObjectId();
-          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/events/' + event._id, event);
-        })
-        .then(function(response) {
-          if(201 !== response.status) {
-            throw response;
-          }
-          return response;
+          return loadService.wrapHTTPCall($http.put(url, event), 201);
         });
       }
   }

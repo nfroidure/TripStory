@@ -7,9 +7,15 @@
     .controller('UpdateProfileCtrl', UpdateProfileCtrl)
     .controller('UpdateAvatarProfileCtrl', UpdateAvatarProfileCtrl);
 
-  ProfileCtrl.$inject = ['$scope', '$state', '$stateParams', 'authService', 'ENV'];
+  ProfileCtrl.$inject = [
+    '$scope', '$state', '$stateParams',
+    'authService', 'ENV',
+  ];
   /* @ngInject */
-  function ProfileCtrl($scope, $state, $stateParams, authService, ENV) {
+  function ProfileCtrl(
+    $scope, $state, $stateParams,
+    authService, ENV
+  ) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.goDestroy = goDestroy;

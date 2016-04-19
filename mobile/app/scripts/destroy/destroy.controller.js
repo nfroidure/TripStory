@@ -14,17 +14,16 @@
 
     activate();
 
+    //
     function activate() {
+      $q.all(loadService.loadState($scope, {}));
     }
 
     function doDestroyAccount() {
-      authService.deleteProfile()
-        .then(function(logResponse) {
-          $state.go('login');
-        })
-        .catch(function(err){
-          $scope.fail = err;
-        });
+      loadService.runState($scope, 'remove', authService.deleteProfile())
+      .then(function() {
+        $state.go('login');
+      });
     }
   }
 })();

@@ -5,46 +5,45 @@
     .module('app.friends')
     .controller('FriendsCtrl', FriendsCtrl);
 
-  FriendsCtrl.$inject = ['$scope', '$state', '$stateParams', 'friendsFactory'];
+  FriendsCtrl.$inject = [
+    '$scope', '$state', '$stateParams', '$q',
+    'loadService', 'friendsFactory',
+  ];
   /* @ngInject */
-  function FriendsCtrl($scope, $state, $stateParams, friendsFactory) {
+  function FriendsCtrl(
+    $scope, $state, $stateParams, $q,
+    loadService, friendsFactory
+  ) {
     $scope.friends = [];
     $scope.newFriend = {};
-    $scope.state = 'loading';
     $scope.inviteFriend = inviteFriend;
     $scope.refresh = activate;
 
     activate();
 
+    //
     function activate() {
-      $scope.state = 'loading';
-      friendsFactory.list()
-        .then(function(friends){
-          $scope.friends = friends.data;
-          $scope.state = 'loaded';
-        })
-        .catch(function(err) {
-          $scope.state = 'errored';
-        });
+      $q.all(loadService.loadState($scope, {
+        friends: friendsFactory.list(),
+      }))
+      .then(function(data) {
+        $scope.friends = data.friends.data;
+      });
     }
 
     function inviteFriend() {
       if($scope.inviteForm.$invalid) {
         return;
       }
-      $scope.fail = '';
-      friendsFactory.invite($scope.newFriend)
-        .then(function(response) {
-          $scope.newFriend = {};
-          $scope.refresh();
-        })
-        .catch(function(err) {
-          if (0 >= err.status) {
-            $scope.fail = 'E_NETWORK';
-            return;
-          }
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+
+      return loadService.runState($scope, 'add',
+        friendsFactory.invite($scope.newFriend)
+      )
+      .then(function() {
+        $scope.refresh();
+        $scope.newFriend = {};
+        analyticsService.trackEvent('friends', 'invite', profile._id);
+      });
     }
   }
 

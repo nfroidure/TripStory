@@ -2,13 +2,24 @@
   ng-submit="inviteFriend()">
   <ion-view view-title="Friends">
     <ion-nav-buttons side="right">
-      <button class="button" ng-click="refresh()" ng-if="'loading' !== state">
+      <button class="button" ng-click="refresh()" ng-if="!states._all.loading">
         <i class="ion-refresh"></i>
       </button>
     </ion-nav-buttons>
     <ion-content>
-      <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-      <ion-list ng-show="'loaded' === state">
+      <p class="item"
+        ng-if="states._all.failed.code"
+        ng-switch="states._all.failed.code">
+        <i class="icon ion-alert-circled assertive"></i>
+        <span ng-switch-when="'E_NETWORK'">
+          Looks like the network is bad, try later ;).
+        </span>
+        <span ng-switch-default>
+          Unexpected error! We are going to fix it soon!
+        </span>
+      </p>
+      <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
+      <ion-list ng-show="states._all.loaded">
         <ion-item ng-if="!friends.length">
           <p>Looks like you are an early adopter ;).</p>
         </ion-item>
@@ -30,13 +41,16 @@
           <input type="email" name="email" placeholder="ex: john.doe@example.com" required
             ng-model="newFriend.email">
         </label>
-        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+        <p class="item"
+          ng-if="actions.add.failed.code"
+          ng-switch="actions.add.failed.code">
           <i class="icon ion-alert-circled assertive"></i>
-          Unexpected error! We are going to fix it soon!
-        </p>
-        <p class="item" ng-if="fail == 'E_NETWORK'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Looks like the network is bad, try later ;).
+          <span ng-switch-when="'E_NETWORK'">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
         </p>
         <div class="item">
           <button class="button button-block button-positive"

@@ -5,8 +5,8 @@
     </button>
   </ion-nav-buttons>
   <ion-content>
-    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <div class="headerPage" ng-show="'loaded' === state">
+    <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
+    <div class="headerPage" ng-show="states._all.loaded">
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <ion-list ng-show="'loaded' === state">
+    <ion-list ng-show="states._all.loaded">
       <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)" class="event-list-item card">
 
         <div ng-switch-when="trip-start" class="event">

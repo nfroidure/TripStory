@@ -6,11 +6,13 @@
     .factory('carsFactory', carsFactory);
 
   carsFactory.$inject = [
-    '$http', 'createObjectId', '$q', 'ENV', 'authService', 'analyticsService'
+    '$http', 'createObjectId', '$q',
+    'ENV', 'authService', 'loadService', 'analyticsService',
   ];
   /* @ngInject */
   function carsFactory(
-    $http, createObjectId , $q, ENV, authService, analyticsService
+    $http, createObjectId , $q,
+    ENV, authService, loadService, analyticsService
   ) {
       var service = {
         list: list,
@@ -22,43 +24,35 @@
       ////////////////
 
       function list() {
-        return authService.getProfile().then(function(profile){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars';
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/cars';
 
-          return $http.get(url).then(function(response) {
-            if(200 !== response.status) {
-              throw response;
-            }
-            return response;
-          });
+
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
       function get(id) {
-        return authService.getProfile().then(function(profile){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars/' + id;
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/cars/' + id;
 
-          return $http.get(url).then(function(response) {
-            if(200 !== response.status) {
-              throw response;
-            }
-            return response;
-          });
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
       function remove(id) {
-        return authService.getProfile().then(function(profile){
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/cars/' + id;
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/cars/' + id;
 
-          return $http.delete(url).then(function(response) {
-            throw response;
-          }).catch(function(response) {
-            if(410 !== response.status) {
-              throw response;
-            }
+          return loadService.wrapHTTPCall($http.delete(url), 410)
+          .then(function() {
             analyticsService.trackEvent('cars', 'remove', profile._id);
-            return response;
           });
         });
       }

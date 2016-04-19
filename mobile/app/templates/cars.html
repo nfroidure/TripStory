@@ -1,25 +1,53 @@
 <ion-view view-title="Cars">
   <ion-nav-buttons side="right">
-    <button class="button" ng-click="refresh()" ng-if="'loading' !== state">
+    <button class="button" ng-click="refresh()" ng-if="!states._all.loading">
       <i class="ion-refresh"></i>
     </button>
   </ion-nav-buttons>
   <ion-content>
-    <ion-spinner icon="lines" ng-show="'loading' === state"></ion-spinner>
-    <ion-list ng-show="'loaded' === state">
-      <div class="item item-divider">
+    <p class="item"
+      ng-if="states._all.failed.code"
+      ng-switch="states._all.failed.code">
+      <i class="icon ion-alert-circled assertive"></i>
+      <span ng-switch-when="'E_NETWORK'">
+        Looks like the network is bad, try later ;).
+      </span>
+      <span ng-switch-default>
+        Unexpected error! We are going to fix it soon!
+      </span>
+    </p>
+    <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
+    <ion-list ng-show="states._all.loaded">
+      <ion-item class="item-divider">
         Cars
-      </div>
+      </ion-item>
       <ion-item ng-if="!cars.length">
         <p>No connected car. {{ year }} is calling ;).</p>
+      </ion-item>
+      <ion-item
+        ng-if="actions.remove.failed.code"
+        ng-switch="actions.remove.failed.code">
+        <i class="icon ion-alert-circled assertive"></i>
+        <span ng-switch-when="'E_NETWORK'">
+          Looks like the network is bad, try later ;).
+        </span>
+        <span ng-switch-when="'E_USER_EXISTS'">
+        This user already exists!
+        </span>
+        <span ng-switch-default>
+          Unexpected error! We are going to fix it soon!
+        </span>
       </ion-item>
       <ion-item class="item item-button-right" ng-repeat="car in cars">
         <h2>{{car.contents.name}}</h2>
         <p ng-if="car.contents.brand">{{car.contents.brand}} {{car.contents.model}}</p>
-        <button class="button button-assertive" ng-click="remove(car._id)">
+        <button class="button button-assertive"
+          ng-click="remove(car._id)" ng-disabled="actions.remove.loading">
           <i class="icon ion-close"></i>
         </button>
       </ion-item>
+    </ion-list>
+    <ion-list>
       <div class="item item-divider" ng-if="!profile.xee">
         Connect
       </div>

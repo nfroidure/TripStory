@@ -8,17 +8,16 @@
 
   TripCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q', '$ionicModal',
-    'tripsFactory', 'pusherService', 'authService',
+    'tripsFactory', 'pusherService', 'authService', 'loadService',
   ];
   /* @ngInject */
   function TripCtrl(
     $scope, $state, $stateParams, $q, $ionicModal,
-    tripsFactory, pusherService, authService
+    tripsFactory, pusherService, authService, loadService
   ) {
 
     $scope.trip = null;
     $scope.canStopTrip = false;
-    $scope.state = 'loading';
     $scope.startEvent = '';
     $scope.goToMember = goToMember;
     $scope.mapClassEvent = mapClassEvent;
@@ -27,36 +26,35 @@
     $scope.closeStopTrip = closeStopTrip;
     $scope.refresh = activate;
 
+    activate();
+
     pusherService.subscribe( $scope, 'trips-' + $stateParams.trip_id, {
       A_TRIP_UPDATED: $scope.refresh.bind($scope),
       A_TRIP_DELETED: $state.go.bind($state, 'app.trips'),
     });
-    activate();
 
     function activate() {
-      $scope.state = 'loading';
       $scope.canStopTrip = false;
-      $q.all({
+      $q.all(loadService.loadState($scope, {
         profile: authService.getProfile(),
         trip: tripsFactory.get($stateParams.trip_id),
-      })
-      .then(function(result) {
-        $scope.profile = result.profile;
-        $scope.trip = result.trip.data;
-        $scope.state = 'loaded';
-        $scope.canStopTrip = $scope.trip.owner_id === result.profile._id &&
+      }))
+      .then(function(data) {
+        $scope.profile = data.profile;
+        $scope.trip = data.trip.data;
+        $scope.canStopTrip = $scope.trip.owner_id === data.profile._id &&
           !$scope.trip.ended_date;
-      })
-      .catch(function(err) {
-        $scope.state = 'errored';
       });
     }
+
     function goToMember(member) {
       $state.go('app.member', { memberId: member.id });
     }
+
     function goToMap() {
       $state.go('app.tripMap', { trip_id: $stateParams.trip_id});
     }
+
     function mapClassEvent(type) {
       var classes = {
         'trip-start': 'event__start',

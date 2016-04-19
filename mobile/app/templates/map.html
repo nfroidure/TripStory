@@ -6,7 +6,9 @@
     </button>
   </ion-nav-buttons>
   <ion-content data-tap-disabled="true">
-    <ui-gmap-google-map zoom="map.zoom" center="map.center">
+    <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
+    <ui-gmap-google-map zoom="map.zoom" center="map.center"
+      ng-show="states._all.activated">
 
       <ui-gmap-markers
         models="markers"

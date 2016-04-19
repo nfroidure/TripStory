@@ -6,15 +6,17 @@
     .factory('tripsFactory', tripsFactory);
 
   tripsFactory.$inject = [
-    '$http', 'createObjectId', '$q', 'ENV', 'authService', 'analyticsService'
+    '$http', 'createObjectId', '$q',
+    'ENV', 'authService', 'analyticsService', 'loadService',
   ];
   /* @ngInject */
   function tripsFactory(
-    $http, createObjectId , $q, ENV, authService, analyticsService
+    $http, createObjectId , $q,
+    ENV, authService, analyticsService, loadService
   ) {
       var service = {
-        get: get,
         list: list,
+        get: get,
         put: put,
         remove: remove,
       };
@@ -22,56 +24,48 @@
       return service;
       ////////////////
 
-      function get(idTrip) {
-        return authService.getProfile().then(function(profile) {
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + idTrip;
+      function list() {
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/trips';
 
-          return $http.get(url)
-          .then(function(response) {
-            if(200 !== response.status) {
-              throw response;
-            }
-            return response;
-          });
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
-      function list() {
-        return authService.getProfile().then(function(profile) {
-          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips';
+      function get(id) {
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/trips/' + id;
 
-          return $http.get(url)
-          .then(function(response) {
-            if(200 !== response.status) {
-              throw response;
-            }
-            return response;
-          });
+          return loadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
       function put(trip) {
-        return authService.getProfile().then(function(profile){
-          return $http.put(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + createObjectId(), trip)
-          .then(function(response) {
-            if(201 !== response.status) {
-              throw response;
-            }
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/trips/' + createObjectId();
+
+          return loadService.wrapHTTPCall($http.put(url, trip), 201)
+          .then(function() {
             analyticsService.trackEvent('trips', 'add', profile._id);
-            return response;
           });
         });
       }
 
       function remove(tripId) {
-        return authService.getProfile().then(function(profile){
-          return $http.delete(ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/trips/' + tripId)
-          .then(function(response) {
-            if(204 !== response.status) {
-              throw response;
-            }
+        return authService.getProfile()
+        .then(function(profile) {
+          var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
+            '/trips/' + tripId;
+
+          return loadService.wrapHTTPCall($http.delete(url), 204)
+          .then(function() {
             analyticsService.trackEvent('trips', 'delete', profile._id);
-            return response;
           });
         });
       }
