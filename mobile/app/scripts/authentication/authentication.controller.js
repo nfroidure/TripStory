@@ -6,10 +6,14 @@
     .controller('AuthCtrl', AuthCtrl);
 
   AuthCtrl.$inject = [
-    '$scope', '$state', '$ionicModal', '$timeout', 'authService', 'ENV'
+    '$scope', '$state', '$ionicModal', '$timeout',
+    'ENV', 'loadService', 'authService',
   ];
   /* @ngInject */
-  function AuthCtrl($scope, $state, $ionicModal, $timeout, authService, ENV) {
+  function AuthCtrl(
+    $scope, $state, $ionicModal, $timeout,
+    ENV, loadService, authService
+  ) {
     $scope.user = {};
     $scope.loginData = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
@@ -20,7 +24,8 @@
     activate();
 
     function activate() {
-      authService.getProfile().then(function(profile) {
+      authService.getProfile()
+      .then(function(profile) {
         $state.go('app.trips');
       });
     }
@@ -29,35 +34,24 @@
       if($scope.loginForm.$invalid) {
         return;
       }
-      authService.log($scope.loginData)
-        .then(function() {
-          $state.go('app.trips');
-        })
-        .catch(function(err) {
-          if (0 >= err.status) {
-            $scope.fail = 'E_NETWORK';
-            return;
-          }
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+      loadService.runState($scope, 'login',
+        authService.login($scope.loginData)
+      )
+      .then(function() {
+        $state.go('app.trips');
+      });
     }
 
     function doSignup() {
       if($scope.signupForm.$invalid) {
         return;
       }
-      $scope.fail = '';
-      authService.signup($scope.loginData)
-        .then(function(response) {
-          $state.go("app.trips");
-        })
-        .catch(function(err) {
-          if (0 >= err.status) {
-            $scope.fail = 'E_NETWORK';
-            return;
-          }
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+      loadService.runState($scope, 'signup',
+        authService.signup($scope.loginData)
+      )
+      .then(function(response) {
+        $state.go("app.trips");
+      });
     }
   }
 })();

@@ -70,7 +70,7 @@
         return promise.then(function(data) {
           _softlySetKey(scope, prop, key, SUCCESS_VALUES);
           return data;
-        // Catch errror and cast it
+        // Catch error and cast it
         }).catch(function(err) {
           if(!(err && err.code)) {
             err = new Error(FAIL_VALUES.failed);
@@ -103,11 +103,11 @@
           var err;
 
           if(response.status !== expectedStatus) {
-            if (0 >= response.status) {
+            if(0 >= response.status) {
               err = new Error('E_NETWORK');
               err.code = 'E_NETWORK';
+              throw err;
             }
-            throw err;
           }
           return response;
         })

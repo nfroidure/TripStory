@@ -6,13 +6,13 @@
     .factory('tripsFactory', tripsFactory);
 
   tripsFactory.$inject = [
-    '$http', 'createObjectId', '$q',
-    'ENV', 'authService', 'analyticsService', 'loadService',
+    '$http', '$q',
+    'ENV', 'createObjectId', 'authService', 'analyticsService', 'loadService',
   ];
   /* @ngInject */
   function tripsFactory(
-    $http, createObjectId , $q,
-    ENV, authService, analyticsService, loadService
+    $http, $q,
+    ENV, createObjectId, authService, analyticsService, loadService
   ) {
       var service = {
         list: list,

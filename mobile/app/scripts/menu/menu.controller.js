@@ -33,7 +33,8 @@
     $scope.$on('profile:update', activate);
 
     function activate() {
-      authService.getProfile().then(function(profile) {
+      authService.getProfile()
+      .then(function(profile) {
         $scope.user = profile;
       }).catch(function(err) {
         $state.go('login');
@@ -62,12 +63,9 @@
 
     function doLogout() {
       authService.logout()
-        .then(function(status) {
-          $state.go('login');
-        })
-        .catch(function(err) {
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+      .then(function() {
+        $state.go('login');
+      });
     }
   }
 })();

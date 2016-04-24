@@ -9,7 +9,7 @@
       ng-if="states._all.failed.code"
       ng-switch="states._all.failed.code">
       <i class="icon ion-alert-circled assertive"></i>
-      <span ng-switch-when="'E_NETWORK'">
+      <span ng-switch-when="E_NETWORK">
         Looks like the network is bad, try later ;).
       </span>
       <span ng-switch-default>
@@ -28,10 +28,10 @@
         ng-if="actions.remove.failed.code"
         ng-switch="actions.remove.failed.code">
         <i class="icon ion-alert-circled assertive"></i>
-        <span ng-switch-when="'E_NETWORK'">
+        <span ng-switch-when="E_NETWORK">
           Looks like the network is bad, try later ;).
         </span>
-        <span ng-switch-when="'E_USER_EXISTS'">
+        <span ng-switch-when="E_USER_EXISTS">
         This user already exists!
         </span>
         <span ng-switch-default>

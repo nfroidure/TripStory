@@ -11,7 +11,7 @@
         ng-if="states._all.failed.code"
         ng-switch="states._all.failed.code">
         <i class="icon ion-alert-circled assertive"></i>
-        <span ng-switch-when="'E_NETWORK'">
+        <span ng-switch-when="E_NETWORK">
           Looks like the network is bad, try later ;).
         </span>
         <span ng-switch-default>
@@ -45,7 +45,7 @@
           ng-if="actions.add.failed.code"
           ng-switch="actions.add.failed.code">
           <i class="icon ion-alert-circled assertive"></i>
-          <span ng-switch-when="'E_NETWORK'">
+          <span ng-switch-when="E_NETWORK">
             Looks like the network is bad, try later ;).
           </span>
           <span ng-switch-default>

@@ -6,10 +6,14 @@
     .controller('DestroyCtrl', DestroyCtrl);
 
   DestroyCtrl.$inject = [
-    '$scope', '$state', '$ionicModal', '$timeout', 'authService', 'ENV'
+    '$scope', '$state', '$q',
+    'authService', 'loadService',
   ];
   /* @ngInject */
-  function DestroyCtrl($scope, $state, $ionicModal, $timeout, authService, ENV) {
+  function DestroyCtrl(
+    $scope, $state, $q,
+    authService, loadService
+  ) {
     $scope.doDestroyAccount = doDestroyAccount
 
     activate();
@@ -20,7 +24,7 @@
     }
 
     function doDestroyAccount() {
-      loadService.runState($scope, 'remove', authService.deleteProfile())
+      loadService.runState($scope, 'destroy', authService.deleteProfile())
       .then(function() {
         $state.go('login');
       });

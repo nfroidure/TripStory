@@ -6,13 +6,13 @@
     .factory('friendsFactory', friendsFactory);
 
   friendsFactory.$inject = [
-    '$http', 'createObjectId', '$q',
-    'ENV', 'authService', 'analyticsService', 'loadService',
+    '$http', '$q',
+    'ENV', 'createObjectId', 'authService', 'analyticsService', 'loadService',
   ];
   /* @ngInject */
   function friendsFactory(
-    $http, createObjectId , $q,
-    ENV, authService, analyticsService, loadService
+    $http, $q,
+    ENV, createObjectId, authService, analyticsService, loadService
   ) {
       var service = {
         list: list,

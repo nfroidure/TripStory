@@ -5,16 +5,22 @@
     .module('app.authentication')
     .factory('authService', AuthService);
 
-  AuthService.$inject = ['$http', '$q', '$rootScope', 'ENV', 'analyticsService'];
+  AuthService.$inject = [
+    '$http', '$q', '$rootScope',
+    'ENV', 'analyticsService', 'loadService',
+  ];
   /* @ngInject */
-  function AuthService($http, $q, $rootScope, ENV, analyticsService) {
+  function AuthService(
+    $http, $q, $rootScope,
+    ENV, analyticsService, loadService
+  ) {
     var profileDeffered = null;
     var service = {
       getProfile: getProfile,
       setProfile: setProfile,
       setAvatar: setAvatar,
       deleteProfile: deleteProfile,
-      log: login,
+      login: login,
       signup: signup,
       logout: logout,
     };
@@ -30,15 +36,16 @@
     ////////////////
 
     function getProfile(options) {
+      var url;
+
       options = options || {};
 
       if(options.force || !profileDeffered) {
         profileDeffered = $q.defer()
-        $http.get(ENV.apiEndpoint + '/api/v0/profile')
+        url = ENV.apiEndpoint + '/api/v0/profile';
+
+        loadService.wrapHTTPCall($http.get(url), 200)
         .then(function(response) {
-          if(200 !== response.status) {
-            throw response;
-          }
           profileDeffered.resolve(response.data);
           return profileDeffered.promise;
         }).catch(profileDeffered.reject);
@@ -49,13 +56,11 @@
 
     function setProfile(profile) {
       return getProfile().then(function(profile) {
-        return $http.put(
-          ENV.apiEndpoint + '/api/v0/users/' + profile._id,
-          profile
+        var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id;
+
+        return loadService.wrapHTTPCall(
+          $http.put(url, profile), 201
         ).then(function(response) {
-          if(201 !== response.status) {
-            throw response;
-          }
           profileDeffered = $q.defer();
           profileDeffered.resolve(response.data);
           $rootScope.$broadcast('profile:update');
@@ -67,18 +72,18 @@
 
     function setAvatar(file) {
       return getProfile().then(function(profile) {
-        return $http.put(
-          ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/avatar',
-          file, {
-            headers: {'Content-Type': undefined},
-            transformRequest: angular.identity,
-          }
+        var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/avatar';
+
+        return loadService.wrapHTTPCall(
+          $http.put(
+            url,
+            file, {
+              headers: {'Content-Type': undefined},
+              transformRequest: angular.identity,
+            }
+          ), 201
         ).then(function(response) {
-          var updatedProfilePromise;
-          if(201 !== response.status) {
-            throw response;
-          }
-          updatedProfilePromise = getProfile({
+          var updatedProfilePromise = getProfile({
             force: true,
           });
           $rootScope.$broadcast('profile:update');
@@ -90,16 +95,10 @@
 
     function deleteProfile(profile) {
       return getProfile().then(function(profile) {
-        return $http.delete(
-          ENV.apiEndpoint + '/api/v0/users/' + profile._id
-        )
-        .then(function(response) {
-          throw response;
-        })
-        .catch(function(response) {
-          if(410 !== response.status) {
-            throw response;
-          }
+        var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id;
+        return loadService.wrapHTTPCall(
+          $http.delete(url), 410
+        ).then(function(response) {
           analyticsService.trackEvent('auth', 'signout', profile._id);
           return response;
         });
@@ -111,24 +110,25 @@
     }
 
     function login(credentials) {
-      return $http.post(ENV.apiEndpoint + '/api/v0/login', credentials)
-        .then(function(res) {
-          if(200 !== res.status) {
-            throw res;
-          }
-          profileDeffered = $q.defer();
-          analyticsService.trackEvent('auth', 'login', res.data._id);
-          profileDeffered.resolve(res.data);
-        });
+      var url = ENV.apiEndpoint + '/api/v0/login';
+
+      return loadService.wrapHTTPCall(
+        $http.post(url, credentials), 200
+      )
+      .then(function(response) {
+        profileDeffered = $q.defer();
+        analyticsService.trackEvent('auth', 'login', response.data._id);
+        profileDeffered.resolve(response.data);
+      });
     }
 
     function logout() {
       return getProfile().then(function(profile) {
-        return $http.post(ENV.apiEndpoint + '/api/v0/logout')
-        .then(function(response) {
-          if(204 !== response.status) {
-            throw response;
-          }
+        var url = ENV.apiEndpoint + '/api/v0/logout';
+
+        return loadService.wrapHTTPCall(
+          $http.post(url), 204
+        ).then(function(response) {
           analyticsService.trackEvent('auth', 'logout', profile._id);
           profileDeffered = $q.defer();
           profileDeffered.reject();
@@ -137,15 +137,16 @@
     }
 
     function signup(credentials) {
-      return $http.post(ENV.apiEndpoint + '/api/v0/signup', credentials)
-        .then(function(res) {
-          if(201 !== res.status) {
-            throw res;
-          }
-          profileDeffered = $q.defer();
-          profileDeffered.resolve(res.data);
-          analyticsService.trackEvent('auth', 'signup', res.data._id);
-        });
+      var url = ENV.apiEndpoint + '/api/v0/signup';
+
+      return loadService.wrapHTTPCall(
+        $http.post(url, credentials), 201
+      )
+      .then(function(response) {
+        profileDeffered = $q.defer();
+        profileDeffered.resolve(response.data);
+        analyticsService.trackEvent('auth', 'signup', response.data._id);
+      });
     }
   }
 

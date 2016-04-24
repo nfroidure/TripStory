@@ -23,21 +23,25 @@
           <input type="email" name="email" placeholder="ex: john.doe@example.com" required
             ng-model="profile.contents.email">
         </label>
-        <p class="item" ng-if="fail == 'E_RESERVED_EMAIL'">
+        <p class="item"
+          ng-if="actions.update.failed"
+          ng-switch="actions.update.failed.code">
           <i class="icon ion-alert-circled assertive"></i>
+          <span ng-switch-when="E_RESERVED_EMAIL">
           Strange! Another account already uses this email.
-        </p>
-        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Unexpected error! We are going to fix it soon!
-        </p>
-        <p class="item" ng-if="fail == 'E_NETWORK'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-when="E_NETWORK">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
         </p>
         <div class="item">
-          <button class="button button-block button-positive"
-            type="submit">Update</button>
+          <button class="button button-block button-positive" type="submit"
+            ng-disabled="actions.update.loading">
+            Update
+          </button>
         </div>
       </div>
     </form>
@@ -48,9 +52,23 @@
         <div class="item item-divider">
           Avatar
         </div>
+        <p class="item"
+          ng-if="actions.upload.failed"
+          ng-switch="actions.upload.failed.code">
+          <i class="icon ion-alert-circled assertive"></i>
+          <span ng-switch-when="E_NETWORK">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
+        </p>
         <div class="item">
           <input type="file" id="uploader" class="button button-block" /><br />
-          <button class="button button-block button-positive">Upload</button>
+          <button class="button button-block button-positive"
+            ng-disabled="actions.upload.loading">
+            Upload
+          </button>
         </div>
       </div>
     </form>
@@ -105,7 +123,9 @@
       </div>
       <div class="item">
         <a class="button button-block button-assertive"
-          ng-click="goDestroy()">Erase my profile</a>
+          ng-click="goDestroy()">
+          Erase my profile
+        </a>
       </div>
     </div>
   </ion-content>

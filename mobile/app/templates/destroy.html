@@ -2,10 +2,25 @@
   <ion-content>
     <form ng-submit="doDestroyAccount()" class="profile-form">
       <div class="list">
-        <div class="padding">
+        <div class="item">
           <p>Are you sure you want to definitely destroy your account?</p>
-          <button class="button button-block button-positive"
-            type="submit">Yes, destroy it!</button>
+        </div>
+        <p class="item"
+          ng-if="actions.destroy.failed"
+          ng-switch="actions.destroy.failed.code">
+          <i class="icon ion-alert-circled assertive"></i>
+          <span ng-switch-when="E_NETWORK">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
+        </p>
+        <div class="item">
+          <button class="button button-block button-positive" type="submit"
+            ng-disabled="actions.upload.loading">
+            Yes, destroy it!
+          </button>
         <div>
       </div>
     </form>

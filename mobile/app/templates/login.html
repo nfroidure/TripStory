@@ -42,10 +42,6 @@
         <input type="email" name="email" placeholder="ex: john.doe@example.com" required
           ng-model="loginData.email">
       </label>
-      <p class="item" ng-if="fail == 'E_BAD_EMAIL'">
-        <i class="icon ion-alert-circled assertive"></i>
-        Did not found any user with this email.
-      </p>
       <label class="item item-input">
         <span class="input-label"
           ng-class="{
@@ -58,21 +54,26 @@
         <i class="icon ion-alert-circled assertive"></i>
         Password must have a length of 6 chars.
       </p>
-      <p class="item" ng-if="fail == 'E_BAD_PASSWORD'">
+      <p class="item"
+        ng-if="actions.login.failed.code"
+        ng-switch="actions.login.failed.code">
         <i class="icon ion-alert-circled assertive"></i>
-        This password do not match.
-      </p>
-      <p class="item" ng-if="fail == 'E_UNEXPECTED'">
-        <i class="icon ion-alert-circled assertive"></i>
-        Unexpected error! We are going to fix it soon!
-      </p>
-      <p class="item" ng-if="fail == 'E_NETWORK'">
-        <i class="icon ion-alert-circled assertive"></i>
-        Looks like the network is bad, try later ;).
+        <span ng-switch-when="E_NETWORK">
+          Looks like the network is bad, try later ;).
+        </span>
+        <span ng-switch-when="E_BAD_PASSWORD">
+          This password do not match.
+        </span>
+        <span ng-switch-when="E_BAD_EMAIL">
+          Did not found any user with this email.
+        </span>
+        <span ng-switch-default>
+          Unexpected error! We are going to fix it soon! ({{ actions.login.failed.code }})
+        </span>
       </p>
       <button class="button button-block button-positive"
-        ng-class="{ 'button-assertive': fail }"
-        type="submit">Log {{ fail ? 'again' : 'in' }}</button>
+        ng-class="{ 'button-assertive': actions.login.failed }"
+        type="submit">Log {{ actions.login.failed ? 'again' : 'in' }}</button>
     </div>
     <div class="padding">
       <a class="button button-block" ui-sref="signup">Sign up</a>

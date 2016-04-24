@@ -8,13 +8,13 @@
     .controller('UpdateAvatarProfileCtrl', UpdateAvatarProfileCtrl);
 
   ProfileCtrl.$inject = [
-    '$scope', '$state', '$stateParams',
-    'authService', 'ENV',
+    '$scope', '$state', '$stateParams', '$q',
+    'ENV', 'authService', 'loadService',
   ];
   /* @ngInject */
   function ProfileCtrl(
-    $scope, $state, $stateParams,
-    authService, ENV
+    $scope, $state, $stateParams, $q,
+    ENV, authService, loadService
   ) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
@@ -23,11 +23,13 @@
     activate();
 
     function activate() {
-      authService.getProfile({
-        force: true,
-      })
-      .then(function(profile) {
-        $scope.profile = profile;
+      $q.all(loadService.loadState($scope, {
+        profile: authService.getProfile({
+          force: true,
+        }),
+      }))
+      .then(function(data) {
+        $scope.profile = data.profile;
       });
     }
 
@@ -36,39 +38,42 @@
     }
   }
 
-  UpdateProfileCtrl.$inject = ['$scope', 'authService'];
+  UpdateProfileCtrl.$inject = [
+    '$scope',
+    'authService', 'loadService',
+  ];
   /* @ngInject */
-  function UpdateProfileCtrl($scope, authService) {
+  function UpdateProfileCtrl($scope, authService, loadService) {
     $scope.updateProfile = updateProfile;
 
     function updateProfile() {
       if($scope.profileForm.$invalid) {
         return;
       }
-      authService.setProfile($scope.profile)
+      loadService.runState($scope, 'update',
+        authService.setProfile($scope.profile)
+      )
       .then(function(profile) {
         $scope.profile = profile;
-      })
-      .catch(function(err) {
-        if (0 >= err.status) {
-          $scope.fail = 'E_NETWORK';
-          return;
-        }
-        $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
       });
     }
   }
 
-  UpdateAvatarProfileCtrl.$inject = ['$scope', '$window', 'authService'];
+  UpdateAvatarProfileCtrl.$inject = [
+    '$scope', '$window',
+    'authService', 'loadService',
+  ];
   /* @ngInject */
-  function UpdateAvatarProfileCtrl($scope, $window, authService) {
+  function UpdateAvatarProfileCtrl($scope, $window, authService, loadService) {
     $scope.setAvatar = setAvatar;
 
     function setAvatar() {
       var fileInput = $window.document.getElementById('uploader');
 
       if(fileInput.files[0]) {
-        authService.setAvatar(fileInput.files[0]);
+        loadService.runState($scope, 'upload',
+          authService.setAvatar(fileInput.files[0])
+        );
       }
     }
   }
