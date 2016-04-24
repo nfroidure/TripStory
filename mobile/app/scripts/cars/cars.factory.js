@@ -51,8 +51,9 @@
             '/cars/' + id;
 
           return loadService.wrapHTTPCall($http.delete(url), 410)
-          .then(function() {
+          .then(function(response) {
             analyticsService.trackEvent('cars', 'remove', profile._id);
+            return response;
           });
         });
       }

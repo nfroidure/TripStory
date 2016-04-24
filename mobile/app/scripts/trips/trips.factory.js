@@ -48,11 +48,12 @@
         return authService.getProfile()
         .then(function(profile) {
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
-            '/trips/' + createObjectId();
+            '/trips/' + trip._id;
 
           return loadService.wrapHTTPCall($http.put(url, trip), 201)
-          .then(function() {
+          .then(function(response) {
             analyticsService.trackEvent('trips', 'add', profile._id);
+            return response;
           });
         });
       }
@@ -64,8 +65,9 @@
             '/trips/' + tripId;
 
           return loadService.wrapHTTPCall($http.delete(url), 204)
-          .then(function() {
+          .then(function(response) {
             analyticsService.trackEvent('trips', 'delete', profile._id);
+            return response;
           });
         });
       }

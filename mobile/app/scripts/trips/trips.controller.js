@@ -78,11 +78,16 @@
   }
 
   StartTripCtrl.$inject = [
-    '$scope', 'tripsFactory',
+    '$scope',
+    'tripsFactory', 'loadService', 'createObjectId',
   ];
   /* @ngInject */
-  function StartTripCtrl($scope, tripsFactory) {
+  function StartTripCtrl(
+    $scope,
+    tripsFactory, loadService, createObjectId
+  ) {
     $scope.newTrip = {
+      _id: createObjectId(),
       contents: {
         friends_ids: [],
       },
@@ -93,20 +98,12 @@
       if($scope.tripForm.$invalid) {
         return;
       }
-      $scope.fail = '';
-      tripsFactory.put($scope.newTrip)
-        .then(function(response) {
-          $scope.closeCreateTrip();
-          $scope.refresh();
-          $scope.goToTrip(response.data._id);
-        })
-        .catch(function(err) {
-          if (0 >= err.status) {
-            $scope.fail = 'E_NETWORK';
-            return;
-          }
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+      loadService.runState($scope, 'start',
+        tripsFactory.put($scope.newTrip)
+      ).then(function(response) {
+        $scope.closeCreateTrip();
+        $scope.goToTrip(response.data._id);
+      });
     }
 
   }

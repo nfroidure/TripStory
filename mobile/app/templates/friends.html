@@ -2,7 +2,7 @@
   ng-submit="inviteFriend()">
   <ion-view view-title="Friends">
     <ion-nav-buttons side="right">
-      <button class="button" ng-click="refresh()" ng-if="!states._all.loading">
+      <button class="button" ng-click="refresh()" ng-hide="states._all.loading">
         <i class="ion-refresh"></i>
       </button>
     </ion-nav-buttons>

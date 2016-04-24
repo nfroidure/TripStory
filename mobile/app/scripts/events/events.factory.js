@@ -47,7 +47,6 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/events/' + event._id;
 
-          event._id = event._id || createObjectId();
           return loadService.wrapHTTPCall($http.put(url, event), 201);
         });
       }

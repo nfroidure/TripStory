@@ -12,18 +12,21 @@
         <label class="item item-input">
           <span class="input-label"
             ng-class="{
-              'assertive' : stopTripForm.description.$invalid && stopTripForm.$submitted
+              'assertive': stopTripForm.description.$invalid && stopTripForm.$submitted
             }">End note</span>
-          <input type="text" name="description" required
+          <input type="text" name="description"
             ng-model="newTrip.contents.description">
         </label>
-        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
+        <p class="item"
+          ng-if="actions.stop.failed"
+          ng-switch="actions.stop.failed.code">
           <i class="icon ion-alert-circled assertive"></i>
-          Unexpected error! We are going to fix it soon!
-        </p>
-        <p class="item" ng-if="fail == 'E_NETWORK'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Looks like the network is bad, try later ;).
+          <span ng-switch-when="'E_NETWORK'">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
         </p>
         <label class="item">
           <button class="button button-block button-positive" type="submit">

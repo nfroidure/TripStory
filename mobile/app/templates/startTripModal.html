@@ -23,22 +23,12 @@
               'assertive' : tripForm.description.$invalid && tripForm.$submitted
             }">Description</span>
           <input type="text" name="description"
-            placeholder="ex: Let's trip to Las Vagas!" required
-            ng-model="newTrip.contents.description" required>
-        </label>
-        <label class="item item-input">
-          <span class="input-label"
-            ng-class="{
-              'assertive' : tripForm.hash.$invalid && tripForm.$submitted
-            }">Hashtag</span>
-          <i class="icon ion-pound placeholder-icon"></i> TS-
-          <input type="text" name="hash" placeholder="ex: TheVegasCrew" required
-            ng-model="newTrip.contents.hash" required>
+            placeholder="ex: Let's trip to Las Vagas!"
+            ng-model="newTrip.contents.description">
         </label>
         <label class="item item-input item-select" ng-if="cars.length">
           <span class="input-label">Car</span>
           <select ng-model="newTrip.contents.car_id">
-            <option value="?" selected>None</option>
             <option ng-repeat="car in cars track by car._id" value="{{ car._id }}">
               {{ car.contents.name}}
             </option>
@@ -47,26 +37,25 @@
         <label class="item item-input item-select" ng-if="friends.length">
           <span class="input-label">Friends</span>
           <select ng-model="newTrip.contents.friends_ids" multiple>
-              <option value="?" selected>None</option>
               <option ng-repeat="friend in friends track by friend._id" value="{{ friend._id }}">
                 {{ friend.contents.name}}
               </option>
           </select>
         </label>
-        <p class="item" ng-if="fail == 'E_RESERVED_HASH'">
+        <p class="item"
+          ng-if="actions.start.failed"
+          ng-switch="actions.start.failed.code">
           <i class="icon ion-alert-circled assertive"></i>
-          This hashtag is already taken.
-        </p>
-        <p class="item" ng-if="fail == 'E_UNEXPECTED'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Unexpected error! We are going to fix it soon!
-        </p>
-        <p class="item" ng-if="fail == 'E_NETWORK'">
-          <i class="icon ion-alert-circled assertive"></i>
-          Looks like the network is bad, try later ;).
+          <span ng-switch-when="'E_NETWORK'">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
         </p>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">
+          <button class="button button-block button-positive" type="submit"
+            ng-disabled="actions.start.loading">
             Start tripping
           </button>
         </label>

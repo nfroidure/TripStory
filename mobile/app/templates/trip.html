@@ -1,6 +1,6 @@
 <ion-view view-title="{{ trip.contents.title }}">
   <ion-nav-buttons side="right">
-    <button class="button" ng-click="refresh()">
+    <button class="button" ng-click="refresh()" ng-hide="states._all.loading">
       <i class="ion-refresh"></i>
     </button>
   </ion-nav-buttons>

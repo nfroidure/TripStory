@@ -7,12 +7,12 @@
 
   FriendsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
-    'loadService', 'friendsFactory',
+    'loadService', 'friendsFactory', 'analyticsService', 'authService',
   ];
   /* @ngInject */
   function FriendsCtrl(
     $scope, $state, $stateParams, $q,
-    loadService, friendsFactory
+    loadService, friendsFactory, analyticsService, authService
   ) {
     $scope.friends = [];
     $scope.newFriend = {};
@@ -24,9 +24,11 @@
     //
     function activate() {
       $q.all(loadService.loadState($scope, {
+        profile: authService.getProfile(),
         friends: friendsFactory.list(),
       }))
       .then(function(data) {
+        $scope.profile = data.profile;
         $scope.friends = data.friends.data;
       });
     }
@@ -42,7 +44,8 @@
       .then(function() {
         $scope.refresh();
         $scope.newFriend = {};
-        analyticsService.trackEvent('friends', 'invite', profile._id);
+        $scope.inviteForm.$setPristine(false);
+        analyticsService.trackEvent('friends', 'invite', $scope.profile._id);
       });
     }
   }

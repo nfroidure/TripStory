@@ -28,7 +28,7 @@
 
     activate();
 
-    pusherService.subscribe( $scope, 'trips-' + $stateParams.trip_id, {
+    pusherService.subscribe($scope, 'trips-' + $stateParams.trip_id, {
       A_TRIP_UPDATED: $scope.refresh.bind($scope),
       A_TRIP_DELETED: $state.go.bind($state, 'app.trips'),
     });
@@ -83,11 +83,16 @@
   }
 
   StopTripCtrl.$inject = [
-    '$scope', '$stateParams', 'eventsFactory',
+    '$scope', '$stateParams',
+    'createObjectId', 'eventsFactory', 'loadService',
   ];
   /* @ngInject */
-  function StopTripCtrl($scope, $stateParams, eventsFactory) {
+  function StopTripCtrl(
+    $scope, $stateParams,
+    createObjectId, eventsFactory, loadService
+  ) {
     $scope.tripStopEvent = {
+      _id: createObjectId(),
       contents: {
         type: 'trip-stop',
         trip_id: $stateParams.trip_id,
@@ -99,19 +104,12 @@
       if($scope.stopTripForm.$invalid) {
         return;
       }
-      $scope.fail = '';
-      eventsFactory.put($scope.tripStopEvent)
-        .then(function() {
-          $scope.closeStopTrip();
-          $scope.refresh();
-        })
-        .catch(function(err) {
-          if (0 >= err.status) {
-            $scope.fail = 'E_NETWORK';
-            return;
-          }
-          $scope.fail = err.data && err.data.code ? err.data.code : 'E_UNEXPECTED';
-        });
+      loadService.runState($scope, 'stop',
+        eventsFactory.put($scope.tripStopEvent)
+      ).then(function() {
+        $scope.closeStopTrip();
+        $scope.refresh();
+      });
     }
   }
 
