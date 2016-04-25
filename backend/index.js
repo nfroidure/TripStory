@@ -25,6 +25,7 @@ var initPSAWorker = require('./workers/psa/psa.bin.js');
 var initTwitterWorker = require('./workers/twitter/twitter.bin.js');
 var initEmailWorker = require('./workers/email/email.bin.js');
 var initPusherWorker = require('./workers/pusher/pusher.bin.js');
+var initIpinfoWorker = require('./workers/ipinfo/ipinfo.bin.js');
 
 var context = {};
 
@@ -206,6 +207,7 @@ Promise.all([
   if(context.env.PUSHER_APP_ID) {
     initPusherWorker(context);
   }
+  initIpinfoWorker(context);
 
   // Routes
   initRoutes(context);

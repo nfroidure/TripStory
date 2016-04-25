@@ -58,6 +58,7 @@ function initAuthenticationRoutes(context) {
           exchange: 'A_LOCAL_LOGIN',
           contents: {
             user_id: user._id,
+            ip: req.ip,
           },
         });
         res.status(200).send(usersTransforms.fromCollection(user));
@@ -81,6 +82,7 @@ function initAuthenticationRoutes(context) {
           exchange: 'A_LOCAL_SIGNUP',
           contents: {
             user_id: user._id,
+            ip: req.ip,
           },
         });
         res.status(201).send(usersTransforms.fromCollection(user));
@@ -93,6 +95,7 @@ function initAuthenticationRoutes(context) {
       exchange: 'A_LOGOUT',
       contents: {
         user_id: req.user._id,
+        ip: req.ip,
       },
     });
     req.logout();

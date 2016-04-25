@@ -233,6 +233,7 @@ function initAuthenticationController(context) {
           exchange: 'A_FB_SIGNUP',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       } else {
@@ -240,6 +241,7 @@ function initAuthenticationController(context) {
           exchange: 'A_FB_LOGIN',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       }
@@ -317,6 +319,7 @@ function initAuthenticationController(context) {
           exchange: 'A_GG_SIGNUP',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       } else {
@@ -324,6 +327,7 @@ function initAuthenticationController(context) {
           exchange: 'A_GG_LOGIN',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       }
@@ -387,6 +391,7 @@ function initAuthenticationController(context) {
           exchange: 'A_TWITTER_SIGNUP',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       } else {
@@ -394,6 +399,7 @@ function initAuthenticationController(context) {
           exchange: 'A_TWITTER_LOGIN',
           contents: {
             user_id: result.value._id,
+            ip: req.ip,
           },
         });
       }
@@ -466,6 +472,7 @@ function initAuthenticationController(context) {
             exchange: 'A_XEE_SIGNUP',
             contents: {
               user_id: result.value._id,
+              ip: req.ip,
             },
           });
         } else {
@@ -473,6 +480,7 @@ function initAuthenticationController(context) {
             exchange: 'A_XEE_LOGIN',
             contents: {
               user_id: result.value._id,
+              ip: req.ip,
             },
           });
         }
