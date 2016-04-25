@@ -52,11 +52,11 @@
 
   }
 
-  function isLocatedEvent(event){
+  function isLocatedEvent(event) {
     return event.contents.geo;
   }
 
-  function locatedEventToMapMarker(event, i){
+  function locatedEventToMapMarker(event, i) {
     return {
       id: i,
       latitude: parseFloat(event.contents.geo[0]),

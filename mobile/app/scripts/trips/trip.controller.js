@@ -18,8 +18,7 @@
 
     $scope.trip = null;
     $scope.canStopTrip = false;
-    $scope.startEvent = '';
-    $scope.goToMember = goToMember;
+    $scope.goToUser = goToUser;
     $scope.mapClassEvent = mapClassEvent;
     $scope.goToMap = goToMap;
     $scope.stopTrip = stopTrip;
@@ -47,8 +46,8 @@
       });
     }
 
-    function goToMember(member) {
-      $state.go('app.member', { memberId: member.id });
+    function goToUser(user) {
+      $state.go('app.user', { user_id: user._id });
     }
 
     function goToMap() {

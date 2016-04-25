@@ -10,13 +10,13 @@
       <div class="headerPage__infos">
         <h1 class="headerPage__label">{{ trip.contents.title }}</h1>
         <em class="headerPage__description">{{ trip.contents.description }}</em>
-        <em class="headerPage__data">#{{trip.contents.hash}}</em>
         <div class="headerPage__members">
-          <div class="member"
-            ng-repeat="member in trip.contents.members"
-            ng-click="goToMember(member)">
-            <img class="member__picture" ng-src="{{ member.avatarPicture }}" alt="Profile photo of {{ member.name }}">
-            <div class="member__name">{{ member.name }}</div>
+          <div class="user"
+            ng-repeat="user in trip.friends"
+            ng-click="goToUser(user)">
+            <img class="user__picture" alt="Profile photo of {{ user.contents.name }}"
+              ng-src="{{ user.avatar_url }}">
+            <div class="user__name">{{ user.contents.name }}</div>
           </div>
         </div>
         <div class="map__button">
