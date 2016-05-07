@@ -30,7 +30,6 @@ function ipinfoJob(context, event) {
   })
   .then(JSON.parse)
   .then(function(data) {
-    console.log(data);
     return context.db.collection('users').updateOne({
       _id: event.contents.user_id,
     }, {
