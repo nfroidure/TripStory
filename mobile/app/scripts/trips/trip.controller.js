@@ -83,12 +83,12 @@
 
   StopTripCtrl.$inject = [
     '$scope', '$stateParams',
-    'createObjectId', 'eventsFactory', 'loadService',
+    'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function StopTripCtrl(
     $scope, $stateParams,
-    createObjectId, eventsFactory, loadService
+    createObjectId, eventsFactory, loadService, toasterService
   ) {
     $scope.tripStopEvent = {
       _id: createObjectId(),
@@ -108,6 +108,7 @@
       ).then(function() {
         $scope.closeStopTrip();
         $scope.refresh();
+        toasterService.show('Destination reached!');
       });
     }
   }

@@ -7,12 +7,12 @@
 
   CarsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
-    'carsFactory', 'authService', 'loadService', 'ENV',
+    'ENV', 'carsFactory', 'authService', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function CarsCtrl(
     $scope, $state, $stateParams, $q,
-    carsFactory, authService, loadService, ENV
+    ENV, carsFactory, authService, loadService, toasterService
   ) {
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.cars = [];
@@ -38,6 +38,7 @@
       loadService.runState($scope, 'remove', carsFactory.remove(id))
       .then(function() {
         $scope.refresh();
+        toasterService.show('Car removed!');
       });
     }
   }

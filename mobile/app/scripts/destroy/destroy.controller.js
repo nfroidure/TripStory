@@ -7,12 +7,12 @@
 
   DestroyCtrl.$inject = [
     '$scope', '$state', '$q',
-    'authService', 'loadService',
+    'authService', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function DestroyCtrl(
     $scope, $state, $q,
-    authService, loadService
+    authService, loadService, toasterService
   ) {
     $scope.doDestroyAccount = doDestroyAccount
 
@@ -27,6 +27,7 @@
       loadService.runState($scope, 'destroy', authService.deleteProfile())
       .then(function() {
         $state.go('login');
+        toasterService.show('So, you quit :\'(');
       });
     }
   }

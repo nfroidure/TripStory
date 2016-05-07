@@ -9,13 +9,13 @@
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
     'tripsFactory', 'carsFactory', 'friendsFactory', 'pusherService',
-    'authService', 'loadService',
+    'authService', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function TripsCtrl(
     $scope, $state, $stateParams, $ionicModal, $q,
     tripsFactory, carsFactory, friendsFactory, pusherService,
-    authService, loadService
+    authService, loadService, toasterService
   ) {
     $scope.trips = [];
     $scope.cars = [];
@@ -79,12 +79,12 @@
 
   StartTripCtrl.$inject = [
     '$scope',
-    'tripsFactory', 'loadService', 'createObjectId',
+    'tripsFactory', 'loadService', 'createObjectId', 'toasterService',
   ];
   /* @ngInject */
   function StartTripCtrl(
     $scope,
-    tripsFactory, loadService, createObjectId
+    tripsFactory, loadService, createObjectId, toasterService
   ) {
     $scope.newTrip = {
       _id: createObjectId(),
@@ -103,6 +103,7 @@
       ).then(function(response) {
         $scope.closeCreateTrip();
         $scope.goToTrip(response.data._id);
+        toasterService.show('Trip created!');
       });
     }
 

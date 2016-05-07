@@ -2,6 +2,8 @@
   'use strict';
 
   angular
-    .module('app.profile', ['app.authentication']);
+    .module('app.profile', [
+      'app.authentication', 'app.utils',
+    ]);
 
 }());

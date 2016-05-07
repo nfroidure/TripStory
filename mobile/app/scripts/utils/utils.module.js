@@ -2,6 +2,8 @@
   'use strict';
 
   angular
-    .module('app.utils', []);
+    .module('app.utils', [
+      'ionic-toast',
+    ]);
 
 }());

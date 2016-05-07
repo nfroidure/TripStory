@@ -8,11 +8,13 @@
   FriendsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
     'loadService', 'friendsFactory', 'analyticsService', 'authService',
+    'toasterService',
   ];
   /* @ngInject */
   function FriendsCtrl(
     $scope, $state, $stateParams, $q,
-    loadService, friendsFactory, analyticsService, authService
+    loadService, friendsFactory, analyticsService, authService,
+    toasterService
   ) {
     $scope.friends = [];
     $scope.newFriend = {};
@@ -45,6 +47,7 @@
         $scope.refresh();
         $scope.newFriend = {};
         $scope.inviteForm.$setPristine(false);
+        toasterService.show('Invite sent!');
         analyticsService.trackEvent('friends', 'invite', $scope.profile._id);
       });
     }

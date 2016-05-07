@@ -40,10 +40,13 @@
 
   UpdateProfileCtrl.$inject = [
     '$scope',
-    'authService', 'loadService',
+    'authService', 'loadService', 'toasterService',
   ];
   /* @ngInject */
-  function UpdateProfileCtrl($scope, authService, loadService) {
+  function UpdateProfileCtrl(
+    $scope,
+    authService, loadService, toasterService
+  ) {
     $scope.updateProfile = updateProfile;
 
     function updateProfile() {
@@ -55,16 +58,20 @@
       )
       .then(function(profile) {
         $scope.profile = profile;
+        toasterService.show('Profile updated!');
       });
     }
   }
 
   UpdateAvatarProfileCtrl.$inject = [
     '$scope', '$window',
-    'authService', 'loadService',
+    'authService', 'loadService', 'toasterService',
   ];
   /* @ngInject */
-  function UpdateAvatarProfileCtrl($scope, $window, authService, loadService) {
+  function UpdateAvatarProfileCtrl(
+    $scope, $window,
+    authService, loadService, toasterService
+  ) {
     $scope.setAvatar = setAvatar;
 
     function setAvatar() {
@@ -73,7 +80,9 @@
       if(fileInput.files[0]) {
         loadService.runState($scope, 'upload',
           authService.setAvatar(fileInput.files[0])
-        );
+        ).then(function() {
+          toasterService.show('Avatar uploaded!')
+        });
       }
     }
   }

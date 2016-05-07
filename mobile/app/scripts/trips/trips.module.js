@@ -3,7 +3,7 @@
 
   angular
     .module('app.trips', [
-      'app.authentication', 'app.friends', 'app.cars', 'app.events',
+      'app.authentication', 'app.friends', 'app.cars', 'app.events', 'app.utils',
     ]);
 
 }());

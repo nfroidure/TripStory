@@ -2,6 +2,8 @@
   'use strict';
 
   angular
-    .module('app.cars', ['app.authentication', 'app.utils']);
+    .module('app.cars', [
+      'app.authentication', 'app.utils',
+    ]);
 
 }());
