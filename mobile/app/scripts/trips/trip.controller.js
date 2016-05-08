@@ -4,7 +4,8 @@
   angular
     .module('app.trips')
     .controller('TripCtrl', TripCtrl)
-    .controller('StopTripCtrl', StopTripCtrl);
+    .controller('StopTripCtrl', StopTripCtrl)
+    .controller('CommentTripCtrl', CommentTripCtrl);
 
   TripCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q', '$ionicModal',
@@ -23,6 +24,8 @@
     $scope.goToMap = goToMap;
     $scope.stopTrip = stopTrip;
     $scope.closeStopTrip = closeStopTrip;
+    $scope.commentTrip = commentTrip;
+    $scope.closeCommentTrip = closeCommentTrip;
     $scope.refresh = activate;
 
     activate();
@@ -79,15 +82,30 @@
       $scope.stopTripModal.remove();
       delete $scope.stopTripModal;
     }
+
+    function commentTrip() {
+      $ionicModal.fromTemplateUrl('./templates/commentTripModal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.commentTripModal = modal;
+        modal.show();
+      });
+    }
+
+    function closeCommentTrip() {
+      $scope.commentTripModal.remove();
+      delete $scope.commentTripModal;
+    }
   }
 
   StopTripCtrl.$inject = [
-    '$scope', '$stateParams',
+    '$scope',
     'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function StopTripCtrl(
-    $scope, $stateParams,
+    $scope,
     createObjectId, eventsFactory, loadService, toasterService
   ) {
     $scope.tripStopEvent = {
@@ -109,6 +127,43 @@
         $scope.closeStopTrip();
         $scope.refresh();
         toasterService.show('Destination reached!');
+      });
+    }
+  }
+
+  CommentTripCtrl.$inject = [
+    '$scope', '$stateParams',
+    'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
+    'authService',
+  ];
+  /* @ngInject */
+  function CommentTripCtrl(
+    $scope, $stateParams,
+    createObjectId, eventsFactory, loadService, toasterService,
+    authService
+  ) {
+    $scope.tripCommentEvent = {
+      _id: createObjectId(),
+      contents: {
+        type: 'trip-comment',
+        trip_id: $stateParams.trip_id,
+      },
+    };
+    $scope.commentTrip = commentTrip;
+
+    function commentTrip() {
+      if($scope.commentTripForm.$invalid) {
+        return;
+      }
+      loadService.runState($scope, 'comment',
+        authService.getProfile().then(function(profile) {
+          $scope.tripCommentEvent.contents.author_id = profile._id;
+          return eventsFactory.put($scope.tripCommentEvent);
+        })
+      ).then(function() {
+        $scope.closeCommentTrip();
+        $scope.refresh();
+        toasterService.show('Comment sent!');
       });
     }
   }

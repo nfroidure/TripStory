@@ -1,6 +1,7 @@
 'use strict';
 
 var castToObjectId = require('mongodb').ObjectId;
+var usersTransforms = require('../users/users.transforms');
 var tripsTransforms = require('./trips.transforms');
 var eventsTransforms = require('../events/events.transforms');
 var controllersUtils = require('../utils/controllers');
@@ -35,6 +36,7 @@ function initTripsController(context) {
     createTripGetAggregateStages(context, req)
       .then(executeAggregate.bind(null, context, 'events'))
       .then(castResultsToEvent.bind(null, context))
+      .then(embedAssociatedUsers.bind(null, context))
       .then(sendPayload.bind(null, context, res, 200))
       .catch(next);
   }
@@ -240,4 +242,20 @@ function castResultsToEvent(context, entries) {
   payload = tripsTransforms.fromCollection(entries[0]);
   payload.events = entries[0].events.map(eventsTransforms.fromCollection);
   return payload;
+}
+
+function embedAssociatedUsers(context, payload) {
+  return context.db.collection('users').find({
+    _id: { $in:
+      payload.contents.friends_ids.concat(payload.owner_id).map(castToObjectId),
+    },
+  }).toArray()
+  .then(function(users) {
+    payload.users = users.map(usersTransforms.fromCollection)
+    .reduce(function(hash, user) {
+      hash[user._id] = user;
+      return hash;
+    }, {});
+    return payload;
+  });
 }

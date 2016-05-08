@@ -1,7 +1,13 @@
 <ion-view view-title="{{ trip.contents.title }}">
   <ion-nav-buttons side="right">
-    <button class="button" ng-click="refresh()" ng-hide="states._all.loading">
+    <button class="button"
+      ng-click="refresh()" ng-hide="states._all.loading">
       <i class="ion-refresh"></i>
+    </button>
+    <button class="button"
+      ng-click="commentTrip()"
+      ng-hide="states._all.loading || actions.comment.loading">
+      <i class="ion-android-chat"></i>
     </button>
   </ion-nav-buttons>
   <ion-content>
@@ -33,12 +39,14 @@
       </div>
     </div>
     <ion-list ng-show="states._all.loaded">
-      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type" ng-class="mapClassEvent(event.contents.type)" class="event-list-item card">
+      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type"
+        ng-class="mapClassEvent(event.contents.type)"
+        class="event-list-item card">
 
         <div ng-switch-when="trip-start" class="event">
           <div class="event__icon">
             <i class="ion-location"></i>
-            <em>Depart</em>
+            <em>Start</em>
             <span class="date">{{event.created_date | date:'short'}}</span>
           </div>
         </div>
@@ -59,7 +67,7 @@
           <div class="event__icon">
             <i class="ion-android-car"></i>
             <em>PSA</em>
-            <span class="date">{{event.created_date | date:'short'}}</span>
+            <span class="date">{{ event.created_date | date:'short' }}</span>
           </div>
           <div class="event__text">
             <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
@@ -70,10 +78,19 @@
           <div class="event__icon">
             <i class="ion-map"></i>
             <em>Xee</em>
-            <span class="date">{{event.created_date | date:'short'}}</span>
+            <span class="date">{{ event.created_date | date:'short' }}</span>
           </div>
           <div class="event__text">
             <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
+          </div>
+        </div>
+
+        <div ng-switch-when="trip-comment" class="event">
+          <div class="event__icon">
+            <i class="ion-android-chat"></i>
+            <em>{{ event.contents.comment }}</em>
+            <cite>{{ trip.users[event.contents.author_id].contents.name }}</cite>
+            <span class="date">{{ event.created_date | date:'short' }}</span>
           </div>
         </div>
 
@@ -81,7 +98,7 @@
           <div class="event__icon">
             <i class="ion-android-star-outline"></i>
             <em>Arrived at destination</em>
-            <span class="date">{{event.created_date | date:'short'}}</span>
+            <span class="date">{{ event.created_date | date:'short' }}</span>
           </div>
         </div>
       </ion-item>
