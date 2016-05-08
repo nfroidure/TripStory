@@ -107,7 +107,7 @@ function initTripsController(context) {
         return Promise.resolve();
       }
       return context.db.collection('events').deleteMany({
-        _id: castToObjectId(req.params.trip_id),
+        'contents.trip_id': castToObjectId(req.params.trip_id),
       })
       .then(function() {
         res.sendStatus(410);

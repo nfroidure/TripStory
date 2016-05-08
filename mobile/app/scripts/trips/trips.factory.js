@@ -64,7 +64,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/trips/' + tripId;
 
-          return loadService.wrapHTTPCall($http.delete(url), 204)
+          return loadService.wrapHTTPCall($http.delete(url), 410)
           .then(function(response) {
             analyticsService.trackEvent('trips', 'delete', profile._id);
             return response;

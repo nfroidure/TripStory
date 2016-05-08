@@ -25,6 +25,7 @@
     $scope.createTrip = createTrip;
     $scope.closeCreateTrip = closeCreateTrip;
     $scope.goToTrip = goToTrip;
+    $scope.removeTrip = removeTrip;
     $scope.refresh = activate;
 
     activate()
@@ -70,6 +71,15 @@
     function closeCreateTrip() {
       $scope.createTripModal.remove();
       delete $scope.createTripModal;
+    }
+
+    function removeTrip(id, event) {
+      event.stopPropagation();
+      loadService.runState($scope, 'remove', tripsFactory.remove(id))
+      .then(function() {
+        $scope.refresh();
+        toasterService.show('Trip removed!');
+      });
     }
 
     function goToTrip(tripId) {
