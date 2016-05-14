@@ -8,14 +8,18 @@
     .controller('CommentTripCtrl', CommentTripCtrl);
 
   TripCtrl.$inject = [
-    '$scope', '$state', '$stateParams', '$q', '$ionicModal',
+    '$scope', '$state', '$stateParams', '$q', '$ionicModal', '$log',
     'tripsFactory', 'pusherService', 'authService', 'loadService',
+    'initGeoService', 'eventsFactory', 'createObjectId', 'toasterService',
   ];
   /* @ngInject */
   function TripCtrl(
-    $scope, $state, $stateParams, $q, $ionicModal,
-    tripsFactory, pusherService, authService, loadService
+    $scope, $state, $stateParams, $q, $ionicModal, $log,
+    tripsFactory, pusherService, authService, loadService,
+    initGeoService, eventsFactory, createObjectId, toasterService
   ) {
+    var geoService = initGeoService($scope);
+    var lastPosition = null;
 
     $scope.trip = null;
     $scope.canStopTrip = false;
@@ -26,7 +30,10 @@
     $scope.closeStopTrip = closeStopTrip;
     $scope.commentTrip = commentTrip;
     $scope.closeCommentTrip = closeCommentTrip;
+    $scope.togglePositionTracking = togglePositionTracking;
     $scope.refresh = activate;
+
+    $scope.trackingPosition = false;
 
     activate();
 
@@ -44,9 +51,79 @@
       .then(function(data) {
         $scope.profile = data.profile;
         $scope.trip = data.trip.data;
-        $scope.canStopTrip = $scope.trip.owner_id === data.profile._id &&
-          !$scope.trip.ended_date;
+        render();
       });
+    }
+
+    function render() {
+      $scope.canStopTrip = $scope.trip.owner_id === $scope.profile._id &&
+        !$scope.trip.ended_date;
+      $scope.trackingPosition = geoService.watching();
+    }
+
+    function togglePositionTracking() {
+      if(geoService.watching()) {
+        geoService.stopWatch();
+        toasterService.show('Location tracking disabled!');
+      } else if(!$scope.trip.ended_date) {
+        geoService.watchPosition();
+        retrieveNextPosition();
+        toasterService.show('Location tracking enabled!');
+      }
+      render();
+    }
+
+    function retrieveNextPosition() {
+      if(geoService.watching()) {
+        loadService.runState($scope, 'position', geoService.getPosition())
+        .then(function(position) {
+          if(positionsDiffers(position, lastPosition)) {
+            return sendPositionEvent(position).then(function() {
+              lastPosition = position;
+            });
+          }
+        })
+        .catch(function(err) {
+          $log(err);
+        })
+        .then(retrieveNextPosition);
+      }
+    }
+
+    function positionsDiffers(position1, position2) {
+      if(
+        (!position1) || (!position2) ||
+        position1.coords.latitude !== position2.coords.latitude ||
+        position1.coords.longitude !== position2.coords.longitude ||
+        position1.coords.altitude !== position2.coords.altitude
+      ) {
+        return true;
+      }
+    }
+
+    function sendPositionEvent(position) {
+      var event = {
+        _id: createObjectId(),
+        contents: {
+          type: 'trip-geo',
+          trip_id: $stateParams.trip_id,
+          geo: [
+            position.coords.latitude,
+            position.coords.longitude,
+          ],
+        },
+      };
+
+      if(position.coords.latitude) {
+        event.contents.geo.push(position.coords.latitude);
+      }
+
+      return loadService.runState($scope, 'sendposition',
+        authService.getProfile().then(function(profile) {
+          event.contents.user_id = profile._id;
+          return eventsFactory.put(event);
+        })
+      );
     }
 
     function goToUser(user) {
@@ -100,12 +177,12 @@
   }
 
   StopTripCtrl.$inject = [
-    '$scope',
+    '$scope', '$stateParams',
     'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
   ];
   /* @ngInject */
   function StopTripCtrl(
-    $scope,
+    $scope, $stateParams,
     createObjectId, eventsFactory, loadService, toasterService
   ) {
     $scope.tripStopEvent = {

@@ -87,7 +87,7 @@
         // Ensure the prop is alright
         scope[prop] = scope[prop] || {};
         // Properly init the key if no set
-        scope[prop][key] = scope[prop][key] || DEFAULT_VALUES;
+        scope[prop][key] = scope[prop][key] || angular.copy(DEFAULT_VALUES);
         // Carefully apply values
         ([].slice.call(arguments, 3)).forEach(function(values) {
           Object.keys(values || {}).forEach(function(valueKey) {

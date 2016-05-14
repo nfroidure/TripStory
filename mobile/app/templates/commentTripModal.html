@@ -1,0 +1,38 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Drop a comment</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeCommentTrip()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form name="commentTripForm" novalidate
+      ng-submit="commentTrip()" ng-controller="CommentTripCtrl">
+      <div class="list">
+        <label class="item item-input"
+          ng-class="{
+            'assertive': commentTripForm.description.$invalid && commentTripForm.$submitted
+          }">
+          <textarea name="comment" rows="6" placeholder="Comments"
+            ng-model="tripCommentEvent.contents.comment"></textarea>
+        </label>
+        <p class="item"
+          ng-if="actions.comment.failed"
+          ng-switch="actions.comment.failed.code">
+          <i class="icon ion-alert-circled assertive"></i>
+          <span ng-switch-when="E_NETWORK">
+            Looks like the network is bad, try later ;).
+          </span>
+          <span ng-switch-default>
+            Unexpected error! We are going to fix it soon!
+          </span>
+        </p>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">
+            Send
+          </button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
