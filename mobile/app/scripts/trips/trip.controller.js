@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  var MIN_DISTANCE = 100;
+  var MIN_DISTANCE = 50;
   var MIN_STOP_DURATION = 5 * 60 * 1000; // 5 minutes
   var MIN_SPEED = 5 * 1000 / 3600000; // 5 km/h
 
