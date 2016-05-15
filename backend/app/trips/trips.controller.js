@@ -100,14 +100,45 @@ function initTripsController(context) {
 
   function tripControllerDelete(req, res, next) {
     context.db.collection('events').findOne({
-      owner_id: castToObjectId(req.params.user_id),
       'contents.trip_id': castToObjectId(req.params.trip_id),
+      $or: [{
+        owner_id: castToObjectId(req.params.user_id),
+      }, {
+        'trip.friends_ids': castToObjectId(req.params.user_id),
+      }],
       'contents.type': 'trip-start',
     }).then(function(startEvent) {
       if(!startEvent) {
         res.sendStatus(410);
         return Promise.resolve();
       }
+      // If the trip found is not owned, just leave it
+      if(req.params.user_id !== startEvent.owner_id.toString()) {
+        return context.db.collection('events').updateMany({
+          'contents.trip_id': castToObjectId(req.params.trip_id),
+        }, {
+          $pull: {
+            'trip.friends_ids': castToObjectId(req.params.user_id),
+          },
+        })
+        .then(function() {
+          res.sendStatus(410);
+        })
+        .then(function() {
+          context.bus.trigger({
+            exchange: 'A_TRIP_LEFT',
+            contents: {
+              trip_id: castToObjectId(req.params.trip_id),
+              user_id: castToObjectId(req.params.user_id),
+              users_ids: startEvent.trip.friends_ids.concat(startEvent.owner_id)
+                .filter(function(userId) {
+                  return userId.toString() !== req.params.user_id;
+                }),
+            },
+          });
+        });
+      }
+      // Otherwise, delete it
       return context.db.collection('events').deleteMany({
         'contents.trip_id': castToObjectId(req.params.trip_id),
       })

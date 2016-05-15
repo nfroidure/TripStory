@@ -204,6 +204,7 @@ describe('OAuth Facebook endpoints', function() {
               assert.deepEqual(context.bus.trigger.args, [[{
                 exchange: 'A_FB_SIGNUP',
                 contents: {
+                  ip: '::ffff:127.0.0.1',
                   user_id: newUserId,
                 },
               }]]);
@@ -274,6 +275,7 @@ describe('OAuth Facebook endpoints', function() {
               assert.deepEqual(context.bus.trigger.args, [[{
                 exchange: 'A_FB_LOGIN',
                 contents: {
+                  ip: '::ffff:127.0.0.1',
                   user_id: castToObjectId('abbacacaabbacacaabbacaca'),
                 },
               }]]);

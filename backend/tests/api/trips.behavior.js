@@ -229,6 +229,15 @@ describe('Trips endpoints', function() {
               },
               created_date: '1970-01-01T00:00:01.664Z',
             }],
+            users: {
+              abbacacaabbacacaabbacaca: {
+                _id: 'abbacacaabbacacaabbacaca',
+                contents: {
+                  email: 'popol@moon.u',
+                  name: 'Popol',
+                },
+              },
+            },
             created_date: '1970-01-01T00:00:01.664Z',
           });
           done();
@@ -260,6 +269,49 @@ describe('Trips endpoints', function() {
           })
           .catch(done);
         });
+      });
+
+      describe('for non owned trips', function() {
+
+        beforeEach(function(done) {
+          context.db.collection('events').updateOne({
+            _id: castToObjectId('babababababababababababa'),
+          }, {
+            $set: {
+              'trip.friends_ids': [castToObjectId('abbacacaabbacacaabbacaca')],
+              owner_id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
+            },
+          }, done);
+        });
+
+        it('should allow to leave that trip', function(done) {
+          request(context.app).delete(
+            '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
+          )
+          .auth('popol@moon.u', 'test')
+          .expect(410)
+          .end(function(err, res) {
+            if(err) {
+              return done(err);
+            }
+            assert.deepEqual(context.bus.trigger.args, [[{
+              exchange: 'A_TRIP_LEFT',
+              contents: {
+                trip_id: castToObjectId('babababababababababababa'),
+                user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+                users_ids: [castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0')],
+              },
+            }]]);
+            context.db.collection('events').findOne({
+              _id: castToObjectId('babababababababababababa'),
+            }).then(function(event) {
+              assert.deepEqual(event.trip.friends_ids, []);
+              done(err);
+            })
+            .catch(done);
+          });
+        });
+
       });
 
       it('should allow to update a trip', function(done) {

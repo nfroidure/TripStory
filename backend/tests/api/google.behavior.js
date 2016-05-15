@@ -251,6 +251,7 @@ describe('OAuth Google endpoints', function() {
               assert.deepEqual(context.bus.trigger.args, [[{
                 exchange: 'A_GG_SIGNUP',
                 contents: {
+                  ip: '::ffff:127.0.0.1',
                   user_id: newUserId,
                 },
               }]]);
@@ -325,6 +326,7 @@ describe('OAuth Google endpoints', function() {
               assert.deepEqual(context.bus.trigger.args, [[{
                 exchange: 'A_GG_LOGIN',
                 contents: {
+                  ip: '::ffff:127.0.0.1',
                   user_id: castToObjectId('abbacacaabbacacaabbacaca'),
                 },
               }]]);

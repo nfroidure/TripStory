@@ -117,6 +117,7 @@ describe('Authentication endpoints', function() {
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_LOCAL_LOGIN',
             contents: {
+              ip: '::ffff:127.0.0.1',
               user_id: castToObjectId('abbacacaabbacacaabbacaca'),
             },
           }]]);
@@ -197,6 +198,7 @@ describe('Authentication endpoints', function() {
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_LOGOUT',
             contents: {
+              ip: '::ffff:127.0.0.1',
               user_id: castToObjectId('abbacacaabbacacaabbacaca'),
             },
           }]]);
@@ -247,6 +249,7 @@ describe('Authentication endpoints', function() {
         assert.deepEqual(context.bus.trigger.args, [[{
           exchange: 'A_LOCAL_SIGNUP',
           contents: {
+            ip: '::ffff:127.0.0.1',
             user_id: userId,
           },
         }]]);
