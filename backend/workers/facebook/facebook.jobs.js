@@ -3,6 +3,7 @@
 var workersUtils = require('../utils');
 var controllersUtils = require('../../app/utils/controllers');
 var request = require('request');
+var YError = require('yerror');
 var SINCE_ID_STORE_PREFIX = 'facebook:since:';
 var SERVER = 'https://graph.facebook.com/v2.5';
 var facebookJobs = {
@@ -99,7 +100,7 @@ function facebookSyncJob(context) {
         return Promise.all(users.map(function(user) {
           var newSince;
 
-          context.logger.debug('Getting ' + user.contents.name + ' twitts');
+          context.logger.debug('Getting ' + user.contents.name + ' statuses.');
           return context.store.get(
             SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
             user._id.toString()
@@ -123,16 +124,22 @@ function facebookSyncJob(context) {
                     return reject(err);
                   }
                   if(200 > res.statusCode || 300 <= res.statusCode) {
-                    return reject(new Error('E_BAD_RESPONSE'));
+                    context.logger.debug(
+                      'Facebook statuses retrieval failed:', res.statusCode, body
+                    );
+                    return resolve();
                   }
                   try {
-                    statuses = JSON.parse(body).data || [];
+                    statuses = JSON.parse(body).data || [];
                   } catch(err) {
                     return reject(err);
                   }
                   context.logger.debug('Retrieved facebook statuses:', res.statusCode, body);
-                  context.logger.debug('Fetched ' + statuses.length +
-                    ' statuses sent by ' + user.contents.name, since);
+                  context.logger.debug(
+                    'Fetched ' + statuses.length +
+                    ' statuses sent by ' + user.contents.name + ' since ' +
+                    (new Date(since * 1000)).toISOString()
+                  );
                   if(!statuses.length) {
                     return resolve();
                   }
