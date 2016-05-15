@@ -53,6 +53,10 @@
 
         function positionCallback(position) {
           $log.debug('Got a new position:', position);
+          if(!watchId) {
+            deferredPosition.reject(new Error('E_NOT_WATCHING'));
+            return;
+          }
           deferredPosition.resolve(position);
           deferredPosition = $q.defer();
         }

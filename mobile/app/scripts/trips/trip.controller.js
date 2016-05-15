@@ -115,6 +115,7 @@
         })
         .catch(function(err) {
           $log.error(err);
+          throw err;
         })
         .then(retrieveNextPosition);
       }
