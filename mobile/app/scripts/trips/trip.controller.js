@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var MIN_DISTANCE = 100;
+
   angular
     .module('app.trips')
     .controller('TripCtrl', TripCtrl)
@@ -11,12 +13,14 @@
     '$scope', '$state', '$stateParams', '$q', '$ionicModal', '$log',
     'tripsFactory', 'pusherService', 'authService', 'loadService',
     'initGeoService', 'eventsFactory', 'createObjectId', 'toasterService',
+    'geolib',
   ];
   /* @ngInject */
   function TripCtrl(
     $scope, $state, $stateParams, $q, $ionicModal, $log,
     tripsFactory, pusherService, authService, loadService,
-    initGeoService, eventsFactory, createObjectId, toasterService
+    initGeoService, eventsFactory, createObjectId, toasterService,
+    geolib
   ) {
     var geoService = initGeoService($scope);
     var lastPosition = null;
@@ -49,8 +53,30 @@
         trip: tripsFactory.get($stateParams.trip_id),
       }))
       .then(function(data) {
+        var lastPositionEvent;
+
         $scope.profile = data.profile;
         $scope.trip = data.trip.data;
+        lastPositionEvent = $scope.trip.events.reduce(function(event, candidateEvent) {
+          if('geo' === candidateEvent.contents.type.split('-')[1]) {
+            if(!event) {
+              return candidateEvent;
+            }
+            if(
+              (new Date(candidateEvent.created_date)).getTime() >
+              (new Date(event.created_date)).getTime()
+            ) {
+              return candidateEvent;
+            }
+            return event;
+          }
+        }, {}.undef);
+        lastPosition = lastPositionEvent ? {
+          latitude: lastPositionEvent,
+            latitude: lastPositionEvent.contents.geo[0],
+            longitude: lastPositionEvent.contents.geo[1],
+            altitude: lastPositionEvent.contents.geo[2],
+        } : {}.undef;
         render();
       });
     }
@@ -77,28 +103,38 @@
       if(geoService.watching()) {
         loadService.runState($scope, 'position', geoService.getPosition())
         .then(function(position) {
-          if(positionsDiffers(position, lastPosition)) {
+          if(positionsDiffers({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            altitude: position.coords.altitude,
+          }, lastPosition)) {
             return sendPositionEvent(position).then(function() {
               lastPosition = position;
             });
           }
         })
         .catch(function(err) {
-          $log(err);
+          $log.error(err);
         })
         .then(retrieveNextPosition);
       }
     }
 
     function positionsDiffers(position1, position2) {
-      if(
-        (!position1) || (!position2) ||
-        position1.coords.latitude !== position2.coords.latitude ||
-        position1.coords.longitude !== position2.coords.longitude ||
-        position1.coords.altitude !== position2.coords.altitude
-      ) {
+      var distance;
+
+      if((!position1) || (!position2)) {
         return true;
       }
+      if(
+        position1.latitude !== position2.latitude ||
+        position1.longitude !== position2.longitude ||
+        position1.altitude !== position2.altitude
+      ) {
+        distance = geolib.getDistance(position1, position2);
+        return MIN_DISTANCE < distance;
+      }
+      return false;
     }
 
     function sendPositionEvent(position) {
@@ -108,14 +144,14 @@
           type: 'trip-geo',
           trip_id: $stateParams.trip_id,
           geo: [
-            position.coords.latitude,
-            position.coords.longitude,
+            position.latitude,
+            position.longitude,
           ],
         },
       };
 
-      if(position.coords.latitude) {
-        event.contents.geo.push(position.coords.latitude);
+      if(position.latitude) {
+        event.contents.geo.push(position.latitude);
       }
 
       return loadService.runState($scope, 'sendposition',

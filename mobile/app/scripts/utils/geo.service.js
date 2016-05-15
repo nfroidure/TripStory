@@ -13,11 +13,11 @@
     .service('initGeoService', GeoService);
 
     GeoService.$inject = [
-      '$q',
+      '$q', '$log',
     ];
     /* @ngInject */
     function GeoService(
-      $q
+      $q, $log
     ) {
 
 
@@ -52,11 +52,13 @@
         }
 
         function positionCallback(position) {
+          $log.debug('Got a new position:', position);
           deferredPosition.resolve(position);
           deferredPosition = $q.defer();
         }
 
         function positionError(err) {
+          $log.debug('Could not get position:', err);
           deferredPosition.reject(err);
           deferredPosition = $q.defer();
         }
