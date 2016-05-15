@@ -2,6 +2,8 @@
   'use strict';
 
   var MIN_DISTANCE = 100;
+  var MIN_STOP_DURATION = 5 * 60 * 1000; // 5 minutes
+  var MIN_SPEED = 5 * 1000 / 3600000; // 5 km/h
 
   angular
     .module('app.trips')
@@ -53,30 +55,11 @@
         trip: tripsFactory.get($stateParams.trip_id),
       }))
       .then(function(data) {
-        var lastPositionEvent;
-
         $scope.profile = data.profile;
         $scope.trip = data.trip.data;
-        lastPositionEvent = $scope.trip.events.reduce(function(event, candidateEvent) {
-          if('geo' === candidateEvent.contents.type.split('-')[1]) {
-            if(!event) {
-              return candidateEvent;
-            }
-            if(
-              (new Date(candidateEvent.created_date)).getTime() >
-              (new Date(event.created_date)).getTime()
-            ) {
-              return candidateEvent;
-            }
-            return event;
-          }
-        }, {}.undef);
-        lastPosition = lastPositionEvent ? {
-          latitude: lastPositionEvent,
-            latitude: lastPositionEvent.contents.geo[0],
-            longitude: lastPositionEvent.contents.geo[1],
-            altitude: lastPositionEvent.contents.geo[2],
-        } : {}.undef;
+        $scope.segments = computeSegmentFromEvents($scope.trip.events);
+        console.log($scope.segments)
+        lastPosition = computeLastPositionFromEvents($scope.trip.events);
         render();
       });
     }
@@ -85,6 +68,84 @@
       $scope.canStopTrip = $scope.trip.owner_id === $scope.profile._id &&
         !$scope.trip.ended_date;
       $scope.trackingPosition = geoService.watching();
+    }
+
+    function computeSegmentFromEvents(events) {
+      var segments = events.reduce(function(segments, event) {
+        var curSegment = segments[segments.length -1];
+        var previousPoint = curSegment.points[curSegment.points.length -1];
+
+        // Non geo events are simply appended
+        if('geo' !== event.contents.type.split('-')[1]) {
+          curSegment.events.push(event);
+          return segments;
+        }
+
+        // Geo events are merged according to elapsed time
+        if(!previousPoint) {
+          curSegment.points.push(event);
+          return segments;
+        }
+        event.elapsedTime = (new Date(event.created_date)).getTime() -
+          (new Date(previousPoint.created_date)).getTime();
+        event.distance = geolib.getDistance({
+          latitude: previousPoint.contents.geo[0],
+          longitude: previousPoint.contents.geo[1],
+          altitude: previousPoint.contents.geo[1],
+        }, {
+          latitude: event.contents.geo[0],
+          longitude: event.contents.geo[1],
+          altitude: event.contents.geo[1],
+        });
+        if(
+          MIN_STOP_DURATION < event.elapsedTime &&
+          MIN_SPEED > event.distance / event.elapsedTime
+        ) {
+          segments.push({
+            events: [],
+            points: [event],
+            distance: event.distance,
+            elapsedTime: event.elapsedTime,
+          });
+        } else {
+          curSegment.points.push(event);
+          curSegment.distance += event.distance;
+          curSegment.elapsedTime += event.elapsedTime;
+        }
+        return segments;
+      }, [{
+        events: [],
+        points: [],
+        distance: 0,
+        elapsedTime: 0,
+      }]);
+
+      return segments;
+    }
+
+    function computeLastPositionFromEvents(events) {
+      var lastPositionEvent;
+
+      lastPositionEvent = events.reduce(function(event, candidateEvent) {
+        if('geo' === candidateEvent.contents.type.split('-')[1]) {
+          if(!event) {
+            return candidateEvent;
+          }
+          if(
+            (new Date(candidateEvent.created_date)).getTime() >
+            (new Date(event.created_date)).getTime()
+          ) {
+            return candidateEvent;
+          }
+          return event;
+        }
+      }, {}.undef);
+      return lastPositionEvent ? {
+        latitude: lastPositionEvent,
+          latitude: lastPositionEvent.contents.geo[0],
+          longitude: lastPositionEvent.contents.geo[1],
+          altitude: lastPositionEvent.contents.geo[2],
+      } : {}.undef;
     }
 
     function togglePositionTracking() {
@@ -145,8 +206,8 @@
           type: 'trip-geo',
           trip_id: $stateParams.trip_id,
           geo: [
-            position.latitude,
-            position.longitude,
+            position.coords.latitude,
+            position.coords.longitude,
           ],
         },
       };
@@ -173,11 +234,10 @@
 
     function mapClassEvent(type) {
       var classes = {
-        'trip-start': 'event__start',
-        'twitter-status': 'event__twitter',
-        'psa-geo': 'event__psa',
-        'xee-geo': 'event__xee',
-        'trip-stop': 'event__stop',
+        'trip-start': 'item-body',
+        'twitter-status': 'item-body',
+        'trip-stop': 'item-body',
+        'trip-comment': 'item-avatar'
       };
       return classes[type];
     }

@@ -58,81 +58,67 @@
         </div>
       </div>
     </div>
-    <ion-list ng-show="states._all.loaded">
-      <ion-item ng-repeat="event in trip.events" ng-switch="event.contents.type"
-        ng-class="mapClassEvent(event.contents.type)"
-        class="event-list-item card">
+    <div class="card list"
+      ng-repeat="segment in segments" ng-show="states._all.loaded">
+      <div class="item item-divider">
+        Step {{ $index + 1 }}
+        <span>
+          <span ng-if="segment.points.length > 1">
+            - {{segment.elapsedTime | amDurationFormat}}
+          </span>
+          - {{ segment.distance/1000 | number }} km
+        </span>
+      </div>
+      <div class="item"
+        ng-repeat="event in segment.events" ng-switch="event.contents.type"
+        ng-class="mapClassEvent(event.contents.type)">
 
-        <div ng-switch-when="trip-start" class="event">
-          <div class="event__icon">
-            <i class="ion-location"></i>
-            <em>Start</em>
-            <span class="date">{{event.created_date | date:'short'}}</span>
-          </div>
-        </div>
+        <h2 ng-switch-when="trip-start">
+          <i class="ion-location"></i>
+          <em>Start</em>
+        </h2>
+        <p ng-switch-when="trip-start">
+          <span ng-if="event.contents.description ">
+            {{ event.contents.description }}<br>
+          </span>
+          <span am-time-ago="event.created_date"></span>
+        </p>
 
-        <div ng-switch-when="twitter-status" class="event">
-          <div class="event__icon">
-            <i class="ion-social-twitter"></i>
-            <em>Twitter</em>
-            <span class="date">{{event.created_date | date:'short'}}</span>
-          </div>
-          <div class="event__text">
-            <p class="event__user__name"><strong>{{event.contents.user_name}}</strong> tweeted:</p>
-            <p>{{event.contents.text}}</p>
-          </div>
-        </div>
+        <h2 ng-switch-when="twitter-status">
+          <i class="ion-social-twitter"></i>
+          <strong>{{event.contents.user_name}}</strong> tweeted:
+        </h2>
+        <p ng-switch-when="twitter-status">
+          {{ event.contents.text }}<br>
+          <span am-time-ago="event.created_date"></span>
+        </p>
 
-        <div ng-switch-when="psa-geo" class="event">
-          <div class="event__icon">
-            <i class="ion-android-car"></i>
-            <em>PSA</em>
-            <span class="date">{{ event.created_date | date:'short' }}</span>
-          </div>
-          <div class="event__text">
-            <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
-          </div>
-        </div>
+        <img ng-switch-when="trip-comment"
+          ng-src="trip.users[event.contents.author_id].avatar_url">
+        <h2 ng-switch-when="trip-comment">
+          <i class="ion-android-chat"></i>
+          {{ trip.users[event.contents.author_id].contents.name }}
+        </h2>
+        <p ng-switch-when="trip-comment">
+          {{ event.contents.comment }}
+          - <span am-time-ago="event.created_date"></span>
+        </p>
 
-        <div ng-switch-when="xee-geo" class="event">
-          <div class="event__icon">
-            <i class="ion-map"></i>
-            <em>Xee</em>
-            <span class="date">{{ event.created_date | date:'short' }}</span>
-          </div>
-          <div class="event__text">
-            <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
-          </div>
-        </div>
+        <h2 ng-switch-when="trip-stop">
+          <i class="ion-android-star-outline"></i>
+          <em>Arrived at destination</em>
+        </h2>
+        <p ng-switch-when="trip-stop">
+          <span ng-if="event.contents.description ">
+            {{ event.contents.description }}<br>
+          </span>
+          <span am-time-ago="event.created_date"></span>
+        </p>
 
-        <div ng-switch-when="trip-geo" class="event">
-          <div class="event__icon">
-            <i class="ion-map"></i>
-            <em>Trip</em>
-            <span class="date">{{ event.created_date | date:'short' }}</span>
-          </div>
-          <div class="event__text">
-            <p>The crew is taking a break at: {{ event.contents.geo[0] }}, {{event.contents.geo[1]}}</p>
-          </div>
-        </div>
-
-        <div ng-switch-when="trip-comment" class="event">
-          <div class="event__icon">
-            <i class="ion-android-chat"></i>
-            <em>{{ event.contents.comment }}</em>
-            <cite>{{ trip.users[event.contents.author_id].contents.name }}</cite>
-            <span class="date">{{ event.created_date | date:'short' }}</span>
-          </div>
-        </div>
-
-        <div ng-switch-when="trip-stop" class="event">
-          <div class="event__icon">
-            <i class="ion-android-star-outline"></i>
-            <em>Arrived at destination</em>
-            <span class="date">{{ event.created_date | date:'short' }}</span>
-          </div>
-        </div>
-      </ion-item>
-    </ion-list>
+      </div>
+      <div class="item item-divider">
+        {{ segment.points.length | number }} checks
+      </div>
+    </div>
   </ion-content>
 </ion-view>

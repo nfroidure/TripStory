@@ -140,50 +140,8 @@
   padding-left: 0px;
 }
 
-.card {
-  padding: 0 15px 15px 15px;
-  border: none;
-  box-shadow: none;
-  border-bottom: 1px solid #F1F1F1;
-}
-
-.event__icon {
-  font-size: 1.2em;
-  color: #000000;
-  margin-right: 10px;
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-.event__icon i {
-  display: inline-block;
-  width: 22px;
-}
-
 .ion-social-twitter {
   color: #3b94d9;
-}
-
-.event__icon em {
-  font-size: 0.8em;
-  color: #707070;
-}
-
-.event .date {
-  float: right;
-  color: #666666;
-  font-size: 0.6em;
-}
-.event {
-  border: none;
-  justify-content: center;
-  border: none;
-  width: 100%;
-}
-
-.event p {
-  color: #000000;
-  font-size: 1em;
 }
 
 #map {
