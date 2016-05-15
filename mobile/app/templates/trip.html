@@ -94,7 +94,7 @@
         </p>
 
         <img ng-switch-when="trip-comment"
-          ng-src="trip.users[event.contents.author_id].avatar_url">
+          ng-src="{{ trip.users[event.contents.author_id].avatar_url }}">
         <h2 ng-switch-when="trip-comment">
           <i class="ion-android-chat"></i>
           {{ trip.users[event.contents.author_id].contents.name }}
