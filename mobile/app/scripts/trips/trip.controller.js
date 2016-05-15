@@ -58,7 +58,6 @@
         $scope.profile = data.profile;
         $scope.trip = data.trip.data;
         $scope.segments = computeSegmentFromEvents($scope.trip.events);
-        console.log($scope.segments)
         lastPosition = computeLastPositionFromEvents($scope.trip.events);
         render();
       });
@@ -98,6 +97,7 @@
           altitude: event.contents.geo[1],
         });
         if(
+          1 < curSegment.points.length &&
           MIN_STOP_DURATION < event.elapsedTime &&
           MIN_SPEED > event.distance / event.elapsedTime
         ) {
