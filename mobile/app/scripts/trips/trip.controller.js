@@ -90,11 +90,11 @@
         event.distance = geolib.getDistance({
           latitude: previousPoint.contents.geo[0],
           longitude: previousPoint.contents.geo[1],
-          altitude: previousPoint.contents.geo[1],
+          altitude: previousPoint.contents.geo[2],
         }, {
           latitude: event.contents.geo[0],
           longitude: event.contents.geo[1],
-          altitude: event.contents.geo[1],
+          altitude: event.contents.geo[2],
         });
         if(
           1 < curSegment.points.length &&
@@ -164,11 +164,12 @@
       if(geoService.watching()) {
         loadService.runState($scope, 'position', geoService.getPosition())
         .then(function(position) {
-          if(positionsDiffers({
+          position = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             altitude: position.coords.altitude,
-          }, lastPosition)) {
+          };
+          if(positionsDiffers(position, lastPosition)) {
             return sendPositionEvent(position).then(function() {
               lastPosition = position;
             });
@@ -206,8 +207,8 @@
           type: 'trip-geo',
           trip_id: $stateParams.trip_id,
           geo: [
-            position.coords.latitude,
-            position.coords.longitude,
+            position.latitude,
+            position.longitude,
           ],
         },
       };
