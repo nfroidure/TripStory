@@ -7,12 +7,14 @@
 
   CarsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
-    'ENV', 'carsFactory', 'authService', 'loadService', 'toasterService',
+    'sfLoadService',
+    'ENV', 'carsFactory', 'authService', 'toasterService',
   ];
   /* @ngInject */
   function CarsCtrl(
     $scope, $state, $stateParams, $q,
-    ENV, carsFactory, authService, loadService, toasterService
+    sfLoadService,
+    ENV, carsFactory, authService, toasterService
   ) {
     $scope.apiEndpoint = ENV.apiEndpoint;
     $scope.cars = [];
@@ -24,7 +26,7 @@
 
     //
     function activate() {
-      $q.all(loadService.loadState($scope, {
+      $q.all(sfLoadService.loadState($scope, {
         profile: authService.getProfile(),
         cars: carsFactory.list(),
       }))
@@ -35,7 +37,7 @@
     }
 
     function remove(id) {
-      loadService.runState($scope, 'remove', carsFactory.remove(id))
+      sfLoadService.runState($scope, 'remove', carsFactory.remove(id))
       .then(function() {
         $scope.refresh();
         toasterService.show('Car removed!');

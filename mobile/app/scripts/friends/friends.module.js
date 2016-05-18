@@ -3,6 +3,7 @@
 
   angular
     .module('app.friends', [
+      'sf.load',
       'app.authentication', 'app.utils',
     ]);
 

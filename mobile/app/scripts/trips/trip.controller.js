@@ -13,14 +13,16 @@
 
   TripCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q', '$ionicModal', '$log',
-    'tripsFactory', 'pusherService', 'authService', 'loadService',
+    'sfLoadService',
+    'tripsFactory', 'pusherService', 'authService',
     'initGeoService', 'eventsFactory', 'createObjectId', 'toasterService',
     'geolib',
   ];
   /* @ngInject */
   function TripCtrl(
     $scope, $state, $stateParams, $q, $ionicModal, $log,
-    tripsFactory, pusherService, authService, loadService,
+    sfLoadService,
+    tripsFactory, pusherService, authService,
     initGeoService, eventsFactory, createObjectId, toasterService,
     geolib
   ) {
@@ -50,7 +52,7 @@
 
     function activate() {
       $scope.canStopTrip = false;
-      $q.all(loadService.loadState($scope, {
+      $q.all(sfLoadService.loadState($scope, {
         profile: authService.getProfile(),
         trip: tripsFactory.get($stateParams.trip_id),
       }))
@@ -162,7 +164,7 @@
 
     function retrieveNextPosition() {
       if(geoService.watching()) {
-        loadService.runState($scope, 'position', geoService.getPosition())
+        sfLoadService.runState($scope, 'position', geoService.getPosition())
         .then(function(position) {
           position = {
             latitude: position.coords.latitude,
@@ -217,7 +219,7 @@
         event.contents.geo.push(position.latitude);
       }
 
-      return loadService.runState($scope, 'sendposition',
+      return sfLoadService.runState($scope, 'sendposition',
         authService.getProfile().then(function(profile) {
           event.contents.user_id = profile._id;
           return eventsFactory.put(event);
@@ -276,12 +278,14 @@
 
   StopTripCtrl.$inject = [
     '$scope', '$stateParams',
-    'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
+    'sfLoadService',
+    'createObjectId', 'eventsFactory', 'toasterService',
   ];
   /* @ngInject */
   function StopTripCtrl(
     $scope, $stateParams,
-    createObjectId, eventsFactory, loadService, toasterService
+    sfLoadService,
+    createObjectId, eventsFactory, toasterService
   ) {
     $scope.tripStopEvent = {
       _id: createObjectId(),
@@ -296,7 +300,7 @@
       if($scope.stopTripForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'stop',
+      sfLoadService.runState($scope, 'stop',
         eventsFactory.put($scope.tripStopEvent)
       ).then(function() {
         $scope.closeStopTrip();
@@ -308,14 +312,14 @@
 
   CommentTripCtrl.$inject = [
     '$scope', '$stateParams',
-    'createObjectId', 'eventsFactory', 'loadService', 'toasterService',
-    'authService',
+    'sfLoadService',
+    'createObjectId', 'eventsFactory', 'toasterService', 'authService',
   ];
   /* @ngInject */
   function CommentTripCtrl(
     $scope, $stateParams,
-    createObjectId, eventsFactory, loadService, toasterService,
-    authService
+    sfLoadService,
+    createObjectId, eventsFactory, toasterService, authService
   ) {
     $scope.tripCommentEvent = {
       _id: createObjectId(),
@@ -330,7 +334,7 @@
       if($scope.commentTripForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'comment',
+      sfLoadService.runState($scope, 'comment',
         authService.getProfile().then(function(profile) {
           $scope.tripCommentEvent.contents.author_id = profile._id;
           return eventsFactory.put($scope.tripCommentEvent);

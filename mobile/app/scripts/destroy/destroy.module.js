@@ -2,6 +2,9 @@
   'use strict';
 
   angular
-    .module('app.destroy', ['app.authentication', 'app.utils']);
+    .module('app.destroy', [
+      'sf.load',
+      'app.authentication', 'app.utils'
+    ]);
 
 }());

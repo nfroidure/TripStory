@@ -7,12 +7,14 @@
 
   MapCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
-    'tripsFactory', 'pusherService', 'loadService', 'authService',
+    'sfLoadService',
+    'tripsFactory', 'pusherService', 'authService',
   ];
   /* @ngInject */
   function MapCtrl(
     $scope, $state, $stateParams, $q,
-    tripsFactory, pusherService, loadService, authService
+    sfLoadService,
+    tripsFactory, pusherService, authService
   ) {
     $scope.trip = [];
     $scope.map = {
@@ -35,7 +37,7 @@
 
     function activate() {
       $scope.canStopTrip = false;
-      $q.all(loadService.loadState($scope, {
+      $q.all(sfLoadService.loadState($scope, {
         profile: authService.getProfile(),
         trip: tripsFactory.get($stateParams.trip_id),
       }))

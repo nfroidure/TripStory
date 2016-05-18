@@ -2,6 +2,8 @@
   'use strict';
 
   angular
-    .module('app.menu', ['app.authentication']);
+    .module('app.menu', [
+      'app.authentication',
+    ]);
 
 }());

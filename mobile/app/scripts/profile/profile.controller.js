@@ -9,12 +9,14 @@
 
   ProfileCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$q',
-    'ENV', 'authService', 'loadService',
+    'sfLoadService',
+    'ENV', 'authService',
   ];
   /* @ngInject */
   function ProfileCtrl(
     $scope, $state, $stateParams, $q,
-    ENV, authService, loadService
+    sfLoadService,
+    ENV, authService
   ) {
     $scope.profile = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
@@ -23,7 +25,7 @@
     activate();
 
     function activate() {
-      $q.all(loadService.loadState($scope, {
+      $q.all(sfLoadService.loadState($scope, {
         profile: authService.getProfile({
           force: true,
         }),
@@ -40,12 +42,14 @@
 
   UpdateProfileCtrl.$inject = [
     '$scope',
-    'authService', 'loadService', 'toasterService',
+    'sfLoadService',
+    'authService', 'toasterService',
   ];
   /* @ngInject */
   function UpdateProfileCtrl(
     $scope,
-    authService, loadService, toasterService
+    sfLoadService,
+    authService, toasterService
   ) {
     $scope.updateProfile = updateProfile;
 
@@ -53,7 +57,7 @@
       if($scope.profileForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'update',
+      sfLoadService.runState($scope, 'update',
         authService.setProfile($scope.profile)
       )
       .then(function(profile) {
@@ -65,12 +69,14 @@
 
   UpdateAvatarProfileCtrl.$inject = [
     '$scope', '$window',
-    'authService', 'loadService', 'toasterService',
+    'sfLoadService',
+    'authService', 'toasterService',
   ];
   /* @ngInject */
   function UpdateAvatarProfileCtrl(
     $scope, $window,
-    authService, loadService, toasterService
+    sfLoadService,
+    authService, toasterService
   ) {
     $scope.setAvatar = setAvatar;
 
@@ -78,7 +84,7 @@
       var fileInput = $window.document.getElementById('uploader');
 
       if(fileInput.files[0]) {
-        loadService.runState($scope, 'upload',
+        sfLoadService.runState($scope, 'upload',
           authService.setAvatar(fileInput.files[0])
         ).then(function() {
           toasterService.show('Avatar uploaded!')

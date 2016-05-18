@@ -8,14 +8,16 @@
 
   TripsCtrl.$inject = [
     '$scope', '$state', '$stateParams', '$ionicModal', '$q',
+    'sfLoadService',
     'tripsFactory', 'carsFactory', 'friendsFactory', 'pusherService',
-    'authService', 'loadService', 'toasterService',
+    'authService', 'toasterService',
   ];
   /* @ngInject */
   function TripsCtrl(
     $scope, $state, $stateParams, $ionicModal, $q,
+    sfLoadService,
     tripsFactory, carsFactory, friendsFactory, pusherService,
-    authService, loadService, toasterService
+    authService, toasterService
   ) {
     $scope.trips = [];
     $scope.cars = [];
@@ -41,7 +43,7 @@
 
     function activate() {
       $scope.canStartTrip = false;
-      $q.all(loadService.loadState($scope, {
+      $q.all(sfLoadService.loadState($scope, {
         profile: authService.getProfile(),
         trips: tripsFactory.list(),
         cars: carsFactory.list(),
@@ -75,7 +77,7 @@
 
     function removeTrip(id, event) {
       event.stopPropagation();
-      loadService.runState($scope, 'remove', tripsFactory.remove(id))
+      sfLoadService.runState($scope, 'remove', tripsFactory.remove(id))
       .then(function() {
         $scope.refresh();
         toasterService.show('Trip removed!');
@@ -89,12 +91,14 @@
 
   StartTripCtrl.$inject = [
     '$scope',
-    'tripsFactory', 'loadService', 'createObjectId', 'toasterService',
+    'sfLoadService',
+    'tripsFactory', 'createObjectId', 'toasterService',
   ];
   /* @ngInject */
   function StartTripCtrl(
     $scope,
-    tripsFactory, loadService, createObjectId, toasterService
+    sfLoadService,
+    tripsFactory, createObjectId, toasterService
   ) {
     $scope.newTrip = {
       _id: createObjectId(),
@@ -108,7 +112,7 @@
       if($scope.tripForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'start',
+      sfLoadService.runState($scope, 'start',
         tripsFactory.put($scope.newTrip)
       ).then(function(response) {
         $scope.closeCreateTrip();

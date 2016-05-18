@@ -7,12 +7,14 @@
 
   DestroyCtrl.$inject = [
     '$scope', '$state', '$q',
-    'authService', 'loadService', 'toasterService',
+    'sfLoadService',
+    'authService', 'toasterService',
   ];
   /* @ngInject */
   function DestroyCtrl(
     $scope, $state, $q,
-    authService, loadService, toasterService
+    sfLoadService,
+    authService, toasterService
   ) {
     $scope.doDestroyAccount = doDestroyAccount
 
@@ -20,11 +22,11 @@
 
     //
     function activate() {
-      $q.all(loadService.loadState($scope, {}));
+      $q.all(sfLoadService.loadState($scope, {}));
     }
 
     function doDestroyAccount() {
-      loadService.runState($scope, 'destroy', authService.deleteProfile())
+      sfLoadService.runState($scope, 'destroy', authService.deleteProfile())
       .then(function() {
         $state.go('login');
         toasterService.show('So, you quit :\'(');
