@@ -63,13 +63,12 @@ function twitterSyncJob(context) {
                   newSinceId = statuses[0].id;
                   Promise.all(statuses.map(function(status) {
                     var tweetDate = new Date(status.created_at);
+                    var updateQuery;
 
                     if(tripEvent.created.seal_date.getTime() > tweetDate.getTime()) {
                       return Promise.resolve();
                     }
-                    return context.db.collection('events').findOneAndUpdate({
-                      'contents.twitterId': status.id,
-                    }, {
+                    updateQuery = {
                       $set: {
                         'contents.twitterId': status.id,
                         'contents.text': status.text,
@@ -86,7 +85,22 @@ function twitterSyncJob(context) {
                         trip: tripEvent.trip,
                         created: controllersUtils.getDateSeal(tweetDate.getTime()),
                       },
-                    }, {
+                    };
+                    if(status.entities.media && status.entities.media.length) {
+                      updateQuery.$set['contents.media'] = status.entities.media
+                      .map(function(media) {
+                        return {
+                          type: 'photo' === media.type ?
+                            'image' :
+                            'other',
+                          src_url: media.media_url_https,
+                          link_url: media.expanded_url,
+                        };
+                      });
+                    }
+                    return context.db.collection('events').findOneAndUpdate({
+                      'contents.twitterId': status.id,
+                    }, updateQuery, {
                       upsert: true,
                       returnOriginal: false,
                     })

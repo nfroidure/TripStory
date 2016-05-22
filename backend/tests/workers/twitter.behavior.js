@@ -6,6 +6,8 @@ var sinon = require('sinon');
 var assert = require('assert');
 var Promise = require('bluebird');
 var nock = require('nock');
+var fs = require('fs');
+var path = require('path');
 var Twitter = require('twitter');
 var initObjectIdStub = require('objectid-stub');
 
@@ -192,14 +194,14 @@ describe('Twitter jobs', function() {
     });
 
     describe('when there are running trips', function() {
-      var twitterSatusesCall;
+      var twitterStatusesCall;
       var newEventId;
 
       beforeEach(function() {
         context.store.get.returns(Promise.resolve());
         context.store.set.returns(Promise.resolve());
         newEventId = context.createObjectId.next();
-        twitterSatusesCall = nock('https://api.twitter.com:443', {
+        twitterStatusesCall = nock('https://api.twitter.com:443', {
           encodedQueryParams: true,
         })
         .get('/1.1/statuses/user_timeline.json')
@@ -356,7 +358,7 @@ describe('Twitter jobs', function() {
           contents: {},
         })
         .then(function() {
-          twitterSatusesCall.done();
+          twitterStatusesCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
             contents: {
@@ -388,6 +390,114 @@ describe('Twitter jobs', function() {
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
               created: {
                 seal_date: new Date('2016-03-28T20:30:34.000Z'),
+              },
+            });
+          });
+        })
+        .then(done.bind(null, null))
+        .catch(done);
+      });
+
+    });
+
+    describe.only('when there are running trips and media tweets', function() {
+      var twitterStatusesCall;
+      var newEventId;
+
+      beforeEach(function() {
+        var statuses = JSON.parse(fs.readFileSync(
+          path.join(__dirname, '..', 'fixtures', 'twitter-media.json'),
+          'utf-8'
+        ));
+
+        context.store.get.returns(Promise.resolve());
+        context.store.set.returns(Promise.resolve());
+        newEventId = context.createObjectId.next();
+        twitterStatusesCall = nock('https://api.twitter.com:443', {
+          encodedQueryParams: true,
+        })
+        .get('/1.1/statuses/user_timeline.json')
+        .query({ user_id: '1664', include_rts: 'false' })
+        .reply(200, statuses, {
+          'content-type': 'application/json;charset=utf-8',
+          status: '200 OK',
+        });
+      });
+
+      beforeEach(function(done) {
+        context.db.collection('events').insertOne({
+          _id: castToObjectId('babababababababababababa'),
+          contents: {
+            trip_id: castToObjectId('babababababababababababa'),
+            type: 'trip-start',
+          },
+          owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          trip: {
+            friends_ids: [],
+            title: 'Lol',
+            description: 'Lol',
+            hash: 'lol',
+            car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+          },
+          created: {
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          },
+          modified: [{
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          }],
+        }, done);
+      });
+
+      it('should retrieve tweets', function(done) {
+        twitterJobs[exchange](context, {
+          exchange: exchange,
+          contents: {},
+        })
+        .then(function() {
+          twitterStatusesCall.done();
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+              event_id: newEventId,
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
+            },
+          }]]);
+          return context.db.collection('events').findOne({
+            _id: newEventId,
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: newEventId,
+              contents: {
+                twitterId: 731895976785522700,
+                trip_id: castToObjectId('babababababababababababa'),
+                type: 'twitter-status',
+                geo: [],
+                text:
+                  '@xavhan @_flexbox Trip Story commence à fonctionner :).' +
+                  ' Une bonne âme pour cette issue? https://t.co/aFHFPFyy8Z :/' +
+                  ' https://t.co/hAfg7FPqc6',
+                media: [{
+                  type: 'image',
+                  src_url: 'https://pbs.twimg.com/media/Cig3giKW0AAddsD.jpg',
+                  link_url: 'http://twitter.com/nfroidure/status/731895976785522688/photo/1',
+                }],
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              },
+              trip: {
+                friends_ids: [],
+                title: 'Lol',
+                description: 'Lol',
+                hash: 'lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              created: {
+                seal_date: new Date('2016-05-15T17:16:13.000Z'),
               },
             });
           });

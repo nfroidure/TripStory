@@ -78,7 +78,7 @@
           <em>Start</em>
         </h2>
         <p ng-switch-when="trip-start">
-          <span ng-if="event.contents.description ">
+          <span ng-if="event.contents.description">
             {{ event.contents.description }}<br>
           </span>
           <span am-time-ago="event.created_date"></span>
@@ -92,6 +92,10 @@
         </h2>
         <p ng-switch-when="twitter-status">
           {{ event.contents.text }}<br>
+          <span ng-repeat="media in event.contents.media" ng-switch="media.type">
+            <img ng-src="{{ media.src_url }}"
+              ng-switch-when="image"/><br>
+          </span>
           <span am-time-ago="event.created_date"></span>
         </p>
 
