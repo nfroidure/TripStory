@@ -238,7 +238,7 @@
     function mapClassEvent(type) {
       var classes = {
         'trip-start': 'item-body',
-        'twitter-status': 'item-body',
+        'twitter-status': 'item-avatar',
         'trip-stop': 'item-body',
         'trip-comment': 'item-avatar'
       };

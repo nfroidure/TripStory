@@ -28,7 +28,7 @@ function twitterSyncJob(context) {
         'auth.twitter': { $exists: true },
       }).toArray()
       .then(function(users) {
-        context.logger.debug('Found twitter ' + users.length + 'users for:', tripEvent.trip.title);
+        context.logger.debug('Found ' + users.length + ' twitter users for:', tripEvent.trip.title);
         return Promise.all(users.map(function(user) {
           var newSinceId;
           var twitter = new Twitter({
@@ -76,8 +76,7 @@ function twitterSyncJob(context) {
                         'contents.geo': status.geo && 'point' === status.geo.type ?
                           status.geo.coordinates :
                           [],
-                        'contents.profile_image': status.profile_image_url_https || '',
-                        'contents.user_name': status.user.name,
+                        'contents.author_id': user._id,
                       },
                       $setOnInsert: {
                         _id: context.createObjectId(),

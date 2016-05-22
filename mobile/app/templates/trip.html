@@ -84,9 +84,11 @@
           <span am-time-ago="event.created_date"></span>
         </p>
 
+        <img ng-switch-when="twitter-status"
+          ng-src="{{ trip.users[event.contents.author_id].avatar_url }}">
         <h2 ng-switch-when="twitter-status">
           <i class="ion-social-twitter"></i>
-          <strong>{{event.contents.user_name}}</strong> tweeted:
+          {{ trip.users[event.contents.author_id].contents.name }}
         </h2>
         <p ng-switch-when="twitter-status">
           {{ event.contents.text }}<br>
@@ -100,8 +102,8 @@
           {{ trip.users[event.contents.author_id].contents.name }}
         </h2>
         <p ng-switch-when="trip-comment">
-          {{ event.contents.comment }}
-          - <span am-time-ago="event.created_date"></span>
+          {{ event.contents.comment }}<br>
+          <span am-time-ago="event.created_date"></span>
         </p>
 
         <h2 ng-switch-when="trip-stop">

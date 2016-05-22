@@ -376,8 +376,7 @@ describe('Twitter jobs', function() {
                 type: 'twitter-status',
                 geo: [],
                 text: 'Trop #lol 😂 https://t.co/i1tiWZ3lIk',
-                user_name: 'Benoît Marques',
-                profile_image: '',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
