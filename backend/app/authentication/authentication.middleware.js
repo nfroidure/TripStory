@@ -1,13 +1,13 @@
 'use strict';
 
-var authUtils = require('http-auth-utils');
-var authenticationUtils = require('./authentication.utils');
+const authUtils = require('http-auth-utils');
+const authenticationUtils = require('./authentication.utils');
 
 module.exports = initBasicAuth;
 
 function initBasicAuth(context) {
   return function(req, res, next) {
-    var data;
+    let data;
 
     if(!req.headers.authorization) {
       return next();

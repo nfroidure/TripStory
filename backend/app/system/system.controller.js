@@ -1,12 +1,12 @@
 'use strict';
 
-var transformsUtils = require('../utils/transforms');
-var YHTTPError = require('yhttperror');
+const transformsUtils = require('../utils/transforms');
+const YHTTPError = require('yhttperror');
 
 module.exports = initSystemController;
 
 function initSystemController(context) {
-  var systemController = {
+  const systemController = {
     ping: systemControllerPing,
     triggerEvent: systemControllerTriggerEvent,
     catchErrors: systemControllerCatchErrors,

@@ -1,17 +1,17 @@
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var Promise = require('bluebird');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const Promise = require('bluebird');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
 
-var facebookJobs = require('../../workers/facebook/facebook.jobs.js');
+const facebookJobs = require('../../workers/facebook/facebook.jobs.js');
 
 describe('Facebook jobs', function() {
-  var context;
+  let context;
 
   before(function(done) {
     context = {};
@@ -84,7 +84,7 @@ describe('Facebook jobs', function() {
   });
 
   describe('for Facebook friends sync', function() {
-    var friendsCall;
+    let friendsCall;
 
     beforeEach(function() {
       friendsCall = nock('https://graph.facebook.com:443', {
@@ -155,7 +155,7 @@ describe('Facebook jobs', function() {
   });
 
   describe('for Facebook statuses sync', function() {
-    var exchange = 'A_FB_SYNC';
+    const exchange = 'A_FB_SYNC';
 
     afterEach(function(done) {
       context.db.collection('events').deleteMany({}, done);
@@ -183,8 +183,8 @@ describe('Facebook jobs', function() {
     });
 
     describe('when there are running trips', function() {
-      var facebookSatusesCall;
-      var newEventsIds;
+      let facebookSatusesCall;
+      let newEventsIds;
 
       beforeEach(function() {
         context.store.get.returns(Promise.resolve());

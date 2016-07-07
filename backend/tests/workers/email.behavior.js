@@ -1,15 +1,15 @@
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var initObjectIdStub = require('objectid-stub');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const initObjectIdStub = require('objectid-stub');
 
-var emailJobs = require('../../workers/email/email.jobs.js');
+const emailJobs = require('../../workers/email/email.jobs.js');
 
 describe('Email jobs', function() {
-  var context;
+  let context;
 
   before(function(done) {
     context = {};
@@ -56,7 +56,7 @@ describe('Email jobs', function() {
   });
 
   describe('for friend additions', function() {
-    var exchange = 'A_FRIEND_ADD';
+    const exchange = 'A_FRIEND_ADD';
 
     beforeEach(function(done) {
       context.db.collection('users').insertOne({
@@ -97,7 +97,7 @@ describe('Email jobs', function() {
   });
 
   describe('for friend invites', function() {
-    var exchange = 'A_FRIEND_INVITE';
+    const exchange = 'A_FRIEND_INVITE';
 
     it('should send an email', function(done) {
       context.sendMail.returns(Promise.resolve());

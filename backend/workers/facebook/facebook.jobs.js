@@ -1,12 +1,12 @@
 'use strict';
 
-var workersUtils = require('../utils');
-var controllersUtils = require('../../app/utils/controllers');
-var request = require('request');
-var YError = require('yerror');
-var SINCE_ID_STORE_PREFIX = 'facebook:since:';
-var SERVER = 'https://graph.facebook.com/v2.5';
-var facebookJobs = {
+const workersUtils = require('../utils');
+const controllersUtils = require('../../app/utils/controllers');
+const request = require('request');
+const YError = require('yerror');
+const SINCE_ID_STORE_PREFIX = 'facebook:since:';
+const SERVER = 'https://graph.facebook.com/v2.5';
+const facebookJobs = {
   A_FB_SYNC: facebookSyncJob,
   A_FB_SIGNUP: facebookSignupJob,
   A_FB_LOGIN: facebookLoginJob,
@@ -50,7 +50,7 @@ function pairFacebookFriends(context, user) {
         }, {
           _id: '',
         }).toArray().then(function(friends) {
-          var friendsIds = friends.map(function(friend) {
+          const friendsIds = friends.map(function(friend) {
             return friend._id;
           });
 
@@ -98,7 +98,7 @@ function facebookSyncJob(context) {
       .then(function(users) {
         context.logger.debug('Found ' + users.length + ' facebook users for:', tripEvent.trip.title);
         return Promise.all(users.map(function(user) {
-          var newSince;
+          let newSince;
 
           context.logger.debug('Getting ' + user.contents.name + ' statuses.');
           return context.store.get(
@@ -118,7 +118,7 @@ function facebookSyncJob(context) {
                 'status_type,type' +
                 '&since=' + since,
                 function retrieveStatusCallback(err, res, body) {
-                  var statuses;
+                  let statuses;
 
                   if(err) {
                     return reject(err);
@@ -151,7 +151,7 @@ function facebookSyncJob(context) {
                       -1 !== ['photo', 'status', 'link'].indexOf(status.type);
                   });
                   Promise.all(statuses.map(function(status) {
-                    var statusDate = new Date(status.created_time);
+                    const statusDate = new Date(status.created_time);
 
                     if(tripEvent.created.seal_date.getTime() > statusDate.getTime()) {
                       return Promise.resolve();

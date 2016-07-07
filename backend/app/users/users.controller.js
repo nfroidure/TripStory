@@ -1,14 +1,14 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var usersTransforms = require('./users.transforms');
-var controllersUtils = require('../utils/controllers');
-var YHTTPError = require('yhttperror');
+const castToObjectId = require('mongodb').ObjectId;
+const usersTransforms = require('./users.transforms');
+const controllersUtils = require('../utils/controllers');
+const YHTTPError = require('yhttperror');
 
 module.exports = initUsersController;
 
 function initUsersController(context) {
-  var userController = {
+  const userController = {
     list: userControllerList,
     get: userControllerGet,
     put: userControllerPut,
@@ -40,7 +40,7 @@ function initUsersController(context) {
   }
 
   function userControllerPut(req, res, next) {
-    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
     context.db.collection('users').findOneAndUpdate({
       _id: castToObjectId(req.params.user_id),
@@ -83,7 +83,7 @@ function initUsersController(context) {
       })).on('error', reject);
     })
     .then(function(url) {
-      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+      const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
       return context.db.collection('users').updateOne({
         _id: castToObjectId(req.params.user_id),

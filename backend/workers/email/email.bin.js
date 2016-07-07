@@ -1,6 +1,6 @@
 'use strict';
 
-var jobs = require('./email.jobs.js');
+const jobs = require('./email.jobs.js');
 
 // One day, i'll be a real process!!! Let just be a lib now :)
 module.exports = function initEmailWorker(context) {

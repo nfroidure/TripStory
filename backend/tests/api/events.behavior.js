@@ -1,18 +1,18 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var initObjectIdStub = require('objectid-stub');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const initObjectIdStub = require('objectid-stub');
 
-var initRoutes = require('../../app/routes');
+const initRoutes = require('../../app/routes');
 
 describe('Events endpoints', function() {
-  var context;
+  let context;
 
   before(function(done) {
     context = {};

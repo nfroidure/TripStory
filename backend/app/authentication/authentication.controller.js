@@ -1,18 +1,18 @@
 'use strict';
 
-var request = require('request');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var BasicStrategy = require('passport-http').BasicStrategy;
-var FacebookStrategy = require('passport-facebook');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var TwitterStrategy = require('passport-twitter').Strategy;
-var OAuth2Strategy = require('passport-oauth2');
-var YError = require('yerror');
-var castToObjectId = require('mongodb').ObjectId;
-var authenticationUtils = require('./authentication.utils');
-var Promise = require('bluebird');
-var YHTTPError = require('yhttperror');
+const request = require('request');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const BasicStrategy = require('passport-http').BasicStrategy;
+const FacebookStrategy = require('passport-facebook');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
+const OAuth2Strategy = require('passport-oauth2');
+const YError = require('yerror');
+const castToObjectId = require('mongodb').ObjectId;
+const authenticationUtils = require('./authentication.utils');
+const Promise = require('bluebird');
+const YHTTPError = require('yhttperror');
 
 module.exports = initAuthenticationController;
 
@@ -119,8 +119,8 @@ function initAuthenticationController(context) {
   }
 
   function localSignupLogic(req, email, password, done) {
-    var upsertId = context.createObjectId();
-    var name = req.body.name;
+    const upsertId = context.createObjectId();
+    const name = req.body.name;
 
     context.logger.debug('Signup attempt:', email, name, upsertId);
     Promise.all([
@@ -164,9 +164,9 @@ function initAuthenticationController(context) {
   }
 
   function facebookLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -250,9 +250,9 @@ function initAuthenticationController(context) {
   }
 
   function googleLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -336,9 +336,9 @@ function initAuthenticationController(context) {
   }
 
   function twitterLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Twitter auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -408,7 +408,7 @@ function initAuthenticationController(context) {
   }
 
   function xeeLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
+    const upsertId = context.createObjectId();
 
     if(!req._authState.contents) {
       return done(new YError('E_NO_STATE'));
@@ -424,8 +424,8 @@ function initAuthenticationController(context) {
         resolve(JSON.parse(httpData));
       });
     }).then(function(profile) {
-      var findQuery = {};
-      var updateQuery;
+      const findQuery = {};
+      let updateQuery;
 
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
 

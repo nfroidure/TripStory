@@ -1,9 +1,9 @@
 'use strict';
 
-var initEventController = require('./events.controller');
+const initEventController = require('./events.controller');
 
 module.exports = function initEventsRoutes(context) {
-  var eventController = initEventController(context);
+  const eventController = initEventController(context);
 
   context.app.get(
     '/api/v0/events',

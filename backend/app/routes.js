@@ -1,19 +1,19 @@
 'use strict';
 
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var favicon = require('serve-favicon');
-var express = require('express');
-var path = require('path');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const favicon = require('serve-favicon');
+const express = require('express');
+const path = require('path');
 
-var initBasicAuth = require('./authentication/authentication.middleware');
-var initCors = require('./system/cors.middleware');
-var initAuthenticationRoutes = require('./authentication/authentication.routes');
-var initTripsRoutes = require('./trips/trips.routes');
-var initEventsRoutes = require('./events/events.routes');
-var initUsersRoutes = require('./users/users.routes');
-var initCarsRoutes = require('./cars/cars.routes');
-var initSystemRoutes = require('./system/system.routes');
+const initBasicAuth = require('./authentication/authentication.middleware');
+const initCors = require('./system/cors.middleware');
+const initAuthenticationRoutes = require('./authentication/authentication.routes');
+const initTripsRoutes = require('./trips/trips.routes');
+const initEventsRoutes = require('./events/events.routes');
+const initUsersRoutes = require('./users/users.routes');
+const initCarsRoutes = require('./cars/cars.routes');
+const initSystemRoutes = require('./system/system.routes');
 
 module.exports = initRoutes;
 

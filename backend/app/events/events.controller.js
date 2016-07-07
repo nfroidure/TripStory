@@ -1,15 +1,15 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var eventsTransforms = require('./events.transforms');
-var controllersUtils = require('../utils/controllers');
-var Promise = require('bluebird');
-var YHTTPError = require('yhttperror');
+const castToObjectId = require('mongodb').ObjectId;
+const eventsTransforms = require('./events.transforms');
+const controllersUtils = require('../utils/controllers');
+const Promise = require('bluebird');
+const YHTTPError = require('yhttperror');
 
 module.exports = initEventsController;
 
 function initEventsController(context) {
-  var eventController = {
+  const eventController = {
     list: eventControllerList,
     get: eventControllerGet,
     put: eventControllerPut,
@@ -19,7 +19,7 @@ function initEventsController(context) {
   return eventController;
 
   function eventControllerList(req, res, next) {
-    var query = {};
+    const query = {};
 
     if(req.params.user_id) {
       query.$or = [{
@@ -63,7 +63,7 @@ function initEventsController(context) {
         'contents.trip_id': castToObjectId(req.body.contents.trip_id),
       });
     }).then(function(startEvent) {
-      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+      const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
       if(!startEvent) {
         return res.send(400);

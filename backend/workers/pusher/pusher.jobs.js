@@ -1,6 +1,6 @@
 'use strict';
 
-var emailJobs = {
+const emailJobs = {
   A_TRIP_CREATED: tripChannelJob,
   A_TRIP_UPDATED: tripChannelJob,
   A_TRIP_DELETED: tripChannelJob,

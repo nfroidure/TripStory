@@ -1,12 +1,12 @@
 'use strict';
 
-var request = require('request');
-var workersUtils = require('../utils');
-var controllersUtils = require('../../app/utils/controllers');
-var locationUtils = require('../../app/utils/location.js');
+const request = require('request');
+const workersUtils = require('../utils');
+const controllersUtils = require('../../app/utils/controllers');
+const locationUtils = require('../../app/utils/location.js');
 
-var SERVER = 'https://cloud.xee.com/v1';
-var xeeJobs = {
+const SERVER = 'https://cloud.xee.com/v1';
+const xeeJobs = {
   A_XEE_SYNC: xeeSyncJob,
   A_XEE_SIGNUP: xeeSignupJob,
   A_XEE_LOGIN: xeeSignupJob,
@@ -79,7 +79,7 @@ function xeeSyncJob(context) {
           _id: tripEvent.trip.car_id,
         } },
       }).then(function(user) {
-        var car = (user ? user.cars : []).filter(function(car) {
+        const car = (user ? user.cars : []).filter(function(car) {
           return tripEvent.trip.car_id.toString() === car._id.toString() &&
             'xee' === car.type;
         })[0];
@@ -107,7 +107,7 @@ function xeeSyncJob(context) {
             }
           );
         }).then(function(data) {
-          var geo = [
+          const geo = [
             data.location.latitude,
             data.location.longitude,
             data.location.altitude,
@@ -131,7 +131,7 @@ function xeeSyncJob(context) {
             return '';
           })
           .then(function(address) {
-            var locationDate = new Date(data.location.date.replace(' ', 'T') + '.000Z');
+            let locationDate = new Date(data.location.date.replace(' ', 'T') + '.000Z');
 
             // Limit locations retrieval to the trip start date
             if(locationDate.getTime() < tripEvent.created.seal_date.getTime()) {

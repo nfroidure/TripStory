@@ -1,13 +1,13 @@
 'use strict';
 
-var workersUtils = {
+const workersUtils = {
   getCurrentTrips: workersUtilsGetCurrentTrips,
 };
 
 module.exports = workersUtils;
 
 function workersUtilsGetCurrentTrips(context, options) {
-  var match = {
+  const match = {
     'contents.type': { $in: ['trip-start', 'trip-stop'] },
   };
 

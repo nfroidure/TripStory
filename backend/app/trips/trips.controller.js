@@ -1,17 +1,17 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var usersTransforms = require('../users/users.transforms');
-var tripsTransforms = require('./trips.transforms');
-var eventsTransforms = require('../events/events.transforms');
-var controllersUtils = require('../utils/controllers');
-var Promise = require('bluebird');
-var YHTTPError = require('yhttperror');
+const castToObjectId = require('mongodb').ObjectId;
+const usersTransforms = require('../users/users.transforms');
+const tripsTransforms = require('./trips.transforms');
+const eventsTransforms = require('../events/events.transforms');
+const controllersUtils = require('../utils/controllers');
+const Promise = require('bluebird');
+const YHTTPError = require('yhttperror');
 
 module.exports = initTripsController;
 
 function initTripsController(context) {
-  var tripController = {
+  const tripController = {
     list: tripControllerList,
     get: tripControllerGet,
     put: tripControllerPut,
@@ -42,8 +42,8 @@ function initTripsController(context) {
   }
 
   function tripControllerPut(req, res, next) {
-    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
-    var newTrip = tripsTransforms.toCollection(req.body || {});
+    const dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    const newTrip = tripsTransforms.toCollection(req.body || {});
 
     Promise.all([
       context.db.collection('events').findOneAndUpdate({
@@ -161,7 +161,7 @@ function initTripsController(context) {
 
 function createTripListAggregateStages(context, req) {
   return Promise.resolve().then(function() {
-    var matchStage = {
+    const matchStage = {
       $match: {
         'contents.type': {
           $in: ['trip-start', 'trip-stop'],
@@ -265,7 +265,7 @@ function createTripGetAggregateStages(context, req) {
 }
 
 function castResultsToEvent(context, entries) {
-  var payload;
+  let payload;
 
   if(!entries.length) {
     throw new YHTTPError(404, 'E_NOT_FOUND');

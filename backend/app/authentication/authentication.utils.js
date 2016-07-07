@@ -1,13 +1,13 @@
 'use strict';
 
-var bcrypt = require('bcrypt');
-var clone = require('clone');
-var reaccess = require('express-reaccess');
-var YHTTPError = require('yhttperror');
+const bcrypt = require('bcrypt');
+const clone = require('clone');
+const reaccess = require('express-reaccess');
+const YHTTPError = require('yhttperror');
 
-var DEFAULT_TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
+const DEFAULT_TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
 
-var authenticationUtils = {
+const authenticationUtils = {
   normalizeEmail: authenticationUtilsNormalizeEmail,
   createDefaultRights: authenticationUtilsCreateDefaultRights,
   createRights: authenticationUtilsCreateRights,
@@ -90,10 +90,10 @@ function authenticationUtilsComparePasswordToHash(password, hash) {
 
 function initPassportWithAStateObject(context, type, params) {
   return function initPassportWithAStateObjectCb(req, res, next) {
-    var stateContents = {
+    const stateContents = {
       type,
     };
-    var state;
+    let state;
 
     params = clone(params);
 
@@ -123,7 +123,7 @@ function initPassportWithAStateObject(context, type, params) {
 
 function checkStateObjectAndPassport(context, type, options) {
   return function checkStateObjectAndPassportCb(req, res, next) {
-    var state;
+    let state;
 
     try {
       state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));

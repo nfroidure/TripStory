@@ -1,10 +1,10 @@
 'use strict';
 
-var YError = require('yerror');
-var Promise = require('bluebird');
-var request = require('request');
+const YError = require('yerror');
+const Promise = require('bluebird');
+const request = require('request');
 
-var ipinfoJobs = {
+const ipinfoJobs = {
   A_LOCAL_SIGNUP: ipinfoJob,
   A_LOCAL_LOGIN: ipinfoJob,
   A_FB_SIGNUP: ipinfoJob,

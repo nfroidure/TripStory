@@ -1,20 +1,20 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
 
-var initRoutes = require('../../app/routes');
+const initRoutes = require('../../app/routes');
 
 describe('OAuth Twitter endpoints', function() {
-  var context;
-  var fakeState = new Buffer(JSON.stringify({
+  let context;
+  const fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
   })).toString('base64');
 
@@ -71,7 +71,7 @@ describe('OAuth Twitter endpoints', function() {
   });
 
   describe('entry point', function() {
-    var requestTokenCall;
+    let requestTokenCall;
 
     beforeEach(function() {
       requestTokenCall = nock('https://api.twitter.com:443', {
@@ -110,8 +110,8 @@ describe('OAuth Twitter endpoints', function() {
   });
 
   describe('callback endpoint', function() {
-    var accessTokenCall;
-    var profileCall;
+    let accessTokenCall;
+    let profileCall;
 
     beforeEach(function(done) {
       context.db.collection('sessions').insertOne({
@@ -206,7 +206,7 @@ describe('OAuth Twitter endpoints', function() {
     describe('when user is not known', function() {
 
       it('should work', function(done) {
-        var newUserId = context.createObjectId.next();
+        const newUserId = context.createObjectId.next();
 
         request(context.app).get(
           '/auth/twitter/callback' +

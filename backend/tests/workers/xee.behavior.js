@@ -1,16 +1,16 @@
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
 
-var xeeJobs = require('../../workers/xee/xee.jobs.js');
+const xeeJobs = require('../../workers/xee/xee.jobs.js');
 
 describe('Xee jobs', function() {
-  var context;
+  let context;
 
   before(function(done) {
     context = {};
@@ -83,8 +83,8 @@ describe('Xee jobs', function() {
   });
 
   describe('for Xee cars sync', function() {
-    var carsCall;
-    var newCarId;
+    let carsCall;
+    let newCarId;
 
     beforeEach(function() {
       newCarId = context.createObjectId.next();
@@ -142,7 +142,7 @@ describe('Xee jobs', function() {
   });
 
   describe('for Xee positions sync', function() {
-    var exchange = 'A_XEE_SYNC';
+    const exchange = 'A_XEE_SYNC';
 
     afterEach(function(done) {
       context.db.collection('events').deleteMany({}, done);
@@ -170,9 +170,9 @@ describe('Xee jobs', function() {
     });
 
     describe('when there are running trips', function() {
-      var positionCall;
-      var addressCall;
-      var newEventId;
+      let positionCall;
+      let addressCall;
+      let newEventId;
 
       beforeEach(function() {
         newEventId = context.createObjectId.next();

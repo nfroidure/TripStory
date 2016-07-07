@@ -1,13 +1,13 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var YHTTPError = require('yhttperror');
-var carsTransforms = require('./cars.transforms');
+const castToObjectId = require('mongodb').ObjectId;
+const YHTTPError = require('yhttperror');
+const carsTransforms = require('./cars.transforms');
 
 module.exports = initCarsController;
 
 function initCarsController(context) {
-  var carController = {
+  const carController = {
     list: carControllerList,
     get: carControllerGet,
     delete: carControllerDelete,

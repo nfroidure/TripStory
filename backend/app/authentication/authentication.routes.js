@@ -1,13 +1,13 @@
 'use strict';
 
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var reaccess = require('express-reaccess');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const reaccess = require('express-reaccess');
 
-var initAuthenticationController = require('./authentication.controller');
-var usersTransforms = require('../users/users.transforms');
-var YHTTPError = require('yhttperror');
-var authenticationUtils = require('./authentication.utils');
+const initAuthenticationController = require('./authentication.controller');
+const usersTransforms = require('../users/users.transforms');
+const YHTTPError = require('yhttperror');
+const authenticationUtils = require('./authentication.utils');
 
 module.exports = initAuthenticationRoutes;
 

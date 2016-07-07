@@ -1,9 +1,9 @@
 'use strict';
 
-var YError = require('yerror');
-var Promise = require('bluebird');
+const YError = require('yerror');
+const Promise = require('bluebird');
 
-var emailJobs = {
+const emailJobs = {
   A_LOCAL_SIGNUP: emailSignupJob,
   A_FB_SIGNUP: emailSignupJob,
   A_GG_SIGNUP: emailSignupJob,
@@ -46,7 +46,7 @@ function emailFriendAddJob(context, event) {
     _getRecipient(context, event.contents.user_id),
   ])
   .spread(function(recipient, ccRecipient) {
-    var connectEndpoint = recipient.google ?
+    const connectEndpoint = recipient.google ?
       '/auth/google' :
       recipient.facebook ?
       '/auth/facebook' :

@@ -1,17 +1,17 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
 
-var initRoutes = require('../../app/routes');
+const initRoutes = require('../../app/routes');
 
 describe('System endpoints', function() {
-  var context;
+  let context;
 
   before(function(done) {
     context = {};
@@ -75,7 +75,7 @@ describe('System endpoints', function() {
     });
 
     it('should allow to publish to the bus', function(done) {
-      var payload = {
+      const payload = {
         plop: 'kikoolol',
       };
 

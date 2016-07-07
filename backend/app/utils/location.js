@@ -1,9 +1,9 @@
 'use strict';
 
-var request = require('request');
-var Promise = require('bluebird');
+const request = require('request');
+const Promise = require('bluebird');
 
-var locationUtils = {
+const locationUtils = {
   getFormatedAddress: locationGetFormatedAddress,
 };
 

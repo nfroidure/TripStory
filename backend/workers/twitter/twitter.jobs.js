@@ -1,11 +1,11 @@
 'use strict';
 
-var workersUtils = require('../utils');
-var controllersUtils = require('../../app/utils/controllers');
-var Twitter = require('twitter');
-var SINCE_ID_STORE_PREFIX = 'twitter:since_id:';
+const workersUtils = require('../utils');
+const controllersUtils = require('../../app/utils/controllers');
+const Twitter = require('twitter');
+const SINCE_ID_STORE_PREFIX = 'twitter:since_id:';
 
-var twitterJobs = {
+const twitterJobs = {
   A_TWITTER_SYNC: twitterSyncJob,
   A_TWITTER_SIGNUP: pairTwitterFriends,
   A_TWITTER_LOGIN: pairTwitterFriends,
@@ -30,8 +30,8 @@ function twitterSyncJob(context) {
       .then(function(users) {
         context.logger.debug('Found twitter ' + users.length + 'users for:', tripEvent.trip.title);
         return Promise.all(users.map(function(user) {
-          var newSinceId;
-          var twitter = new Twitter({
+          let newSinceId;
+          const twitter = new Twitter({
             consumer_key: process.env.TWITTER_ID,
             consumer_secret: process.env.TWITTER_SECRET,
             access_token_key: user.auth.twitter.accessToken,
@@ -62,7 +62,7 @@ function twitterSyncJob(context) {
                   }
                   newSinceId = statuses[0].id;
                   Promise.all(statuses.map(function(status) {
-                    var tweetDate = new Date(status.created_at);
+                    const tweetDate = new Date(status.created_at);
 
                     if(tripEvent.created.seal_date.getTime() > tweetDate.getTime()) {
                       return Promise.resolve();
@@ -124,7 +124,7 @@ function pairTwitterFriends(context, event) {
   return context.db.collection('users').findOne({
     _id: event.contents.user_id,
   }).then(function(user) {
-    var twitter = new Twitter({
+    const twitter = new Twitter({
       consumer_key: process.env.TWITTER_ID,
       consumer_secret: process.env.TWITTER_SECRET,
       access_token_key: user.auth.twitter.accessToken,
@@ -146,7 +146,7 @@ function pairTwitterFriends(context, event) {
                 .map(function(id) { return id + ''; }) },
           }, { _id: '' }).toArray()
           .then(function(friends) {
-            var friendsIds = friends.map(function(friend) { return friend._id; });
+            const friendsIds = friends.map(function(friend) { return friend._id; });
 
             if(!friendsIds.length) {
               return Promise.resolve();

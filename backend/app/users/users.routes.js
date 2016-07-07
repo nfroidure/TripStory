@@ -1,9 +1,9 @@
 'use strict';
 
-var initUserController = require('./users.controller');
+const initUserController = require('./users.controller');
 
 module.exports = function initUsersRoutes(context) {
-  var userController = initUserController(context);
+  const userController = initUserController(context);
 
   context.app.get('/api/v0/users', userController.list);
   context.app.get('/api/v0/users/:user_id', userController.get);

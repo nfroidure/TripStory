@@ -1,19 +1,19 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
-var initRoutes = require('../../app/routes');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
+const initRoutes = require('../../app/routes');
 
 describe('OAuth Facebook endpoints', function() {
-  var context;
-  var fakeState = new Buffer(JSON.stringify({
+  let context;
+  const fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
   })).toString('base64');
 
@@ -93,8 +93,8 @@ describe('OAuth Facebook endpoints', function() {
   });
 
   describe('callback endpoint', function() {
-    var accessTokenCall;
-    var profileCall;
+    let accessTokenCall;
+    let profileCall;
 
     beforeEach(function() {
       accessTokenCall = nock('https://graph.facebook.com:443', {
@@ -153,7 +153,7 @@ describe('OAuth Facebook endpoints', function() {
     describe('when user is not known', function() {
 
       it('should work', function(done) {
-        var newUserId = context.createObjectId.next();
+        const newUserId = context.createObjectId.next();
 
         request(context.app).get(
           '/auth/facebook/callback' +

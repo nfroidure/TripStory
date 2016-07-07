@@ -1,16 +1,16 @@
 'use strict';
 
-var request = require('request');
-var workersUtils = require('../utils');
+const request = require('request');
+const workersUtils = require('../utils');
 
-var SERVER = 'https://api.mpsa.com/bgd/jdmc/1.0';
-var psaJobs = {
+const SERVER = 'https://api.mpsa.com/bgd/jdmc/1.0';
+const psaJobs = {
   A_PSA_SYNC: psaSyncJob,
   A_PSA_SIGNUP: psaSignupJob,
 };
-var SECONDS = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
-var lastLatitude;
-var lastLongitude;
+const SECONDS = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
+let lastLatitude;
+let lastLongitude;
 
 module.exports = psaJobs;
 
@@ -30,7 +30,7 @@ function psaSyncJob(context) {
           _id: tripEvent.trip.car_id,
         } },
       }).then(function(user) {
-        var car = user.cars.filter(function(car) {
+        const car = user.cars.filter(function(car) {
           return tripEvent.trip.car_id.toString() === car._id.toString() &&
             'psa' === car.type;
         })[0];
@@ -59,8 +59,8 @@ function psaSyncJob(context) {
             }
           );
         }).then(function(data) {
-          var bestSecond;
-          var geo;
+          let bestSecond;
+          let geo;
 
           // context.logger.debug('Data', JSON.stringify(data, null, 2));
           // Get the best precision possible
@@ -97,7 +97,7 @@ function psaSyncJob(context) {
                 data.latitude[bestSecond] + ',' +
                 data.longitude[bestSecond],
                 function(err, res, body) {
-                  var address;
+                  let address;
 
                   if(err) {
                     context.logger.error(err);
