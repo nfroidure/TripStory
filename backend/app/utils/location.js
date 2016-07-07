@@ -15,13 +15,13 @@ function locationGetFormatedAddress(lat, lng) {
     'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
     lat + ',' + lng,
     function(err, res, body) {
-      if (err) {
+      if(err) {
         return reject(err);
       }
 
       try {
         body = JSON.parse(body);
-      } catch(err2) {
+      } catch (err2) {
         return reject(err2);
       }
 

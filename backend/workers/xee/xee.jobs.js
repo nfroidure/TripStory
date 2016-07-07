@@ -35,7 +35,7 @@ function xeeSignupJob(context, event) {
           context.logger.debug(data);
           try {
             data = JSON.parse(data);
-          } catch(err2) {
+          } catch (err2) {
             return reject(err2);
           }
           context.logger.debug(data);
@@ -100,7 +100,7 @@ function xeeSyncJob(context) {
               }
               try {
                 data = JSON.parse(data);
-              } catch(err2) {
+              } catch (err2) {
                 return reject(err2);
               }
               resolve(data);

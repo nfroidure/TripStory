@@ -13,8 +13,8 @@ var authenticationUtils = {
   createRights: authenticationUtilsCreateRights,
   createPasswordHash: authenticationUtilsCreatePasswordHash,
   comparePasswordToHash: authenticationUtilsComparePasswordToHash,
-  initPassportWithAStateObject: initPassportWithAStateObject,
-  checkStateObjectAndPassport: checkStateObjectAndPassport,
+  initPassportWithAStateObject,
+  checkStateObjectAndPassport,
   redirectToApp: authenticationUtilsRedirectToApp,
   redirectToProfile: authenticationUtilsRedirectToProfile,
 };
@@ -91,7 +91,7 @@ function authenticationUtilsComparePasswordToHash(password, hash) {
 function initPassportWithAStateObject(context, type, params) {
   return function initPassportWithAStateObjectCb(req, res, next) {
     var stateContents = {
-      type: type,
+      type,
     };
     var state;
 
@@ -128,7 +128,7 @@ function checkStateObjectAndPassport(context, type, options) {
     try {
       state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));
       context.tokens.checkToken(state, state.hash);
-    } catch(err) {
+    } catch (err) {
       return next(YHTTPError.cast(err));
     }
     context.logger.debug('Collected a state', state);

@@ -131,7 +131,7 @@ function facebookSyncJob(context) {
                   }
                   try {
                     statuses = JSON.parse(body).data || [];
-                  } catch(err) {
+                  } catch (err) {
                     return reject(err);
                   }
                   context.logger.debug('Retrieved facebook statuses:', res.statusCode, body);

@@ -52,7 +52,7 @@ function psaSyncJob(context) {
               }
               try {
                 data = JSON.parse(data);
-              } catch(err2) {
+              } catch (err2) {
                 return reject(err2);
               }
               resolve(data);
@@ -68,7 +68,7 @@ function psaSyncJob(context) {
             if(data.nbsat && (!best) || best.nbsat < data.nbsat[second]) {
               return {
                 nbsat: data.nbsat[second],
-                second: second,
+                second,
               };
             }
             return best;
@@ -81,7 +81,7 @@ function psaSyncJob(context) {
 
           context.logger.debug('Got positions:', geo, bestSecond);
 
-          if (data.latitude[bestSecond] !== lastLatitude ||
+          if(data.latitude[bestSecond] !== lastLatitude ||
             data.longitude[bestSecond] !== lastLongitude
           ) {
             context.logger.debug(
@@ -99,7 +99,7 @@ function psaSyncJob(context) {
                 function(err, res, body) {
                   var address;
 
-                  if (err) {
+                  if(err) {
                     context.logger.error(err);
                   }
                   body = JSON.parse(body);

@@ -100,16 +100,16 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
     }, function(err, user) {
-      if (err) {
+      if(err) {
         return done(err);
       }
-      if (!user) {
+      if(!user) {
         return done(null, false, { message: 'E_BAD_EMAIL' }, 400);
       }
 
       authenticationUtils.comparePasswordToHash(password, user.passwordHash)
         .then(function(matched) {
-          if (!matched) {
+          if(!matched) {
             return done(null, false, { message: 'E_BAD_PASSWORD' }, 400);
           }
           context.logger.info('Authenticated a user:', user._id, user.contents.name);
@@ -144,13 +144,13 @@ function initAuthenticationController(context) {
       }, {
         $set: {
           contents: {
-            name: name,
-            email: email,
+            name,
+            email,
           },
           emailKeys: [authenticationUtils.normalizeEmail(email)],
         },
         $setOnInsert: {
-          passwordHash: passwordHash,
+          passwordHash,
           _id: upsertId,
           rights: authenticationUtils.createRights(),
         },
@@ -181,8 +181,8 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.facebook': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
         },
       },
       $addToSet: {
@@ -267,8 +267,8 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.google': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
           emails: profile.emails,
         },
       },
@@ -352,8 +352,8 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.twitter': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
         },
       },
     };
@@ -434,8 +434,8 @@ function initAuthenticationController(context) {
           'contents.name': profile.firstName + ' ' + profile.name,
           'auth.xee': {
             id: profile.id,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken,
+            refreshToken,
           },
         },
       };

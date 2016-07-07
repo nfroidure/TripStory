@@ -24,7 +24,7 @@ function initBasicAuth(context) {
 
       return authenticationUtils.comparePasswordToHash(data.password, user.passwordHash)
         .then(function(matched) {
-          if (!matched) {
+          if(!matched) {
             context.logger.debug('Bad password:', data.username);
             return res.sendStatus(401);
           }

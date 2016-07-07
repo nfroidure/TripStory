@@ -77,7 +77,7 @@ describe('Email jobs', function() {
     it('should send an email', function(done) {
       context.sendMail.returns(Promise.resolve());
       emailJobs[exchange](context, {
-        exchange: exchange,
+        exchange,
         contents: {
           user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           friend_id: castToObjectId('babababababababababababa'),
@@ -102,7 +102,7 @@ describe('Email jobs', function() {
     it('should send an email', function(done) {
       context.sendMail.returns(Promise.resolve());
       emailJobs[exchange](context, {
-        exchange: exchange,
+        exchange,
         contents: {
           user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           friend_email: 'jdlf@academie.fr',
@@ -130,7 +130,7 @@ describe('Email jobs', function() {
       it('should send an email (exchange ' + exchange + ')', function(done) {
         context.sendMail.returns(Promise.resolve());
         emailJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
             friend_email: '',

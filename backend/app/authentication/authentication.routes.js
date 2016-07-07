@@ -51,7 +51,7 @@ function initAuthenticationRoutes(context) {
       }
 
       req.logIn(user, function(err) {
-        if (err) {
+        if(err) {
           return next(YHTTPError.cast(err));
         }
         context.bus.trigger({
@@ -68,14 +68,14 @@ function initAuthenticationRoutes(context) {
 
   context.app.post('/api/v0/signup', function(req, res, next) {
     context.passport.authenticate('local-signup', function(err, user) {
-      if (err) {
+      if(err) {
         return next(YHTTPError.cast(err));
       }
-      if (!user) {
+      if(!user) {
         return res.sendStatus(401);
       }
       req.logIn(user, function(err) {
-        if (err) {
+        if(err) {
           return next(YHTTPError.cast(err));
         }
         context.bus.trigger({

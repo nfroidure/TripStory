@@ -95,7 +95,7 @@ describe('Twitter jobs', function() {
     beforeEach(function() {
       friendsCall =
       nock('https://api.twitter.com:443', {
-        encodedQueryParams: true
+        encodedQueryParams: true,
       })
       .get('/1.1/friends/ids.json')
       .reply(200, {
@@ -103,7 +103,7 @@ describe('Twitter jobs', function() {
         next_cursor: 0,
         next_cursor_str: '0',
         previous_cursor: 0,
-        previous_cursor_str: '0'
+        previous_cursor_str: '0',
       }, {
         'content-disposition': 'attachment; filename=json.json',
         'content-length': '3773',
@@ -132,7 +132,7 @@ describe('Twitter jobs', function() {
     ['A_TWITTER_SIGNUP', 'A_TWITTER_LOGIN'].forEach(function(exchange) {
       it('should pair friends', function(done) {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
@@ -174,7 +174,7 @@ describe('Twitter jobs', function() {
 
       it('should do nothing', function(done) {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {
@@ -352,7 +352,7 @@ describe('Twitter jobs', function() {
 
       it('should retrieve tweets', function(done) {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {

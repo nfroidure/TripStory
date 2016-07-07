@@ -52,7 +52,7 @@ function initRoutes(context) {
   if(context.analyticsAgent) {
     context.app.use(context.analyticsAgent);
   }
-  
+
   // API
   initAuthenticationRoutes(context);
   initUsersRoutes(context);

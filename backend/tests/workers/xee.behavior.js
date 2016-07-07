@@ -115,7 +115,7 @@ describe('Xee jobs', function() {
     ['A_XEE_SIGNUP', 'A_XEE_LOGIN'].forEach(function(exchange) {
       it('should retrieve cars', function(done) {
         xeeJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
@@ -152,7 +152,7 @@ describe('Xee jobs', function() {
 
       it('should do nothing', function(done) {
         xeeJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {
@@ -337,7 +337,7 @@ describe('Xee jobs', function() {
 
       it('should retrieve position', function(done) {
         xeeJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {
@@ -397,7 +397,7 @@ describe('Xee jobs', function() {
 
         it('should retrieve position', function(done) {
           xeeJobs[exchange](context, {
-            exchange: exchange,
+            exchange,
             contents: {},
           })
           .then(function() {

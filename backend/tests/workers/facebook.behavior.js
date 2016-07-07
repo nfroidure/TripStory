@@ -124,7 +124,7 @@ describe('Facebook jobs', function() {
     ['A_FB_SIGNUP', 'A_FB_LOGIN'].forEach(function(exchange) {
       it('should pair friends', function(done) {
         facebookJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
@@ -165,7 +165,7 @@ describe('Facebook jobs', function() {
 
       it('should do nothing', function(done) {
         facebookJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {
@@ -327,7 +327,7 @@ describe('Facebook jobs', function() {
 
       it('should retrieve tweets', function(done) {
         facebookJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
         .then(function() {
