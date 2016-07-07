@@ -3,8 +3,69 @@
 const initEventController = require('./events.controller');
 
 module.exports = function initEventsRoutes(context) {
-  const eventController = initEventController(context);
+  var eventController = initEventController(context);
+  var apiPrefix = '/api/v0';
+  var routes = [
+    {
+      method: 'GET',
+      path: '/events',
+      controller: eventController.list,
+      requestBody: '',
+      requestQuery: [],
+      responseBody: 'eventLists',
+      responseCodes: [200, 500],
+    },
+    {
+      method: 'GET',
+      path: '/users/:user_id/events',
+      controller: eventController.list,
+      requestBody: '',
+      requestQuery: [],
+      responseBody: 'eventLists',
+      responseCodes: [200, 500],
+    },
+    {
+      method: 'GET',
+      path: '/users/:user_id/events/:event_id',
+      controller: eventController.get,
+      requestBody: '',
+      requestQuery: [],
+      responseBody: 'event',
+      responseCodes: [200, 500],
+    },
+    {
+      method: 'PUT',
+      path: '/users/:user_id/events/:event_id',
+      controller: eventController.put,
+      requestBody: '',
+      requestQuery: [],
+      responseBody: 'event',
+      responseCodes: [200, 500],
+    },
+    {
+      method: 'DELETE',
+      path: '/users/:user_id/events/:event_id',
+      controller: eventController.delete,
+      requestBody: '',
+      requestQuery: [],
+      responseBody: 'event',
+      responseCodes: [200, 500],
+    },
+  ].map(function setPrefix(route) {
+    route.path = apiPrefix + route.path;
 
+    return route;
+  });
+
+  routes.forEach(function initRoute(route) {
+    console.log('route', route.path);
+    context.app[route.method.toLowerCase()](
+      route.path,
+      route.controller
+    );
+  });
+
+  /*
   context.app.get(
     '/api/v0/events',
     eventController.list
@@ -25,4 +86,7 @@ module.exports = function initEventsRoutes(context) {
     '/api/v0/users/:user_id/events/:event_id',
     eventController.delete
   );
+  */
+
+  return routes;
 };
