@@ -8,10 +8,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const emailJobs = require('../../workers/email/email.jobs.js');
 
-describe('Email jobs', function() {
+describe('Email jobs', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {
@@ -28,22 +28,22 @@ describe('Email jobs', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.sendMail = sinon.stub();
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertOne({
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -55,10 +55,10 @@ describe('Email jobs', function() {
     }, done);
   });
 
-  describe('for friend additions', function() {
+  describe('for friend additions', () => {
     const exchange = 'A_FRIEND_ADD';
 
-    beforeEach(function(done) {
+    beforeEach(done => {
       context.db.collection('users').insertOne({
         _id: castToObjectId('babababababababababababa'),
         contents: {
@@ -74,7 +74,7 @@ describe('Email jobs', function() {
       }, done);
     });
 
-    it('should send an email', function(done) {
+    it('should send an email', done => {
       context.sendMail.returns(Promise.resolve());
       emailJobs[exchange](context, {
         exchange,
@@ -83,7 +83,7 @@ describe('Email jobs', function() {
           friend_id: castToObjectId('babababababababababababa'),
         },
       })
-      .then(function() {
+      .then(() => {
         assert.equal(context.sendMail.callCount, 1);
         assert.deepEqual(
           context.sendMail.args[0][0],
@@ -96,10 +96,10 @@ describe('Email jobs', function() {
 
   });
 
-  describe('for friend invites', function() {
+  describe('for friend invites', () => {
     const exchange = 'A_FRIEND_INVITE';
 
-    it('should send an email', function(done) {
+    it('should send an email', done => {
       context.sendMail.returns(Promise.resolve());
       emailJobs[exchange](context, {
         exchange,
@@ -108,7 +108,7 @@ describe('Email jobs', function() {
           friend_email: 'jdlf@academie.fr',
         },
       })
-      .then(function() {
+      .then(() => {
         assert.equal(context.sendMail.callCount, 1);
         assert.deepEqual(
           context.sendMail.args[0][0],
@@ -121,13 +121,13 @@ describe('Email jobs', function() {
 
   });
 
-  describe('for welcome email', function() {
+  describe('for welcome email', () => {
 
     [
       'A_LOCAL_SIGNUP', 'A_FB_SIGNUP', 'A_GG_SIGNUP', 'A_TWITTER_SIGNUP',
       'A_XEE_SIGNUP',
-    ].forEach(function(exchange) {
-      it('should send an email (exchange ' + exchange + ')', function(done) {
+    ].forEach(exchange => {
+      it('should send an email (exchange ' + exchange + ')', done => {
         context.sendMail.returns(Promise.resolve());
         emailJobs[exchange](context, {
           exchange,
@@ -136,7 +136,7 @@ describe('Email jobs', function() {
             friend_email: '',
           },
         })
-        .then(function() {
+        .then(() => {
           assert.equal(context.sendMail.callCount, 1);
           assert.deepEqual(
             context.sendMail.args[0][0],

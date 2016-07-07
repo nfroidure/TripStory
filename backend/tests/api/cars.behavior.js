@@ -11,10 +11,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const initRoutes = require('../../app/routes');
 
-describe('Cars endpoints', function() {
+describe('Cars endpoints', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {
@@ -30,30 +30,30 @@ describe('Cars endpoints', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -95,11 +95,11 @@ describe('Cars endpoints', function() {
     }], done);
   });
 
-  describe('for simple users', function() {
+  describe('for simple users', () => {
 
-    describe('when the user has no cars', function() {
+    describe('when the user has no cars', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').updateOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
         }, {
@@ -109,11 +109,11 @@ describe('Cars endpoints', function() {
         }, done);
       });
 
-      it('should allow to list cars', function(done) {
+      it('should allow to list cars', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/cars')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -122,13 +122,13 @@ describe('Cars endpoints', function() {
         });
       });
 
-      it('should fail to get an unexisting car', function(done) {
+      it('should fail to get an unexisting car', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/cars/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(404)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -136,13 +136,13 @@ describe('Cars endpoints', function() {
         });
       });
 
-      it('should allow to delete an unexisting car', function(done) {
+      it('should allow to delete an unexisting car', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/cars/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -153,13 +153,13 @@ describe('Cars endpoints', function() {
 
     });
 
-    describe('when the user has cars', function() {
+    describe('when the user has cars', () => {
 
-      it('should allow to list cars', function(done) {
+      it('should allow to list cars', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/cars')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -177,13 +177,13 @@ describe('Cars endpoints', function() {
         });
       });
 
-      it('should allow to get a car', function(done) {
+      it('should allow to get a car', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/cars/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -201,19 +201,19 @@ describe('Cars endpoints', function() {
         });
       });
 
-      it('should allow to delete a car', function(done) {
+      it('should allow to delete a car', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/cars/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
           context.db.collection('users').findOne({
             _id: castToObjectId('abbacacaabbacacaabbacaca'),
-          }).then(function(user) {
+          }).then(user => {
             assert.equal(user.cars.length, 0);
             done(err);
           })
@@ -225,13 +225,13 @@ describe('Cars endpoints', function() {
 
   });
 
-  describe('for root users', function() {
+  describe('for root users', () => {
 
-    it('should allow to get all cars', function(done) {
+    it('should allow to get all cars', done => {
       request(context.app).get('/api/v0/cars')
       .auth('jpb@marvello.us', 'test')
       .expect(200)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }

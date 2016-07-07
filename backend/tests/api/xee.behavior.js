@@ -12,13 +12,13 @@ const initObjectIdStub = require('objectid-stub');
 
 const initRoutes = require('../../app/routes');
 
-describe('OAuth XEE endpoints', function() {
+describe('OAuth XEE endpoints', () => {
   let context;
   const fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
   })).toString('base64');
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.tokens = {
       createToken: sinon.stub().returns({
@@ -43,35 +43,35 @@ describe('OAuth XEE endpoints', function() {
     });
     context.base = 'http://tripstory.insertafter.com';
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('entry point', function() {
+  describe('entry point', () => {
 
-    it('should redirect to the OAuth page', function(done) {
+    it('should redirect to the OAuth page', done => {
       request(context.app).get('/auth/xee')
         .expect(302)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -94,11 +94,11 @@ describe('OAuth XEE endpoints', function() {
 
   });
 
-  describe('callback endpoint', function() {
+  describe('callback endpoint', () => {
     let accessTokenCall;
     let profileCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       accessTokenCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
       })
@@ -149,9 +149,9 @@ describe('OAuth XEE endpoints', function() {
       });
     });
 
-    describe('when user is not known', function() {
+    describe('when user is not known', () => {
 
-      it('should work', function(done) {
+      it('should work', done => {
         const newUserId = context.createObjectId.next();
 
         request(context.app).get(
@@ -162,7 +162,7 @@ describe('OAuth XEE endpoints', function() {
           '&code=THISISIT' // eslint-disable-line
         )
           .expect(301)
-          .end(function(err, res) {
+          .end((err, res) => {
             if(err) {
               return done(err);
             }
@@ -170,7 +170,7 @@ describe('OAuth XEE endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               'contents.name': 'Nicolas Froidure',
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: newUserId,
@@ -211,9 +211,9 @@ describe('OAuth XEE endpoints', function() {
 
     });
 
-    describe('when user is known', function() {
+    describe('when user is known', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').insertOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
           contents: {
@@ -232,7 +232,7 @@ describe('OAuth XEE endpoints', function() {
         }, done);
       });
 
-      it('should work', function(done) {
+      it('should work', done => {
         request(context.app).get(
           '/auth/xee/callback' +
           '?state=' + encodeURIComponent(fakeState) +
@@ -241,7 +241,7 @@ describe('OAuth XEE endpoints', function() {
           '&code=THISISIT'
         )
           .expect(301)
-          .end(function(err) {
+          .end(err => {
             if(err) {
               return done(err);
             }
@@ -249,7 +249,7 @@ describe('OAuth XEE endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               _id: castToObjectId('abbacacaabbacacaabbacaca'),
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),

@@ -11,10 +11,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const initRoutes = require('../../app/routes');
 
-describe('Trips endpoints', function() {
+describe('Trips endpoints', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {
@@ -30,34 +30,34 @@ describe('Trips endpoints', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('events').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -93,7 +93,7 @@ describe('Trips endpoints', function() {
     }], done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('events').insertOne({
       _id: castToObjectId('babababababababababababa'),
       contents: {
@@ -121,21 +121,21 @@ describe('Trips endpoints', function() {
     }, done);
   });
 
-  describe('for simple users', function() {
+  describe('for simple users', () => {
 
-    describe('when the user has no trips', function() {
+    describe('when the user has no trips', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').deleteOne({
           _id: castToObjectId('babababababababababababa'),
         }, done);
       });
 
-      it('should allow to list trips', function(done) {
+      it('should allow to list trips', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/trips')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -144,13 +144,13 @@ describe('Trips endpoints', function() {
         });
       });
 
-      it('should fail to get an unexisting trip', function(done) {
+      it('should fail to get an unexisting trip', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(404)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -158,13 +158,13 @@ describe('Trips endpoints', function() {
         });
       });
 
-      it('should allow to delete an unexisting trip', function(done) {
+      it('should allow to delete an unexisting trip', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -175,13 +175,13 @@ describe('Trips endpoints', function() {
 
     });
 
-    describe('when the user has trips', function() {
+    describe('when the user has trips', () => {
 
-      it('should allow to list trips', function(done) {
+      it('should allow to list trips', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/trips')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -201,13 +201,13 @@ describe('Trips endpoints', function() {
         });
       });
 
-      it('should allow to get a trip', function(done) {
+      it('should allow to get a trip', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
         )
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -244,13 +244,13 @@ describe('Trips endpoints', function() {
         });
       });
 
-      it('should allow to delete a trip', function(done) {
+      it('should allow to delete a trip', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -263,7 +263,7 @@ describe('Trips endpoints', function() {
           }]]);
           context.db.collection('events').find({
             _id: castToObjectId('babababababababababababa'),
-          }).toArray().then(function(events) {
+          }).toArray().then(events => {
             assert.deepEqual(events, []);
             done(err);
           })
@@ -271,9 +271,9 @@ describe('Trips endpoints', function() {
         });
       });
 
-      describe('for non owned trips', function() {
+      describe('for non owned trips', () => {
 
-        beforeEach(function(done) {
+        beforeEach(done => {
           context.db.collection('events').updateOne({
             _id: castToObjectId('babababababababababababa'),
           }, {
@@ -284,13 +284,13 @@ describe('Trips endpoints', function() {
           }, done);
         });
 
-        it('should allow to leave that trip', function(done) {
+        it('should allow to leave that trip', done => {
           request(context.app).delete(
             '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
           )
           .auth('popol@moon.u', 'test')
           .expect(410)
-          .end(function(err, res) {
+          .end((err, res) => {
             if(err) {
               return done(err);
             }
@@ -304,7 +304,7 @@ describe('Trips endpoints', function() {
             }]]);
             context.db.collection('events').findOne({
               _id: castToObjectId('babababababababababababa'),
-            }).then(function(event) {
+            }).then(event => {
               assert.deepEqual(event.trip.friends_ids, []);
               done(err);
             })
@@ -314,7 +314,7 @@ describe('Trips endpoints', function() {
 
       });
 
-      it('should allow to update a trip', function(done) {
+      it('should allow to update a trip', done => {
         request(context.app).put(
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/babababababababababababa'
         )
@@ -330,7 +330,7 @@ describe('Trips endpoints', function() {
           },
         })
         .expect(201)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -343,7 +343,7 @@ describe('Trips endpoints', function() {
           }]]);
           context.db.collection('events').findOne({
             _id: castToObjectId('babababababababababababa'),
-          }).then(function(event) {
+          }).then(event => {
             assert.deepEqual(event, {
               _id: castToObjectId('babababababababababababa'),
               contents: {
@@ -381,7 +381,7 @@ describe('Trips endpoints', function() {
 
     });
 
-    it('should allow to create a trip', function(done) {
+    it('should allow to create a trip', done => {
       request(context.app).put(
         '/api/v0/users/abbacacaabbacacaabbacaca/trips/b0b0b0b0b0b0b0b0b0b0b0b0'
       )
@@ -397,7 +397,7 @@ describe('Trips endpoints', function() {
         },
       })
       .expect(201)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }
@@ -410,7 +410,7 @@ describe('Trips endpoints', function() {
         }]]);
         context.db.collection('events').findOne({
           _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-        }).then(function(event) {
+        }).then(event => {
           assert.deepEqual(event, {
             _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
             contents: {
@@ -444,13 +444,13 @@ describe('Trips endpoints', function() {
 
   });
 
-  describe('for root users', function() {
+  describe('for root users', () => {
 
-    it('should allow to get all trips', function(done) {
+    it('should allow to get all trips', done => {
       request(context.app).get('/api/v0/trips')
       .auth('jpb@marvello.us', 'test')
       .expect(200)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }

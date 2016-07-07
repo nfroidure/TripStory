@@ -83,7 +83,7 @@ function initTripsController(context) {
         },
       }),
     ])
-    .spread(function(result) {
+    .spread((result) => {
       context.bus.trigger({
         exchange: result.lastErrorObject.updatedExisting ?
           'A_TRIP_UPDATED' :
@@ -107,7 +107,7 @@ function initTripsController(context) {
         'trip.friends_ids': castToObjectId(req.params.user_id),
       }],
       'contents.type': 'trip-start',
-    }).then(function(startEvent) {
+    }).then((startEvent) => {
       if(!startEvent) {
         res.sendStatus(410);
         return Promise.resolve();
@@ -121,19 +121,17 @@ function initTripsController(context) {
             'trip.friends_ids': castToObjectId(req.params.user_id),
           },
         })
-        .then(function() {
+        .then(() => {
           res.sendStatus(410);
         })
-        .then(function() {
+        .then(() => {
           context.bus.trigger({
             exchange: 'A_TRIP_LEFT',
             contents: {
               trip_id: castToObjectId(req.params.trip_id),
               user_id: castToObjectId(req.params.user_id),
               users_ids: startEvent.trip.friends_ids.concat(startEvent.owner_id)
-                .filter(function(userId) {
-                  return userId.toString() !== req.params.user_id;
-                }),
+                .filter(userId => userId.toString() !== req.params.user_id),
             },
           });
         });
@@ -142,10 +140,10 @@ function initTripsController(context) {
       return context.db.collection('events').deleteMany({
         'contents.trip_id': castToObjectId(req.params.trip_id),
       })
-      .then(function() {
+      .then(() => {
         res.sendStatus(410);
       })
-      .then(function() {
+      .then(() => {
         context.bus.trigger({
           exchange: 'A_TRIP_DELETED',
           contents: {
@@ -160,7 +158,7 @@ function initTripsController(context) {
 }
 
 function createTripListAggregateStages(context, req) {
-  return Promise.resolve().then(function() {
+  return Promise.resolve().then(() => {
     const matchStage = {
       $match: {
         'contents.type': {
@@ -219,49 +217,47 @@ function sendPayload(context, res, status, payload) {
 }
 
 function createTripGetAggregateStages(context, req) {
-  return Promise.resolve().then(function() {
-    return [{
-      $match: {
-        $or: [{
-          owner_id: castToObjectId(req.params.user_id),
-        }, {
-          'trip.friends_ids': castToObjectId(req.params.user_id),
-        }],
-        'contents.trip_id': castToObjectId(req.params.trip_id),
-      },
-    }, {
-      $project: {
-        _id: '$contents.trip_id',
-        contents: '$trip',
-        owner_id: '$owner_id',
-        created: '$created',
-        ended: { $cond: {
-          if: { $eq: ['trip-stop', '$contents.type'] },
-          then: '$created',
-          else: null,
-        } },
-        event: {
-          _id: '$_id',
-          created: '$created',
-          contents: '$contents',
-        },
-      },
-    }, {
-      $sort: {
-        'event.created.seal_date': 1,
-      },
-    }, {
-      $group: {
+  return Promise.resolve().then(() => [{
+    $match: {
+      $or: [{
+        owner_id: castToObjectId(req.params.user_id),
+      }, {
+        'trip.friends_ids': castToObjectId(req.params.user_id),
+      }],
+      'contents.trip_id': castToObjectId(req.params.trip_id),
+    },
+  }, {
+    $project: {
+      _id: '$contents.trip_id',
+      contents: '$trip',
+      owner_id: '$owner_id',
+      created: '$created',
+      ended: { $cond: {
+        if: { $eq: ['trip-stop', '$contents.type'] },
+        then: '$created',
+        else: null,
+      } },
+      event: {
         _id: '$_id',
-        contents: { $first: '$contents' },
-        owner_id: { $first: '$owner_id' },
-        events: { $push: '$event' },
-        created: { $first: '$created' },
-        modified: { $last: '$created' },
-        ended: { $last: '$ended' },
+        created: '$created',
+        contents: '$contents',
       },
-    }];
-  });
+    },
+  }, {
+    $sort: {
+      'event.created.seal_date': 1,
+    },
+  }, {
+    $group: {
+      _id: '$_id',
+      contents: { $first: '$contents' },
+      owner_id: { $first: '$owner_id' },
+      events: { $push: '$event' },
+      created: { $first: '$created' },
+      modified: { $last: '$created' },
+      ended: { $last: '$ended' },
+    },
+  }]);
 }
 
 function castResultsToEvent(context, entries) {
@@ -281,9 +277,9 @@ function embedAssociatedUsers(context, payload) {
       payload.contents.friends_ids.concat(payload.owner_id).map(castToObjectId),
     },
   }).toArray()
-  .then(function(users) {
+  .then((users) => {
     payload.users = users.map(usersTransforms.fromCollection)
-    .reduce(function(hash, user) {
+    .reduce((hash, user) => {
       hash[user._id] = user;
       return hash;
     }, {});

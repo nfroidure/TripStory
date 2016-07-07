@@ -20,8 +20,8 @@ const ipinfoJobs = {
 module.exports = ipinfoJobs;
 
 function ipinfoJob(context, event) {
-  return new Promise(function(resolve, reject) {
-    request('http://ipinfo.io/' + event.contents.ip, function(err, res, body) {
+  return new Promise((resolve, reject) => {
+    request('http://ipinfo.io/' + event.contents.ip, (err, res, body) => {
       if(err) {
         return reject(YError.wrap(err, 'E_IP_LOOKUP_FAILED'));
       }
@@ -29,13 +29,11 @@ function ipinfoJob(context, event) {
     });
   })
   .then(JSON.parse)
-  .then(function(data) {
-    return context.db.collection('users').updateOne({
-      _id: event.contents.user_id,
-    }, {
-      $set: {
-        geo: data.loc ? data.loc.split(',') : [0, 0],
-      },
-    });
-  });
+  .then(data => context.db.collection('users').updateOne({
+    _id: event.contents.user_id,
+  }, {
+    $set: {
+      geo: data.loc ? data.loc.split(',') : [0, 0],
+    },
+  }));
 }

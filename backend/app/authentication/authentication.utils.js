@@ -62,12 +62,12 @@ function authenticationUtilsCreateRights() {
 }
 
 function authenticationUtilsCreatePasswordHash(password) {
-  return new Promise(function(resolve, reject) {
-    bcrypt.genSalt(10, function genSaltHandler(err, salt) {
+  return new Promise((resolve, reject) => {
+    bcrypt.genSalt(10, (err, salt) => {
       if(err) {
         return reject(err);
       }
-      bcrypt.hash(password, salt, function hashHandler(err2, hash) {
+      bcrypt.hash(password, salt, (err2, hash) => {
         if(err2) {
           return reject(err2);
         }
@@ -78,8 +78,8 @@ function authenticationUtilsCreatePasswordHash(password) {
 }
 
 function authenticationUtilsComparePasswordToHash(password, hash) {
-  return new Promise(function(resolve, reject) {
-    bcrypt.compare(password, hash, function compareHandler(err, res) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, (err, res) => {
       if(err) {
         return reject(err);
       }

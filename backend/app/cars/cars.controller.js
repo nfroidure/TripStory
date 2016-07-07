@@ -17,7 +17,7 @@ function initCarsController(context) {
 
   function carControllerList(req, res, next) {
     Promise.resolve([])
-    .then(function(pipeline) {
+    .then((pipeline) => {
       if(req.params.user_id) {
         pipeline.push({
           $match: {
@@ -27,24 +27,20 @@ function initCarsController(context) {
       }
       return pipeline;
     })
-    .catch(function castUserError(err) {
+    .catch((err) => {
       throw YHTTPError.wrap(err, 400, 'E_BAD_USER_ID', req.params.user_id);
     })
-    .then(function(pipeline) {
-      return pipeline.concat({
-        $unwind: '$cars',
-      }, {
-        $project: {
-          _id: '$cars._id',
-          user_id: '$_id',
-          contents: '$cars',
-        },
-      });
-    })
-    .then(function(pipeline) {
-      return context.db.collection('users').aggregate(pipeline).toArray();
-    })
-    .then(function(entries) {
+    .then(pipeline => pipeline.concat({
+      $unwind: '$cars',
+    }, {
+      $project: {
+        _id: '$cars._id',
+        user_id: '$_id',
+        contents: '$cars',
+      },
+    }))
+    .then(pipeline => context.db.collection('users').aggregate(pipeline).toArray())
+    .then(entries => {
       res.status(200).send(entries.map(carsTransforms.fromCollection));
     }).catch(next);
   }
@@ -67,7 +63,7 @@ function initCarsController(context) {
         _id: castToObjectId(req.params.car_id),
       },
     }]).toArray()
-    .then(function(entries) {
+    .then(entries => {
       if(!entries.length) {
         return res.sendStatus(404);
       }
@@ -84,7 +80,7 @@ function initCarsController(context) {
           _id: castToObjectId(req.params.car_id),
         },
       },
-    }).then(function(result) {
+    }).then(result => {
       res.sendStatus(410);
     }).catch(next);
   }

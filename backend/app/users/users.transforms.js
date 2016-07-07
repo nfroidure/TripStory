@@ -20,7 +20,7 @@ function usersTransformsFromCollection(src) {
   }
 
   if(src.auth) {
-    Object.keys(src.auth).forEach(function(provider) {
+    Object.keys(src.auth).forEach((provider) => {
       dest[provider] = {
         id: src.auth[provider].id,
       };

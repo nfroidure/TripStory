@@ -11,10 +11,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const initRoutes = require('../../app/routes');
 
-describe('Authentication endpoints', function() {
+describe('Authentication endpoints', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.tokens = {
       createToken: sinon.stub().returns({
@@ -36,32 +36,32 @@ describe('Authentication endpoints', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('for existing users', function() {
+  describe('for existing users', () => {
 
-    beforeEach(function(done) {
+    beforeEach(done => {
       context.db.collection('users').insertOne({
         _id: castToObjectId('abbacacaabbacacaabbacaca'),
         contents: {
@@ -77,11 +77,11 @@ describe('Authentication endpoints', function() {
       }, done);
     });
 
-    it('should allow to authenticate with basic auth', function(done) {
+    it('should allow to authenticate with basic auth', done => {
       request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -96,14 +96,14 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should allow to log in', function(done) {
+    it('should allow to log in', done => {
       request(context.app).post('/api/v0/login')
         .send({
           email: 'popol@moon.u',
           password: 'test',
         })
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -125,14 +125,14 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when loggin in with bad password', function(done) {
+    it('should fail when loggin in with bad password', done => {
       request(context.app).post('/api/v0/login')
         .send({
           email: 'popol@moon.u',
           password: 'testouille',
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -141,14 +141,14 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when loggin in with bad email', function(done) {
+    it('should fail when loggin in with bad email', done => {
       request(context.app).post('/api/v0/login')
         .send({
           email: 'leon@moon.u',
           password: 'testouille',
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -157,13 +157,13 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when loggin in with no username', function(done) {
+    it('should fail when loggin in with no username', done => {
       request(context.app).post('/api/v0/login')
         .send({
           password: 'testouille',
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -172,13 +172,13 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when loggin in with no password', function(done) {
+    it('should fail when loggin in with no password', done => {
       request(context.app).post('/api/v0/login')
         .send({
           username: 'popol@moon.u',
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -187,11 +187,11 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should allow to log out when authenticated', function(done) {
+    it('should allow to log out when authenticated', done => {
       request(context.app).post('/api/v0/logout')
         .auth('popol@moon.u', 'test')
         .expect(204)
-        .end(function(err) {
+        .end(err => {
           if(err) {
             return done(err);
           }
@@ -206,7 +206,7 @@ describe('Authentication endpoints', function() {
         });
     });
 
-    it('should fail when signuping twice', function(done) {
+    it('should fail when signuping twice', done => {
       request(context.app).post('/api/v0/signup')
         .send({
           email: 'popol@moon.u',
@@ -214,7 +214,7 @@ describe('Authentication endpoints', function() {
           password: 'test',
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -225,7 +225,7 @@ describe('Authentication endpoints', function() {
 
   });
 
-  it('should allow to sign up', function(done) {
+  it('should allow to sign up', done => {
     const userId = context.createObjectId.next();
 
     request(context.app).post('/api/v0/signup')
@@ -235,7 +235,7 @@ describe('Authentication endpoints', function() {
         password: 'test',
       })
       .expect(201)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }
@@ -255,7 +255,7 @@ describe('Authentication endpoints', function() {
         }]]);
         context.db.collection('users').findOne({
           _id: userId,
-        }).then(function(user) {
+        }).then(user => {
           assert(user, 'User is created.');
           assert.equal(user.contents.email, 'popol@moon.u');
           assert(user.passwordHash, 'Computed the hash');

@@ -10,10 +10,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const facebookJobs = require('../../workers/facebook/facebook.jobs.js');
 
-describe('Facebook jobs', function() {
+describe('Facebook jobs', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {};
@@ -27,18 +27,18 @@ describe('Facebook jobs', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       })
       .catch(done);
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -72,7 +72,7 @@ describe('Facebook jobs', function() {
     }], done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
@@ -83,10 +83,10 @@ describe('Facebook jobs', function() {
     done();
   });
 
-  describe('for Facebook friends sync', function() {
+  describe('for Facebook friends sync', () => {
     let friendsCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       friendsCall = nock('https://graph.facebook.com:443', {
         encodedQueryParams: true,
       })
@@ -121,15 +121,15 @@ describe('Facebook jobs', function() {
       });
     });
 
-    ['A_FB_SIGNUP', 'A_FB_LOGIN'].forEach(function(exchange) {
-      it('should pair friends', function(done) {
+    ['A_FB_SIGNUP', 'A_FB_LOGIN'].forEach(exchange => {
+      it('should pair friends', done => {
         facebookJobs[exchange](context, {
           exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
         })
-        .then(function() {
+        .then(() => {
           friendsCall.done();
           return Promise.all([
             context.db.collection('users').findOne({
@@ -138,7 +138,7 @@ describe('Facebook jobs', function() {
             context.db.collection('users').findOne({
               _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             }),
-          ]).spread(function(user, friend) {
+          ]).spread((user, friend) => {
             assert.deepEqual(user.friends_ids, [
               castToObjectId('b17eb17eb17eb17eb17eb17e'),
             ]);
@@ -154,24 +154,24 @@ describe('Facebook jobs', function() {
 
   });
 
-  describe('for Facebook statuses sync', function() {
+  describe('for Facebook statuses sync', () => {
     const exchange = 'A_FB_SYNC';
 
-    afterEach(function(done) {
+    afterEach(done => {
       context.db.collection('events').deleteMany({}, done);
     });
 
-    describe('when there are no running trips', function() {
+    describe('when there are no running trips', () => {
 
-      it('should do nothing', function(done) {
+      it('should do nothing', done => {
         facebookJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
-          .then(function(count) {
+          .then(count => {
             assert.equal(count, 0);
           });
         })
@@ -182,11 +182,11 @@ describe('Facebook jobs', function() {
 
     });
 
-    describe('when there are running trips', function() {
+    describe('when there are running trips', () => {
       let facebookSatusesCall;
       let newEventsIds;
 
-      beforeEach(function() {
+      beforeEach(() => {
         context.store.get.returns(Promise.resolve());
         context.store.set.returns(Promise.resolve());
         newEventsIds = [
@@ -297,7 +297,7 @@ describe('Facebook jobs', function() {
         });
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').insertOne({
           _id: castToObjectId('babababababababababababa'),
           contents: {
@@ -325,12 +325,12 @@ describe('Facebook jobs', function() {
         }, done);
       });
 
-      it('should retrieve tweets', function(done) {
+      it('should retrieve tweets', done => {
         facebookJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           facebookSatusesCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
@@ -374,7 +374,7 @@ describe('Facebook jobs', function() {
             context.db.collection('events').findOne({
               _id: newEventsIds[3],
             }),
-          ]).spread(function(event1, event2, event3, event4) {
+          ]).spread((event1, event2, event3, event4) => {
             assert.deepEqual(event1, {
               _id: newEventsIds[0],
               contents: {

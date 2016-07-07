@@ -10,11 +10,11 @@ const locationUtils = {
 module.exports = locationUtils;
 
 function locationGetFormatedAddress(lat, lng) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     request.get(
     'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
     lat + ',' + lng,
-    function(err, res, body) {
+    (err, res, body) => {
       if(err) {
         return reject(err);
       }

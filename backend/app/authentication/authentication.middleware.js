@@ -6,7 +6,7 @@ const authenticationUtils = require('./authentication.utils');
 module.exports = initBasicAuth;
 
 function initBasicAuth(context) {
-  return function(req, res, next) {
+  return (req, res, next) => {
     let data;
 
     if(!req.headers.authorization) {
@@ -16,14 +16,14 @@ function initBasicAuth(context) {
 
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(data.username)] },
-    }).then(function basicAuthUserHandler(user) {
+    }).then((user) => {
       if(!user) {
         context.logger.debug('Unknown user:', data.username);
         return res.sendStatus(401);
       }
 
       return authenticationUtils.comparePasswordToHash(data.password, user.passwordHash)
-        .then(function(matched) {
+        .then((matched) => {
           if(!matched) {
             context.logger.debug('Bad password:', data.username);
             return res.sendStatus(401);

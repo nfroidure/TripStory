@@ -45,7 +45,7 @@ function emailFriendAddJob(context, event) {
     _getRecipient(context, event.contents.friend_id),
     _getRecipient(context, event.contents.user_id),
   ])
-  .spread(function(recipient, ccRecipient) {
+  .spread((recipient, ccRecipient) => {
     const connectEndpoint = recipient.google ?
       '/auth/google' :
       recipient.facebook ?
@@ -83,34 +83,32 @@ function emailFriendAddJob(context, event) {
 }
 
 function emailFriendInviteJob(context, event) {
-  return _getRecipient(context, event.contents.user_id).then(function(recipient) {
-    return context.sendMail({
-      from: context.env.EMAIL,
-      to: event.contents.friend_email,
-      subject: recipient.contents.name + ' has invited you to join Trip Story',
-      html:
-        '<p>Hi there!</p>\r\n' +
-        '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
-        '<p><a href="' + context.base + '">' +
-          'Join us to share your trips experiences!' +
-        '</a></p>\r\n' +
-        '<p><small>You may copy/paste this link into your browser: ' + context.base + '</small></p>\r\n' +
-        '<p>See you soon</p>\r\n' +
-        '<p>— The Trip Story crew</p>\r\n',
-      text:
-        'Hi!\r\n' +
-        '\r\n' +
-        recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
-        '\r\n' +
-        'Join us by browsing ' + context.base + '\u200B!\r\n',
-    });
-  });
+  return _getRecipient(context, event.contents.user_id).then(recipient => context.sendMail({
+    from: context.env.EMAIL,
+    to: event.contents.friend_email,
+    subject: recipient.contents.name + ' has invited you to join Trip Story',
+    html:
+      '<p>Hi there!</p>\r\n' +
+      '<p>' + recipient.contents.name + ' thought you may want to join Trip Story!</p>\r\n' +
+      '<p><a href="' + context.base + '">' +
+        'Join us to share your trips experiences!' +
+      '</a></p>\r\n' +
+      '<p><small>You may copy/paste this link into your browser: ' + context.base + '</small></p>\r\n' +
+      '<p>See you soon</p>\r\n' +
+      '<p>— The Trip Story crew</p>\r\n',
+    text:
+      'Hi!\r\n' +
+      '\r\n' +
+      recipient.contents.name + ' thought you may want to join Trip Story!\r\n' +
+      '\r\n' +
+      'Join us by browsing ' + context.base + '\u200B!\r\n',
+  }));
 }
 
 function _getRecipient(context, recipientId) {
   return context.db.collection('users').findOne({
     _id: recipientId,
-  }).then(function(recipient) {
+  }).then(recipient => {
     if(!recipient) {
       throw new YError('E_RECIPIENT_NOT_FOUND', recipientId);
     }

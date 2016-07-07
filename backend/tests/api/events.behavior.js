@@ -11,10 +11,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const initRoutes = require('../../app/routes');
 
-describe('Events endpoints', function() {
+describe('Events endpoints', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {
@@ -30,34 +30,34 @@ describe('Events endpoints', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('events').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -93,7 +93,7 @@ describe('Events endpoints', function() {
     }], done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('events').insertMany([{
       _id: castToObjectId('babababababababababababa'),
       contents: {
@@ -151,11 +151,11 @@ describe('Events endpoints', function() {
     }], done);
   });
 
-  describe('for simple users', function() {
+  describe('for simple users', () => {
 
-    describe('when the user has no events', function() {
+    describe('when the user has no events', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').deleteMany({
           _id: { $in: [
             castToObjectId('babababababababababababa'),
@@ -164,11 +164,11 @@ describe('Events endpoints', function() {
         }, done);
       });
 
-      it('should allow to list events', function(done) {
+      it('should allow to list events', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/events')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -177,13 +177,13 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should fail to get an unexisting event', function(done) {
+      it('should fail to get an unexisting event', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(404)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -191,13 +191,13 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should allow to delete an unexisting event', function(done) {
+      it('should allow to delete an unexisting event', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -208,13 +208,13 @@ describe('Events endpoints', function() {
 
     });
 
-    describe('when the user has events', function() {
+    describe('when the user has events', () => {
 
-      it('should allow to list events', function(done) {
+      it('should allow to list events', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/events')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -243,13 +243,13 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should allow to get an event', function(done) {
+      it('should allow to get an event', done => {
         request(context.app).get(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/babababababababababababa'
         )
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -265,13 +265,13 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should fail to delete trip-start event', function(done) {
+      it('should fail to delete trip-start event', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/babababababababababababa'
         )
         .auth('popol@moon.u', 'test')
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -280,13 +280,13 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should allow to delete a normal event', function(done) {
+      it('should allow to delete a normal event', done => {
         request(context.app).delete(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/bbbbbbbbbbbbbbbbbbbbbbbb'
         )
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -300,7 +300,7 @@ describe('Events endpoints', function() {
           }]]);
           context.db.collection('events').find({
             _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
-          }).toArray().then(function(events) {
+          }).toArray().then(events => {
             assert.deepEqual(events, []);
             done(err);
           })
@@ -308,7 +308,7 @@ describe('Events endpoints', function() {
         });
       });
 
-      it('should allow to update an event', function(done) {
+      it('should allow to update an event', done => {
         request(context.app).put(
           '/api/v0/users/abbacacaabbacacaabbacaca/events/bbbbbbbbbbbbbbbbbbbbbbbb'
         )
@@ -327,7 +327,7 @@ describe('Events endpoints', function() {
           },
         })
         .expect(201)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -341,7 +341,7 @@ describe('Events endpoints', function() {
           }]]);
           context.db.collection('events').findOne({
             _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
-          }).then(function(event) {
+          }).then(event => {
             assert.deepEqual(event, {
               _id: castToObjectId('bbbbbbbbbbbbbbbbbbbbbbbb'),
               contents: {
@@ -385,7 +385,7 @@ describe('Events endpoints', function() {
 
     });
 
-    it('should allow to create an event', function(done) {
+    it('should allow to create an event', done => {
       request(context.app).put(
         '/api/v0/users/abbacacaabbacacaabbacaca/events/b0b0b0b0b0b0b0b0b0b0b0b0'
       )
@@ -404,7 +404,7 @@ describe('Events endpoints', function() {
         },
       })
       .expect(201)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }
@@ -418,7 +418,7 @@ describe('Events endpoints', function() {
         }]]);
         context.db.collection('events').findOne({
           _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
-        }).then(function(event) {
+        }).then(event => {
           assert.deepEqual(event, {
             _id: castToObjectId('b0b0b0b0b0b0b0b0b0b0b0b0'),
             contents: {
@@ -457,7 +457,7 @@ describe('Events endpoints', function() {
 
     });
 
-    it('should fail to create a start event', function(done) {
+    it('should fail to create a start event', done => {
       request(context.app).put(
         '/api/v0/users/abbacacaabbacacaabbacaca/events/b0b0b0b0b0b0b0b0b0b0b0b0'
       )
@@ -470,7 +470,7 @@ describe('Events endpoints', function() {
         },
       })
       .expect(400)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }
@@ -482,13 +482,13 @@ describe('Events endpoints', function() {
 
   });
 
-  describe('for root users', function() {
+  describe('for root users', () => {
 
-    it('should allow to get all events', function(done) {
+    it('should allow to get all events', done => {
       request(context.app).get('/api/v0/events')
       .auth('jpb@marvello.us', 'test')
       .expect(200)
-      .end(function(err, res) {
+      .end((err, res) => {
         if(err) {
           return done(err);
         }

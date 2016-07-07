@@ -10,10 +10,10 @@ const assert = require('assert');
 
 const initRoutes = require('../../app/routes');
 
-describe('System endpoints', function() {
+describe('System endpoints', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.env = {
       SESSION_SECRET: 'none',
@@ -25,7 +25,7 @@ describe('System endpoints', function() {
       info: sinon.spy(),
     };
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
@@ -34,21 +34,21 @@ describe('System endpoints', function() {
     };
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  it('should allow to ping the server', function(done) {
+  it('should allow to ping the server', done => {
     request(context.app).get('/ping')
       .expect(200)
       .expect('pong')
-      .end(function(err) {
+      .end(err => {
         if(err) {
           return done(err);
         }
@@ -56,9 +56,9 @@ describe('System endpoints', function() {
       });
   });
 
-  describe('for root users', function() {
+  describe('for root users', () => {
 
-    beforeEach(function(done) {
+    beforeEach(done => {
       context.db.collection('users').insertOne({
         _id: castToObjectId('abbacacaabbacacaabbacaca'),
         contents: {
@@ -74,7 +74,7 @@ describe('System endpoints', function() {
       }, done);
     });
 
-    it('should allow to publish to the bus', function(done) {
+    it('should allow to publish to the bus', done => {
       const payload = {
         plop: 'kikoolol',
       };
@@ -83,7 +83,7 @@ describe('System endpoints', function() {
         .send(payload)
         .auth('popol@moon.u', 'test')
         .expect(201)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }

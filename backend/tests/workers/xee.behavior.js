@@ -9,10 +9,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const xeeJobs = require('../../workers/xee/xee.jobs.js');
 
-describe('Xee jobs', function() {
+describe('Xee jobs', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {};
@@ -26,29 +26,29 @@ describe('Xee jobs', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.createObjectId.reset();
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -82,11 +82,11 @@ describe('Xee jobs', function() {
     }], done);
   });
 
-  describe('for Xee cars sync', function() {
+  describe('for Xee cars sync', () => {
     let carsCall;
     let newCarId;
 
-    beforeEach(function() {
+    beforeEach(() => {
       newCarId = context.createObjectId.next();
       carsCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
@@ -112,19 +112,19 @@ describe('Xee jobs', function() {
       });
     });
 
-    ['A_XEE_SIGNUP', 'A_XEE_LOGIN'].forEach(function(exchange) {
-      it('should retrieve cars', function(done) {
+    ['A_XEE_SIGNUP', 'A_XEE_LOGIN'].forEach(exchange => {
+      it('should retrieve cars', done => {
         xeeJobs[exchange](context, {
           exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
         })
-        .then(function() {
+        .then(() => {
           carsCall.done();
           return context.db.collection('users').findOne({
             _id: castToObjectId('abbacacaabbacacaabbacaca'),
-          }).then(function(user) {
+          }).then(user => {
             assert.deepEqual(user.cars, [{
               _id: newCarId,
               xeeId: 2321,
@@ -141,24 +141,24 @@ describe('Xee jobs', function() {
 
   });
 
-  describe('for Xee positions sync', function() {
+  describe('for Xee positions sync', () => {
     const exchange = 'A_XEE_SYNC';
 
-    afterEach(function(done) {
+    afterEach(done => {
       context.db.collection('events').deleteMany({}, done);
     });
 
-    describe('when there are no trip', function() {
+    describe('when there are no trip', () => {
 
-      it('should do nothing', function(done) {
+      it('should do nothing', done => {
         xeeJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
-          .then(function(count) {
+          .then(count => {
             assert.equal(count, 0);
           });
         })
@@ -169,12 +169,12 @@ describe('Xee jobs', function() {
 
     });
 
-    describe('when there are running trips', function() {
+    describe('when there are running trips', () => {
       let positionCall;
       let addressCall;
       let newEventId;
 
-      beforeEach(function() {
+      beforeEach(() => {
         newEventId = context.createObjectId.next();
         positionCall = nock('https://cloud.xee.com:443', {
           encodedQueryParams: true,
@@ -291,7 +291,7 @@ describe('Xee jobs', function() {
         });
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').updateOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
         }, {
@@ -307,7 +307,7 @@ describe('Xee jobs', function() {
         }, done);
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').insertOne({
           _id: castToObjectId('babababababababababababa'),
           contents: {
@@ -335,12 +335,12 @@ describe('Xee jobs', function() {
         }, done);
       });
 
-      it('should retrieve position', function(done) {
+      it('should retrieve position', done => {
         xeeJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           positionCall.done();
           addressCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
@@ -353,7 +353,7 @@ describe('Xee jobs', function() {
           }]]);
           return context.db.collection('events').findOne({
             _id: newEventId,
-          }).then(function(event) {
+          }).then(event => {
             assert.deepEqual(event, {
               _id: newEventId,
               contents: {
@@ -384,9 +384,9 @@ describe('Xee jobs', function() {
         .catch(done);
       });
 
-      describe('for position retrieval with past date', function() {
+      describe('for position retrieval with past date', () => {
 
-        beforeEach(function(done) {
+        beforeEach(done => {
           context.db.collection('events').updateOne({
             _id: castToObjectId('babababababababababababa'),
           }, { $set: {
@@ -395,12 +395,12 @@ describe('Xee jobs', function() {
           } }, done);
         });
 
-        it('should retrieve position', function(done) {
+        it('should retrieve position', done => {
           xeeJobs[exchange](context, {
             exchange,
             contents: {},
           })
-          .then(function() {
+          .then(() => {
             positionCall.done();
             addressCall.done();
             assert.deepEqual(context.bus.trigger.args, [[{
@@ -413,7 +413,7 @@ describe('Xee jobs', function() {
             }]]);
             return context.db.collection('events').findOne({
               _id: newEventId,
-            }).then(function(event) {
+            }).then(event => {
               assert.deepEqual(event, {
                 _id: newEventId,
                 contents: {

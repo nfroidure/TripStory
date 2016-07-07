@@ -20,7 +20,7 @@ function initAuthenticationRoutes(context) {
   }));
   context.app.use(context.passport.initialize());
   context.app.use(context.passport.session());
-  context.app.use(function setClientRights(req, res, next) {
+  context.app.use((req, res, next) => {
     req._rights = authenticationUtils.createDefaultRights();
     if(!req.user) {
       return next();
@@ -37,11 +37,11 @@ function initAuthenticationRoutes(context) {
     accessErrorMessage: 'E_UNAUTHORIZED',
   }));
 
-  context.app.post('/api/v0/login', function(req, res, next) {
+  context.app.post('/api/v0/login', (req, res, next) => {
     context.passport.authenticate('local', {
       failWithError: true,
       badRequestMessage: 'E_BAD_CREDENTIALS',
-    }, function(err, user, message, status) {
+    }, (err, user, message, status) => {
       if(err) {
         return next(YHTTPError.cast(err));
       }
@@ -50,7 +50,7 @@ function initAuthenticationRoutes(context) {
         return next(new YHTTPError(status, message.message));
       }
 
-      req.logIn(user, function(err) {
+      req.logIn(user, err => {
         if(err) {
           return next(YHTTPError.cast(err));
         }
@@ -66,15 +66,15 @@ function initAuthenticationRoutes(context) {
     })(req, res, next);
   });
 
-  context.app.post('/api/v0/signup', function(req, res, next) {
-    context.passport.authenticate('local-signup', function(err, user) {
+  context.app.post('/api/v0/signup', (req, res, next) => {
+    context.passport.authenticate('local-signup', (err, user) => {
       if(err) {
         return next(YHTTPError.cast(err));
       }
       if(!user) {
         return res.sendStatus(401);
       }
-      req.logIn(user, function(err) {
+      req.logIn(user, err => {
         if(err) {
           return next(YHTTPError.cast(err));
         }
@@ -90,7 +90,7 @@ function initAuthenticationRoutes(context) {
     })(req, res, next);
   });
 
-  context.app.post('/api/v0/logout', function authLogout(req, res) {
+  context.app.post('/api/v0/logout', (req, res) => {
     context.bus.trigger({
       exchange: 'A_LOGOUT',
       contents: {

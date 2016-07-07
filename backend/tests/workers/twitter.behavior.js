@@ -11,10 +11,10 @@ const initObjectIdStub = require('objectid-stub');
 
 const twitterJobs = require('../../workers/twitter/twitter.jobs.js');
 
-describe('Twitter jobs', function() {
+describe('Twitter jobs', () => {
   let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {};
@@ -34,13 +34,13 @@ describe('Twitter jobs', function() {
       access_token_secret: 'process.env.TWITTER_ACCESS_TOKEN_SECRET',
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
@@ -51,11 +51,11 @@ describe('Twitter jobs', function() {
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -89,10 +89,10 @@ describe('Twitter jobs', function() {
     }], done);
   });
 
-  describe('for Twitter friends sync', function() {
+  describe('for Twitter friends sync', () => {
     let friendsCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       friendsCall =
       nock('https://api.twitter.com:443', {
         encodedQueryParams: true,
@@ -129,15 +129,15 @@ describe('Twitter jobs', function() {
 
     });
 
-    ['A_TWITTER_SIGNUP', 'A_TWITTER_LOGIN'].forEach(function(exchange) {
-      it('should pair friends', function(done) {
+    ['A_TWITTER_SIGNUP', 'A_TWITTER_LOGIN'].forEach(exchange => {
+      it('should pair friends', done => {
         twitterJobs[exchange](context, {
           exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
         })
-        .then(function() {
+        .then(() => {
           friendsCall.done();
           return Promise.all([
             context.db.collection('users').findOne({
@@ -146,7 +146,7 @@ describe('Twitter jobs', function() {
             context.db.collection('users').findOne({
               _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             }),
-          ]).spread(function(user, friend) {
+          ]).spread((user, friend) => {
             assert.deepEqual(user.friends_ids, [
               castToObjectId('b17eb17eb17eb17eb17eb17e'),
             ]);
@@ -163,24 +163,24 @@ describe('Twitter jobs', function() {
 
   });
 
-  describe('for Twitter statuses sync', function() {
+  describe('for Twitter statuses sync', () => {
     const exchange = 'A_TWITTER_SYNC';
 
-    afterEach(function(done) {
+    afterEach(done => {
       context.db.collection('events').deleteMany({}, done);
     });
 
-    describe('when there are no trip', function() {
+    describe('when there are no trip', () => {
 
-      it('should do nothing', function(done) {
+      it('should do nothing', done => {
         twitterJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
-          .then(function(count) {
+          .then(count => {
             assert.equal(count, 0);
           });
         })
@@ -191,11 +191,11 @@ describe('Twitter jobs', function() {
 
     });
 
-    describe('when there are running trips', function() {
+    describe('when there are running trips', () => {
       let twitterSatusesCall;
       let newEventId;
 
-      beforeEach(function() {
+      beforeEach(() => {
         context.store.get.returns(Promise.resolve());
         context.store.set.returns(Promise.resolve());
         newEventId = context.createObjectId.next();
@@ -322,7 +322,7 @@ describe('Twitter jobs', function() {
         });
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').insertOne({
           _id: castToObjectId('babababababababababababa'),
           contents: {
@@ -350,12 +350,12 @@ describe('Twitter jobs', function() {
         }, done);
       });
 
-      it('should retrieve tweets', function(done) {
+      it('should retrieve tweets', done => {
         twitterJobs[exchange](context, {
           exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           twitterSatusesCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
@@ -367,7 +367,7 @@ describe('Twitter jobs', function() {
           }]]);
           return context.db.collection('events').findOne({
             _id: newEventId,
-          }).then(function(event) {
+          }).then(event => {
             assert.deepEqual(event, {
               _id: newEventId,
               contents: {

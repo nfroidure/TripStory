@@ -19,11 +19,11 @@ module.exports = initAuthenticationController;
 function initAuthenticationController(context) {
 
   // Serialization
-  passport.serializeUser(function passportSerializeUser(user, done) {
+  passport.serializeUser((user, done) => {
     context.logger.debug('Serialized user:', user._id.toString());
     done(null, user._id.toString());
   });
-  passport.deserializeUser(function passportDeserializeUser(id, done) {
+  passport.deserializeUser((id, done) => {
     context.logger.debug('Deserialized user:', id);
     Promise.resolve(context.db.collection('users').findOne({
       _id: castToObjectId(id),
@@ -99,7 +99,7 @@ function initAuthenticationController(context) {
     context.logger.debug('Authentication attempt:', email);
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
-    }, function(err, user) {
+    }, (err, user) => {
       if(err) {
         return done(err);
       }
@@ -108,7 +108,7 @@ function initAuthenticationController(context) {
       }
 
       authenticationUtils.comparePasswordToHash(password, user.passwordHash)
-        .then(function(matched) {
+        .then(matched => {
           if(!matched) {
             return done(null, false, { message: 'E_BAD_PASSWORD' }, 400);
           }
@@ -128,7 +128,7 @@ function initAuthenticationController(context) {
         emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
       }),
       authenticationUtils.createPasswordHash(password),
-    ]).spread(function(user, passwordHash) {
+    ]).spread((user, passwordHash) => {
       if(user) {
         throw new YHTTPError(400, 'E_USER_EXISTS', user._id);
       }
@@ -157,7 +157,7 @@ function initAuthenticationController(context) {
       }, {
         upsert: true,
         returnOriginal: false,
-      }).then(function(result) {
+      }).then(result => {
         done(null, result.value);
       });
     }).catch(done);
@@ -187,9 +187,7 @@ function initAuthenticationController(context) {
       },
       $addToSet: {
         emailKeys: {
-          $each: profile.emails.map(function(email) {
-            return authenticationUtils.normalizeEmail(email.value);
-          }),
+          $each: profile.emails.map(email => authenticationUtils.normalizeEmail(email.value)),
         },
       },
     };
@@ -200,9 +198,7 @@ function initAuthenticationController(context) {
       findQuery.$or = [{
         'auth.facebook.id': profile.id,
       }, {
-        'contents.email': { $in: profile.emails.map(function(email) {
-          return email.value;
-        }) },
+        'contents.email': { $in: profile.emails.map(email => email.value) },
       }];
       // It looks like Mongo can't recognize when an upsert is beeing processed...
       // So we avoid setting the upsert id ourself when we are sure the user exists.
@@ -220,7 +216,7 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function facebookLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
@@ -274,9 +270,7 @@ function initAuthenticationController(context) {
       },
       $addToSet: {
         emailKeys: {
-          $each: profile.emails.map(function(email) {
-            return authenticationUtils.normalizeEmail(email.value);
-          }),
+          $each: profile.emails.map(email => authenticationUtils.normalizeEmail(email.value)),
         },
       },
     };
@@ -287,9 +281,7 @@ function initAuthenticationController(context) {
       findQuery.$or = [{
         'auth.google.id': profile.id,
       }, {
-        'contents.email': { $in: profile.emails.map(function(email) {
-          return email.value;
-        }) },
+        'contents.email': { $in: profile.emails.map(email => email.value) },
       }];
       // It looks like Mongo can't recognize when an upsert is beeing processed...
       // So we avoid setting the upsert id ourself when we are sure the user exists.
@@ -307,7 +299,7 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function googleLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
@@ -378,7 +370,7 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function twitterLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
@@ -414,16 +406,16 @@ function initAuthenticationController(context) {
       return done(new YError('E_NO_STATE'));
     }
 
-    new Promise(function(resolve, reject) {
+    new Promise((resolve, reject) => {
       request.get(
       'https://cloud.xee.com/v1/user/me.json?access_token=' + accessToken,
-      function(err, httpRes, httpData) {
+      (err, httpRes, httpData) => {
         if(err) {
           return reject(err);
         }
         resolve(JSON.parse(httpData));
       });
-    }).then(function(profile) {
+    }).then(profile => {
       const findQuery = {};
       let updateQuery;
 
@@ -460,7 +452,7 @@ function initAuthenticationController(context) {
       context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
         upsert: true,
         returnOriginal: false,
-      }, function xeeLoginHandler(err, result) {
+      }, (err, result) => {
         if(err) {
           return done(err);
         }

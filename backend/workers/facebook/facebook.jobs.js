@@ -44,15 +44,11 @@ function pairFacebookFriends(context, user) {
         context.logger.debug('Retrieved facebook friends:', res.statusCode, body);
         // Update friends that are know in the platform
         return context.db.collection('users').find({
-          'auth.facebook.id': { $in: JSON.parse(body).data.map(function(friend) {
-            return friend.id;
-          }) },
+          'auth.facebook.id': { $in: JSON.parse(body).data.map(friend => friend.id) },
         }, {
           _id: '',
-        }).toArray().then(function(friends) {
-          const friendsIds = friends.map(function(friend) {
-            return friend._id;
-          });
+        }).toArray().then(friends => {
+          const friendsIds = friends.map(friend => friend._id);
 
           if(!friendsIds.length) {
             return Promise.resolve();
@@ -89,15 +85,15 @@ function facebookSyncJob(context) {
     if(!tripsEvents.length) {
       return Promise.resolve();
     }
-    return Promise.all(tripsEvents.map(function(tripEvent) {
+    return Promise.all(tripsEvents.map(tripEvent => {
       context.logger.debug('Retrieving trip facebook users for:', tripEvent.trip.title);
       return context.db.collection('users').find({
         _id: { $in: tripEvent.trip.friends_ids.concat(tripEvent.owner_id) },
         'auth.facebook': { $exists: true },
       }).toArray()
-      .then(function(users) {
+      .then(users => {
         context.logger.debug('Found ' + users.length + ' facebook users for:', tripEvent.trip.title);
-        return Promise.all(users.map(function(user) {
+        return Promise.all(users.map(user => {
           let newSince;
 
           context.logger.debug('Getting ' + user.contents.name + ' statuses.');
@@ -105,7 +101,7 @@ function facebookSyncJob(context) {
             SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
             user._id.toString()
           )
-          .then(function(since) {
+          .then(since => {
             since = since || Math.floor(
               (tripEvent.created.seal_date).getTime() / 1000
             );
@@ -146,11 +142,8 @@ function facebookSyncJob(context) {
                   newSince = Math.round(
                     (new Date(statuses[0].created_time)).getTime() / 1000
                   );
-                  statuses = statuses.filter(function(status) {
-                    return status.message &&
-                      -1 !== ['photo', 'status', 'link'].indexOf(status.type);
-                  });
-                  Promise.all(statuses.map(function(status) {
+                  statuses = statuses.filter(status => status.message && -1 !== ['photo', 'status', 'link'].indexOf(status.type));
+                  Promise.all(statuses.map(status => {
                     const statusDate = new Date(status.created_time);
 
                     if(tripEvent.created.seal_date.getTime() > statusDate.getTime()) {
@@ -183,7 +176,7 @@ function facebookSyncJob(context) {
                       upsert: true,
                       returnOriginal: false,
                     })
-                    .then(function(result) {
+                    .then(result => {
                       context.bus.trigger({
                         exchange: 'A_TRIP_UPDATED',
                         contents: {
