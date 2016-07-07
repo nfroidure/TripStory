@@ -37,11 +37,7 @@ function psaSyncJob(context) {
 
       return new Promise(function psaPositionPromise(resolve, reject) {
         request.get(
-          SERVER +
-          '/place/lastposition/' + car.vin +
-          '?contract=' + car.contract +
-          '&listsecond=' + SECONDS.join(',') +
-          '&client_id=' + context.env.PSA_CLIENT_ID,
+          `${SERVER}/place/lastposition/${car.vin}?contract=${car.contract}&listsecond=${SECONDS.join(',')}&client_id=${context.env.PSA_CLIENT_ID}`,
           (err, res, data) => {
             if(err) {
               return reject(err);
@@ -89,9 +85,7 @@ function psaSyncJob(context) {
 
           request
             .get(
-              'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-              data.latitude[bestSecond] + ',' +
-              data.longitude[bestSecond],
+              `http://maps.googleapis.com/maps/api/geocode/json?latlng=${data.latitude[bestSecond]},${data.longitude[bestSecond]}`,
               (err, res, body) => {
                 let address;
 
@@ -151,11 +145,6 @@ function psaSignupJob(context, event) {
 
 function transformPSADate(psaDate) {
   return new Date(
-    psaDate.substr(0, 4) + '-' +
-    psaDate.substr(4, 2) + '-' +
-    psaDate.substr(6, 2) + 'T' +
-    psaDate.substr(8, 2) + ':' +
-    psaDate.substr(10, 2) + ':' +
-    psaDate.substr(12, 2) + '.000Z'
+    `${psaDate.substr(0, 4)}-${psaDate.substr(4, 2)}-${psaDate.substr(6, 2)}T${psaDate.substr(8, 2)}:${psaDate.substr(10, 2)}:${psaDate.substr(12, 2)}.000Z`
   );
 }

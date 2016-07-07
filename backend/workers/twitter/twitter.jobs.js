@@ -28,7 +28,7 @@ function twitterSyncJob(context) {
         'auth.twitter': { $exists: true },
       }).toArray()
       .then(users => {
-        context.logger.debug('Found twitter ' + users.length + 'users for:', tripEvent.trip.title);
+        context.logger.debug(`Found twitter ${users.length}users for:`, tripEvent.trip.title);
         return Promise.all(users.map(user => {
           let newSinceId;
           const twitter = new Twitter({
@@ -38,10 +38,9 @@ function twitterSyncJob(context) {
             access_token_secret: user.auth.twitter.refreshToken,
           });
 
-          context.logger.debug('Getting ' + user.contents.name + ' twitts');
+          context.logger.debug(`Getting ${user.contents.name} twitts`);
           return context.store.get(
-            SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-            user._id.toString()
+            `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`
           )
           .then(sinceId => new Promise((resolve, reject) => {
             twitter.get(
@@ -54,8 +53,7 @@ function twitterSyncJob(context) {
                 if(err) {
                   return reject(err);
                 }
-                context.logger.debug('Fetched ' + statuses.length +
-                  ' twitts sent by ' + user.contents.name, sinceId);
+                context.logger.debug(`Fetched ${statuses.length} twitts sent by ${user.contents.name}`, sinceId);
                 if(!statuses.length) {
                   return resolve();
                 }
@@ -103,8 +101,7 @@ function twitterSyncJob(context) {
                 }))
                 .then(context.store.set.bind(
                     null,
-                    SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-                    user._id.toString(),
+                    `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`,
                     newSinceId
                   ))
                 .then(resolve)
@@ -141,7 +138,7 @@ function pairTwitterFriends(context, event) {
           context.logger.debug('Retrieved twitter friends', data);
           context.db.collection('users').find({
             'auth.twitter.id': { $in: (data.ids || [])
-                .map(id => id + '') },
+                .map(id => `${id}`) },
           }, { _id: '' }).toArray()
           .then(friends => {
             const friendsIds = friends.map(friend => friend._id);

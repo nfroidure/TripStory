@@ -78,14 +78,9 @@ describe('OAuth Google endpoints', () => {
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://accounts.google.com/o/oauth2/auth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/google/callback'
-            ) +
-            '&scope=profile%20email' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.GOOGLE_ID
+            `https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/google/callback`
+)}&scope=profile%20email&state=${encodeURIComponent(fakeState)}&client_id=${context.env.GOOGLE_ID}`
           );
           done();
         });
@@ -103,13 +98,9 @@ describe('OAuth Google endpoints', () => {
       })
       .post(
         '/o/oauth2/token',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/google/callback'
-        ) +
-        '&client_id=' + context.env.GOOGLE_ID +
-        '&client_secret=' + context.env.GOOGLE_SECRET +
-        '&code=THISISIT')
+        `grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/google/callback`
+)}&client_id=${context.env.GOOGLE_ID}&client_secret=${context.env.GOOGLE_SECRET}&code=THISISIT`)
       .reply(
         200, {
           access_token: 'COMMON_BOY',
@@ -199,11 +190,7 @@ describe('OAuth Google endpoints', () => {
         const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/google/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.GOOGLE_ID +
-          '&client_secret=' + context.env.GOOGLE_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          `/auth/google/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.GOOGLE_ID}&client_secret=${context.env.GOOGLE_SECRET}&code=THISISIT` // eslint-disable-line
         )
           .expect(301)
           .end(err => {
@@ -285,11 +272,7 @@ describe('OAuth Google endpoints', () => {
 
       it('should work', done => {
         request(context.app).get(
-          '/auth/google/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.GOOGLE_ID +
-          '&client_secret=' + context.env.GOOGLE_SECRET +
-          '&code=THISISIT'
+          `/auth/google/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.GOOGLE_ID}&client_secret=${context.env.GOOGLE_SECRET}&code=THISISIT`
         )
           .expect(301)
           .end(err => {

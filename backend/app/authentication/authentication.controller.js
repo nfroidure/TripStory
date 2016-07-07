@@ -52,7 +52,7 @@ function initAuthenticationController(context) {
     passport.use(new FacebookStrategy({
       clientID: context.env.FACEBOOK_ID,
       clientSecret: context.env.FACEBOOK_SECRET,
-      callbackURL: context.base + '/auth/facebook/callback',
+      callbackURL: `${context.base}/auth/facebook/callback`,
       enableProof: false,
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       passReqToCallback: true,
@@ -64,7 +64,7 @@ function initAuthenticationController(context) {
     passport.use(new GoogleStrategy({
       clientID: context.env.GOOGLE_ID,
       clientSecret: context.env.GOOGLE_SECRET,
-      callbackURL: context.base + '/auth/google/callback',
+      callbackURL: `${context.base}/auth/google/callback`,
       passReqToCallback: true,
     }, googleLoginLogic));
   } else {
@@ -74,7 +74,7 @@ function initAuthenticationController(context) {
     passport.use(new TwitterStrategy({
       consumerKey: context.env.TWITTER_ID,
       consumerSecret: context.env.TWITTER_SECRET,
-      callbackURL: context.base + '/auth/twitter/callback',
+      callbackURL: `${context.base}/auth/twitter/callback`,
       passReqToCallback: true,
     }, twitterLoginLogic));
   } else {
@@ -86,7 +86,7 @@ function initAuthenticationController(context) {
       tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
       clientID: context.env.XEE_ID,
       clientSecret: context.env.XEE_SECRET,
-      callbackURL: context.base + '/auth/xee/callback',
+      callbackURL: `${context.base}/auth/xee/callback`,
       useAuthorizationHeaderForGET: true,
       useAuthorizationHeaderForPOST: true,
       passReqToCallback: true,
@@ -223,7 +223,7 @@ function initAuthenticationController(context) {
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           'Facebook signup:', profile.displayName,
-          ' https://facebook.com/' + profile.id
+          ` https://facebook.com/${profile.id}`
         );
         context.bus.trigger({
           exchange: 'A_FB_SIGNUP',
@@ -408,7 +408,7 @@ function initAuthenticationController(context) {
 
     new Promise((resolve, reject) => {
       request.get(
-      'https://cloud.xee.com/v1/user/me.json?access_token=' + accessToken,
+      `https://cloud.xee.com/v1/user/me.json?access_token=${accessToken}`,
       (err, httpRes, httpData) => {
         if(err) {
           return reject(err);
@@ -423,7 +423,7 @@ function initAuthenticationController(context) {
 
       updateQuery = {
         $set: {
-          'contents.name': profile.firstName + ' ' + profile.name,
+          'contents.name': `${profile.firstName} ${profile.name}`,
           'auth.xee': {
             id: profile.id,
             accessToken,
@@ -458,7 +458,7 @@ function initAuthenticationController(context) {
         }
         if(!result.lastErrorObject.updatedExisting) {
           context.logger.info(
-            'Xee signup:', profile.firstName + ' ' + profile.name
+            'Xee signup:', `${profile.firstName} ${profile.name}`
           );
           context.bus.trigger({
             exchange: 'A_XEE_SIGNUP',

@@ -78,15 +78,9 @@ describe('OAuth XEE endpoints', () => {
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://cloud.xee.com/v1/auth/auth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/xee/callback'
-            ) +
-            '&scope=user_get%20email_get%20car_get%20data_get%20' +
-              'location_get%20address_all%20accelerometer_get' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.XEE_ID
+            `https://cloud.xee.com/v1/auth/auth?response_type=code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/xee/callback`
+)}&scope=user_get%20email_get%20car_get%20data_get%20location_get%20address_all%20accelerometer_get&state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}`
           );
           done();
         });
@@ -104,13 +98,9 @@ describe('OAuth XEE endpoints', () => {
       })
       .post(
         '/v1/auth/access_token.json',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/xee/callback'
-        ) +
-        '&client_id=' + context.env.XEE_ID +
-        '&client_secret=' + context.env.XEE_SECRET +
-        '&code=THISISIT'
+        `grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/xee/callback`
+)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT`
       )
       .basicAuth({
         user: context.env.XEE_ID,
@@ -155,11 +145,7 @@ describe('OAuth XEE endpoints', () => {
         const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/xee/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.XEE_ID +
-          '&client_secret=' + context.env.XEE_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          `/auth/xee/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT` // eslint-disable-line
         )
           .expect(301)
           .end((err, res) => {
@@ -234,11 +220,7 @@ describe('OAuth XEE endpoints', () => {
 
       it('should work', done => {
         request(context.app).get(
-          '/auth/xee/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.XEE_ID +
-          '&client_secret=' + context.env.XEE_SECRET +
-          '&code=THISISIT'
+          `/auth/xee/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT`
         )
           .expect(301)
           .end(err => {

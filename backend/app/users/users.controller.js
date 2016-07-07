@@ -75,7 +75,7 @@ function initUsersController(context) {
       req.pipe(context.cloudinary.uploader.upload_stream((result) => {
         console.log('result', result);
         resolve(context.cloudinary.url(
-          result.public_id + '.' + result.format, {
+          `${result.public_id}.${result.format}`, {
             width: 300, height: 300,
             crop: 'thumb', gravity: 'face',
             secure: true,

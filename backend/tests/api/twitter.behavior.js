@@ -82,9 +82,7 @@ describe('OAuth Twitter endpoints', () => {
       )
       .reply(
         200,
-        'oauth_token=YOP' +
-        '&oauth_token_secret=POY' +
-        '&oauth_callback_confirmed=true', {
+        'oauth_token=YOP&oauth_token_secret=POY&oauth_callback_confirmed=true', {
           'content-type': 'text/plain; charset=UTF-8',
         }
       );
@@ -140,11 +138,7 @@ describe('OAuth Twitter endpoints', () => {
       )
       .reply(
         200,
-        'oauth_token=COMMON_BOY' +
-        '&oauth_token_secret=COME_AGAIN_MAN' +
-        '&user_id=1664' +
-        '&screen_name=nfroidure' +
-        '&x_auth_expires=0', {
+        'oauth_token=COMMON_BOY&oauth_token_secret=COME_AGAIN_MAN&user_id=1664&screen_name=nfroidure&x_auth_expires=0', {
           'content-type': 'text/plain; charset=UTF-8',
         });
 
@@ -209,10 +203,7 @@ describe('OAuth Twitter endpoints', () => {
         const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/twitter/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&oauth_token=YOP' +
-          '&oauth_verifier=POY'
+          `/auth/twitter/callback?state=${encodeURIComponent(fakeState)}&oauth_token=YOP&oauth_verifier=POY`
         )
           .set('Cookie', 'connect.sid=s%3Ax6L9CiWPF1pD4bIFyCFvV--sg7H2znNj.4eX1VfudnVnDiwRDUy0G0%2FeiG05doSmwDp5EUOEYcS0')
           .expect(301)
@@ -289,10 +280,7 @@ describe('OAuth Twitter endpoints', () => {
 
       it('should work', done => {
         request(context.app).get(
-          '/auth/twitter/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&oauth_token=YOP' +
-          '&oauth_verifier=POY'
+          `/auth/twitter/callback?state=${encodeURIComponent(fakeState)}&oauth_token=YOP&oauth_verifier=POY`
         )
           .set('Cookie', 'connect.sid=s%3Ax6L9CiWPF1pD4bIFyCFvV--sg7H2znNj.4eX1VfudnVnDiwRDUy0G0%2FeiG05doSmwDp5EUOEYcS0')
           .expect(301)

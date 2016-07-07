@@ -21,7 +21,7 @@ module.exports = ipinfoJobs;
 
 function ipinfoJob(context, event) {
   return new Promise((resolve, reject) => {
-    request('http://ipinfo.io/' + event.contents.ip, (err, res, body) => {
+    request(`http://ipinfo.io/${event.contents.ip}`, (err, res, body) => {
       if(err) {
         return reject(YError.wrap(err, 'E_IP_LOOKUP_FAILED'));
       }

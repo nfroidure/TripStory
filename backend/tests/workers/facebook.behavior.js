@@ -202,9 +202,7 @@ describe('Facebook jobs', () => {
         .get('/v2.5/me/posts')
         .query({
           access_token: 'COMMON_BOY',
-          fields: 'description,caption,link,created_time,id,photos,' +
-          'application,from,icon,message,message_tags,name,picture,' +
-          'place,status_type,type',
+          fields: 'description,caption,link,created_time,id,photos,application,from,icon,message,message_tags,name,picture,place,status_type,type',
           since: Math.floor(context.time() / 1000),
         })
         .reply(200, {

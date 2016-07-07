@@ -20,13 +20,9 @@ function xeeSignupJob(context, event) {
   })
   .then(user => new Promise((resolve, reject) => {
     context.logger.debug(
-      SERVER +
-      '/user/' + user.auth.xee.id + '/car.json' +
-      '?access_token=' + user.auth.xee.accessToken);
+      `${SERVER}/user/${user.auth.xee.id}/car.json?access_token=${user.auth.xee.accessToken}`);
     request.get(
-      SERVER +
-      '/user/' + user.auth.xee.id + '/car.json' +
-      '?access_token=' + user.auth.xee.accessToken,
+      `${SERVER}/user/${user.auth.xee.id}/car.json?access_token=${user.auth.xee.accessToken}`,
       function handleXEECars(err, res, data) {
         if(err) {
           return reject(err);
@@ -78,9 +74,7 @@ function xeeSyncJob(context) {
 
       return new Promise(function xeePositionPromise(resolve, reject) {
         request.get(
-          SERVER +
-          '/car/' + car.xeeId + '/carstatus.json' +
-          '?access_token=' + user.auth.xee.accessToken,
+          `${SERVER}/car/${car.xeeId}/carstatus.json?access_token=${user.auth.xee.accessToken}`,
           (err, res, data) => {
             context.logger.debug(JSON.stringify(data, null, 2));
             if(err) {
@@ -119,7 +113,7 @@ function xeeSyncJob(context) {
           return '';
         })
         .then(address => {
-          let locationDate = new Date(data.location.date.replace(' ', 'T') + '.000Z');
+          let locationDate = new Date(`${data.location.date.replace(' ', 'T')}.000Z`);
 
           // Limit locations retrieval to the trip start date
           if(locationDate.getTime() < tripEvent.created.seal_date.getTime()) {

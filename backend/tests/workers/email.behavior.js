@@ -127,7 +127,7 @@ describe('Email jobs', () => {
       'A_LOCAL_SIGNUP', 'A_FB_SIGNUP', 'A_GG_SIGNUP', 'A_TWITTER_SIGNUP',
       'A_XEE_SIGNUP',
     ].forEach(exchange => {
-      it('should send an email (exchange ' + exchange + ')', done => {
+      it(`should send an email (exchange ${exchange})`, done => {
         context.sendMail.returns(Promise.resolve());
         emailJobs[exchange](context, {
           exchange,

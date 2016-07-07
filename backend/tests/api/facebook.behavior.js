@@ -77,14 +77,9 @@ describe('OAuth Facebook endpoints', () => {
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://www.facebook.com/v2.2/dialog/oauth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/facebook/callback'
-            ) +
-            '&scope=public_profile%2Cemail%2Cuser_friends' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.FACEBOOK_ID
+            `https://www.facebook.com/v2.2/dialog/oauth?response_type=code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/facebook/callback`
+)}&scope=public_profile%2Cemail%2Cuser_friends&state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}`
           );
           done();
         });
@@ -102,13 +97,9 @@ describe('OAuth Facebook endpoints', () => {
       })
       .post(
         '/oauth/access_token',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/facebook/callback'
-        ) +
-        '&client_id=' + context.env.FACEBOOK_ID +
-        '&client_secret=' + context.env.FACEBOOK_SECRET +
-        '&code=THISISIT')
+        `grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/facebook/callback`
+)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT`)
       .reply(
         200, {
           access_token: 'COMMON_BOY',
@@ -156,11 +147,7 @@ describe('OAuth Facebook endpoints', () => {
         const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/facebook/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT'
+          `/auth/facebook/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT`
         )
           .expect(301)
           .end(err => {
@@ -238,11 +225,7 @@ describe('OAuth Facebook endpoints', () => {
 
       it('should work', done => {
         request(context.app).get(
-          '/auth/facebook/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          `/auth/facebook/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT` // eslint-disable-line
         )
           .expect(301)
           .end(err => {

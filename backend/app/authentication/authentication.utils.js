@@ -113,8 +113,7 @@ function initPassportWithAStateObject(context, type, params) {
     params.state = (new Buffer(JSON.stringify(state))).toString('base64');
     // Extra glue for twitter OAuth1...
     if('twitter' === type) {
-      params.callbackURL = context.base + '/auth/twitter/callback?state=' +
-        params.state;
+      params.callbackURL = `${context.base}/auth/twitter/callback?state=${params.state}`;
     }
     context.logger.debug('Assigned a state', state);
     context.passport.authenticate(type, params)(req, res, next);
@@ -141,7 +140,7 @@ function authenticationUtilsRedirectToApp(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
-  res.setHeader('Location', context.base + '/#/app/trips');
+  res.setHeader('Location', `${context.base}/#/app/trips`);
   res.sendStatus(301);
 }
 
@@ -149,6 +148,6 @@ function authenticationUtilsRedirectToProfile(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
-  res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
+  res.setHeader('Location', `${context.base}/api/v0/users/${req.user._id.toString()}`);
   res.sendStatus(301);
 }
