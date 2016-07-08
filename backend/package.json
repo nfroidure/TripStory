@@ -7,7 +7,8 @@
     "cli": "env NPM_RUN_CLI=1",
     "test": "mocha tests/**/*.behavior.js tests/**/*.specs.js",
     "lint": "eslint app/*.js workers/*.js app/**/*.js workers/**/*.js",
-    "cover": "istanbul cover --report html _mocha -- tests/**/*.behavior.js tests/**/*.specs.js -R spec -t 5000"
+    "cover": "istanbul cover --report html _mocha -- tests/**/*.behavior.js tests/**/*.specs.js -R spec -t 5000",
+    "build:swagger": "node scripts/build-swagger.js > ./app/swagger.json"
   },
   "author": "",
   "license": "MIT",
