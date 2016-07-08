@@ -60,6 +60,7 @@
     "mockery": "^1.4.0",
     "nock": "^6.0.1",
     "sinon": "^1.17.2",
-    "supertest": "^1.1.0"
+    "supertest": "^1.1.0",
+    "swagger-ui": "^2.1.4"
   }
 }

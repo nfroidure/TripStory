@@ -51,19 +51,21 @@ module.exports = function initEventsRoutes(context) {
       responseBody: 'event',
       responseCodes: [200, 500],
     },
-  ].map(function setPrefix(route) {
-    route.path = apiPrefix + route.path;
+  ];
 
-    return route;
-  });
+  routes
+    .map(function setPrefix(route) {
+      route.path = apiPrefix + route.path;
 
-  routes.forEach(function initRoute(route) {
-    console.log('route', route.path);
-    context.app[route.method.toLowerCase()](
-      route.path,
-      route.controller
-    );
-  });
+      return route;
+    })
+    .forEach(function initRoute(route) {
+      context.app[route.method.toLowerCase()](
+        route.path,
+        route.controller
+      );
+    })
+  ;
 
   /*
   context.app.get(

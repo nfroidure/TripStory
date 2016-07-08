@@ -27,6 +27,11 @@ function initRoutes(context) {
   if(context.env.AGENTS) {
     context.app.use(initAgentVersionChecker(context));
   }
+  context.app.use('/swagger', express.static(__dirname + '/../node_modules/swagger-ui/dist'));
+  context.app.get('/api', function(req, res) {
+    res.redirect(301, context.base + '/swagger/?url=' + context.base + '/swagger.json');
+  });
+  context.app.use('/swagger.json', express.static(__dirname + '/swagger.json'));
   if(context.env.STATIC_PATH) {
     context.app.use(express.static(path.join(
       process.cwd(),
