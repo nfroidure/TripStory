@@ -115,6 +115,12 @@ cd mobile/
 npm run cli -- grunt serve --force
 ```
 
+### Browse api with swagger
+
+```
+open http://localhost:3000/api
+```
+
 ### Auth:
 - Facebook: GET /auth/facebook
 - Twitter: GET /auth/twitter
