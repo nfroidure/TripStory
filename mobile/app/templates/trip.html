@@ -78,18 +78,39 @@
           <em>Start</em>
         </h2>
         <p ng-switch-when="trip-start">
-          <span ng-if="event.contents.description ">
+          <span ng-if="event.contents.description">
             {{ event.contents.description }}<br>
           </span>
           <span am-time-ago="event.created_date"></span>
         </p>
 
+        <img ng-switch-when="twitter-status"
+          ng-src="{{ trip.users[event.contents.author_id].avatar_url }}">
         <h2 ng-switch-when="twitter-status">
           <i class="ion-social-twitter"></i>
-          <strong>{{event.contents.user_name}}</strong> tweeted:
+          {{ trip.users[event.contents.author_id].contents.name }}
         </h2>
         <p ng-switch-when="twitter-status">
           {{ event.contents.text }}<br>
+          <span ng-repeat="media in event.contents.media" ng-switch="media.type">
+            <img ng-src="{{ media.src_url }}"
+              ng-switch-when="image"/><br>
+          </span>
+          <span am-time-ago="event.created_date"></span>
+        </p>
+
+        <img ng-switch-when="facebook-status"
+          ng-src="{{ trip.users[event.contents.author_id].avatar_url }}">
+        <h2 ng-switch-when="facebook-status">
+          <i class="ion-social-facebook"></i>
+          {{ trip.users[event.contents.author_id].contents.name }}
+        </h2>
+        <p ng-switch-when="facebook-status">
+          {{ event.contents.text }}<br>
+          <span ng-repeat="media in event.contents.media" ng-switch="media.type">
+            <img ng-src="{{ media.src_url }}"
+              ng-switch-when="image"/><br>
+          </span>
           <span am-time-ago="event.created_date"></span>
         </p>
 
@@ -100,8 +121,8 @@
           {{ trip.users[event.contents.author_id].contents.name }}
         </h2>
         <p ng-switch-when="trip-comment">
-          {{ event.contents.comment }}
-          - <span am-time-ago="event.created_date"></span>
+          {{ event.contents.comment }}<br>
+          <span am-time-ago="event.created_date"></span>
         </p>
 
         <h2 ng-switch-when="trip-stop">

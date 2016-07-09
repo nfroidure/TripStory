@@ -27,11 +27,11 @@ function twitterSyncJob(context) {
         _id: { $in: tripEvent.trip.friends_ids.concat(tripEvent.owner_id) },
         'auth.twitter': { $exists: true },
       }).toArray()
-      .then(users => {
-        context.logger.debug(`Found twitter ${users.length}users for:`, tripEvent.trip.title);
-        return Promise.all(users.map(user => {
-          let newSinceId;
-          const twitter = new Twitter({
+      .then((users) => {
+        context.logger.debug(`Found ${users.length} twitter users for:`, tripEvent.trip.title);
+        return Promise.all(users.map((user) => {
+          var newSinceId;
+          var twitter = new Twitter({
             consumer_key: process.env.TWITTER_ID,
             consumer_secret: process.env.TWITTER_SECRET,
             access_token_key: user.auth.twitter.accessToken,
@@ -42,73 +42,88 @@ function twitterSyncJob(context) {
           return context.store.get(
             `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`
           )
-          .then(sinceId => new Promise((resolve, reject) => {
-            twitter.get(
-              'statuses/user_timeline', {
-                user_id: user.auth.twitter.id,
-                include_rts: false,
-                since_id: sinceId,
-              },
-              function twitterSearchHandler(err, statuses) {
-                if(err) {
-                  return reject(err);
-                }
-                context.logger.debug(`Fetched ${statuses.length} twitts sent by ${user.contents.name}`, sinceId);
-                if(!statuses.length) {
-                  return resolve();
-                }
-                newSinceId = statuses[0].id;
-                Promise.all(statuses.map(status => {
-                  const tweetDate = new Date(status.created_at);
-
-                  if(tripEvent.created.seal_date.getTime() > tweetDate.getTime()) {
-                    return Promise.resolve();
+          .then(function(sinceId) {
+            return new Promise((resolve, reject) => {
+              twitter.get(
+                'statuses/user_timeline', {
+                  user_id: user.auth.twitter.id,
+                  include_rts: false,
+                  since_id: sinceId,
+                },
+                function twitterSearchHandler(err, statuses) {
+                  if(err) {
+                    return reject(err);
                   }
-                  return context.db.collection('events').findOneAndUpdate({
-                    'contents.twitterId': status.id,
-                  }, {
-                    $set: {
-                      'contents.twitterId': status.id,
-                      'contents.text': status.text,
-                      'contents.geo': status.geo && 'point' === status.geo.type ?
-                        status.geo.coordinates :
-                        [],
-                      'contents.profile_image': status.profile_image_url_https || '',
-                      'contents.user_name': status.user.name,
-                    },
-                    $setOnInsert: {
-                      _id: context.createObjectId(),
-                      owner_id: user._id,
-                      'contents.trip_id': tripEvent._id,
-                      'contents.type': 'twitter-status',
-                      trip: tripEvent.trip,
-                      created: controllersUtils.getDateSeal(tweetDate.getTime()),
-                    },
-                  }, {
-                    upsert: true,
-                    returnOriginal: false,
-                  })
-                  .then(result => {
-                    context.bus.trigger({
-                      exchange: 'A_TRIP_UPDATED',
-                      contents: {
-                        trip_id: tripEvent._id,
-                        event_id: result.value._id,
-                        users_ids: tripEvent.trip.friends_ids.concat([tripEvent.owner_id]),
+                  context.logger.debug('Fetched ' + statuses.length +
+                    ' twitts sent by ' + user.contents.name, sinceId);
+                  if(!statuses.length) {
+                    return resolve();
+                  }
+                  newSinceId = statuses[0].id;
+                  Promise.all(statuses.map(function(status) {
+                    var tweetDate = new Date(status.created_at);
+                    var updateQuery;
+
+                    if(tripEvent.created.seal_date.getTime() > tweetDate.getTime()) {
+                      return Promise.resolve();
+                    }
+                    updateQuery = {
+                      $set: {
+                        'contents.twitterId': status.id,
+                        'contents.text': status.text,
+                        'contents.geo': status.geo && 'point' === status.geo.type ?
+                          status.geo.coordinates :
+                          [],
+                        'contents.author_id': user._id,
                       },
+                      $setOnInsert: {
+                        _id: context.createObjectId(),
+                        owner_id: user._id,
+                        'contents.trip_id': tripEvent._id,
+                        'contents.type': 'twitter-status',
+                        trip: tripEvent.trip,
+                        created: controllersUtils.getDateSeal(tweetDate.getTime()),
+                      },
+                    };
+                    if(status.entities.media && status.entities.media.length) {
+                      updateQuery.$set['contents.media'] = status.entities.media
+                      .map(function(media) {
+                        return {
+                          type: 'photo' === media.type ?
+                            'image' :
+                            'other',
+                          src_url: media.media_url_https,
+                          link_url: media.expanded_url,
+                        };
+                      });
+                    }
+                    return context.db.collection('events').findOneAndUpdate({
+                      'contents.twitterId': status.id,
+                    }, updateQuery, {
+                      upsert: true,
+                      returnOriginal: false,
+                    })
+                    .then((result) => {
+                      context.bus.trigger({
+                        exchange: 'A_TRIP_UPDATED',
+                        contents: {
+                          trip_id: tripEvent._id,
+                          event_id: result.value._id,
+                          users_ids: tripEvent.trip.friends_ids.concat([tripEvent.owner_id]),
+                        },
+                      });
                     });
-                  });
-                }))
-                .then(context.store.set.bind(
-                    null,
-                    `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`,
-                    newSinceId
-                  ))
-                .then(resolve)
-                .catch(reject);
-              }
-            );
-          }));
+                  }))
+                  .then(context.store.set.bind(
+                      null,
+                      `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`,
+                      newSinceId
+                    ))
+                  .then(resolve)
+                  .catch(reject);
+                });
+            });
+          });
         }));
       });
     }));

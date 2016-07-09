@@ -8,6 +8,8 @@ const Promise = require('bluebird');
 const nock = require('nock');
 const Twitter = require('twitter');
 const initObjectIdStub = require('objectid-stub');
+const fs = require('fs');
+const path = require('path');
 
 const twitterJobs = require('../../workers/twitter/twitter.jobs.js');
 
@@ -192,14 +194,14 @@ describe('Twitter jobs', () => {
     });
 
     describe('when there are running trips', () => {
-      let twitterSatusesCall;
+      let twitterStatusesCall;
       let newEventId;
 
       beforeEach(() => {
         context.store.get.returns(Promise.resolve());
         context.store.set.returns(Promise.resolve());
         newEventId = context.createObjectId.next();
-        twitterSatusesCall = nock('https://api.twitter.com:443', {
+        twitterStatusesCall = nock('https://api.twitter.com:443', {
           encodedQueryParams: true,
         })
         .get('/1.1/statuses/user_timeline.json')
@@ -217,23 +219,7 @@ describe('Twitter jobs', () => {
             symbols: [],
             user_mentions: [],
             urls: [],
-            media: [{
-              id: 714550209066451000,
-              id_str: '714550209066450944',
-              indices: [75, 98],
-              media_url: 'http://pbs.twimg.com/media/CeqXoRmWQAAp3Tl.jpg',
-              media_url_https: 'https://pbs.twimg.com/media/CeqXoRmWQAAp3Tl.jpg',
-              url: 'https://t.co/i1tiWZ3lIk',
-              display_url: 'pic.twitter.com/i1tiWZ3lIk',
-              expanded_url: 'http://twitter.com/benoit_marques/status/714550269917446146/photo/1',
-              type: 'photo',
-              sizes: {
-                large: { w: 600, h: 800, resize: 'fit' },
-                thumb: { w: 150, h: 150, resize: 'crop' },
-                medium: { w: 600, h: 800, resize: 'fit' },
-                small: { w: 340, h: 453, resize: 'fit' },
-              },
-            }],
+            media: [],
           },
           truncated: false,
           metadata: {
@@ -356,7 +342,7 @@ describe('Twitter jobs', () => {
           contents: {},
         })
         .then(() => {
-          twitterSatusesCall.done();
+          twitterStatusesCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
             contents: {
@@ -376,8 +362,7 @@ describe('Twitter jobs', () => {
                 type: 'twitter-status',
                 geo: [],
                 text: 'Trop #lol 😂 https://t.co/i1tiWZ3lIk',
-                user_name: 'Benoît Marques',
-                profile_image: '',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
@@ -389,6 +374,114 @@ describe('Twitter jobs', () => {
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
               created: {
                 seal_date: new Date('2016-03-28T20:30:34.000Z'),
+              },
+            });
+          });
+        })
+        .then(done.bind(null, null))
+        .catch(done);
+      });
+
+    });
+
+    describe('when there are running trips and media tweets', function() {
+      var twitterStatusesCall;
+      var newEventId;
+
+      beforeEach(function() {
+        var statuses = JSON.parse(fs.readFileSync(
+          path.join(__dirname, '..', 'fixtures', 'twitter-media.json'),
+          'utf-8'
+        ));
+
+        context.store.get.returns(Promise.resolve());
+        context.store.set.returns(Promise.resolve());
+        newEventId = context.createObjectId.next();
+        twitterStatusesCall = nock('https://api.twitter.com:443', {
+          encodedQueryParams: true,
+        })
+        .get('/1.1/statuses/user_timeline.json')
+        .query({ user_id: '1664', include_rts: 'false' })
+        .reply(200, statuses, {
+          'content-type': 'application/json;charset=utf-8',
+          status: '200 OK',
+        });
+      });
+
+      beforeEach(function(done) {
+        context.db.collection('events').insertOne({
+          _id: castToObjectId('babababababababababababa'),
+          contents: {
+            trip_id: castToObjectId('babababababababababababa'),
+            type: 'trip-start',
+          },
+          owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+          trip: {
+            friends_ids: [],
+            title: 'Lol',
+            description: 'Lol',
+            hash: 'lol',
+            car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+          },
+          created: {
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          },
+          modified: [{
+            seal_date: new Date(context.time()),
+            user_id: castToObjectId('abbacacaabbacacaabbacaca'),
+            ip: '::1',
+          }],
+        }, done);
+      });
+
+      it('should retrieve tweets', function(done) {
+        twitterJobs[exchange](context, {
+          exchange: exchange,
+          contents: {},
+        })
+        .then(function() {
+          twitterStatusesCall.done();
+          assert.deepEqual(context.bus.trigger.args, [[{
+            exchange: 'A_TRIP_UPDATED',
+            contents: {
+              trip_id: castToObjectId('babababababababababababa'),
+              event_id: newEventId,
+              users_ids: [castToObjectId('abbacacaabbacacaabbacaca')],
+            },
+          }]]);
+          return context.db.collection('events').findOne({
+            _id: newEventId,
+          }).then(function(event) {
+            assert.deepEqual(event, {
+              _id: newEventId,
+              contents: {
+                twitterId: 731895976785522700,
+                trip_id: castToObjectId('babababababababababababa'),
+                type: 'twitter-status',
+                geo: [],
+                text:
+                  '@xavhan @_flexbox Trip Story commence à fonctionner :).' +
+                  ' Une bonne âme pour cette issue? https://t.co/aFHFPFyy8Z :/' +
+                  ' https://t.co/hAfg7FPqc6',
+                media: [{
+                  type: 'image',
+                  src_url: 'https://pbs.twimg.com/media/Cig3giKW0AAddsD.jpg',
+                  link_url: 'http://twitter.com/nfroidure/status/731895976785522688/photo/1',
+                }],
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              },
+              trip: {
+                friends_ids: [],
+                title: 'Lol',
+                description: 'Lol',
+                hash: 'lol',
+                car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
+              },
+              owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
+              created: {
+                seal_date: new Date('2016-05-15T17:16:13.000Z'),
               },
             });
           });

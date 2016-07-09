@@ -105,7 +105,7 @@ function facebookSyncJob(context) {
             );
             return new Promise(function pairFriendsPromise(resolve, reject) {
               request.get(
-                `${SERVER}/me/posts?access_token=${user.auth.facebook.accessToken}&fields=description,caption,link,created_time,id,photos,application,from,icon,message,message_tags,name,picture,place,status_type,type&since=${since}`,
+                `${SERVER}/me/posts?access_token=${user.auth.facebook.accessToken}&fields=description,caption,link,created_time,id,application,from,icon,message,message_tags,name,picture,place,status_type,type&since=${since}`,
                 function retrieveStatusCallback(err, res, body) {
                   let statuses;
 
@@ -153,7 +153,7 @@ function facebookSyncJob(context) {
                             status.place.location.longitude,
                             0,
                           ] : [],
-                        'contents.user_name': status.from.name,
+                        'contents.author_id': user._id,
                       },
                       $setOnInsert: {
                         _id: context.createObjectId(),
