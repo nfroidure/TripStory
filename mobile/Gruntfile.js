@@ -1,6 +1,7 @@
 // Generated on 2015-11-13 using generator-ionic 0.7.3
 'use strict';
 
+var packageConfig = require('./package')
 var _ = require('lodash');
 var path = require('path');
 var cordovaCli = require('cordova');
@@ -42,6 +43,7 @@ module.exports = function (grunt) {
       development: {
         constants: {
           ENV: {
+            agent: packageConfig.name + ':' + packageConfig.version,
             name: 'development',
             apiEndpoint: 'http://localhost:3000',
             pusherKey: '67c63872cef9daddfedc',
@@ -54,6 +56,7 @@ module.exports = function (grunt) {
       production: {
         constants: {
           ENV: {
+            agent: packageConfig.name + ':' + packageConfig.version,
             name: 'production',
             apiEndpoint: 'https://tripstory.insertafter.com',
             pusherKey: '1142ca3c31b809234e2e',

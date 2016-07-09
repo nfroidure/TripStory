@@ -67,6 +67,9 @@
         <span ng-switch-when="E_BAD_EMAIL">
           Did not found any user with this email.
         </span>
+        <span ng-switch-when="A_DISABLED_AGENT_VERSION">
+          Looks like your app is pretty old, please upgrade it!
+        </span>
         <span ng-switch-default>
           Unexpected error! We are going to fix it soon! ({{ actions.login.failed.code }})
         </span>
