@@ -1,24 +1,24 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
 
-var initRoutes = require('../../app/routes');
+const initRoutes = require('../../app/routes');
 
-describe('OAuth XEE endpoints', function() {
-  var context;
-  var fakeState = new Buffer(JSON.stringify({
+describe('OAuth XEE endpoints', () => {
+  let context;
+  const fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
   })).toString('base64');
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.tokens = {
       createToken: sinon.stub().returns({
@@ -43,50 +43,44 @@ describe('OAuth XEE endpoints', function() {
     });
     context.base = 'http://tripstory.insertafter.com';
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('entry point', function() {
+  describe('entry point', () => {
 
-    it('should redirect to the OAuth page', function(done) {
+    it('should redirect to the OAuth page', done => {
       request(context.app).get('/auth/xee')
         .expect(302)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://cloud.xee.com/v1/auth/auth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/xee/callback'
-            ) +
-            '&scope=user_get%20email_get%20car_get%20data_get%20' +
-              'location_get%20address_all%20accelerometer_get' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.XEE_ID
+            `https://cloud.xee.com/v1/auth/auth?response_type=code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/xee/callback`
+)}&scope=user_get%20email_get%20car_get%20data_get%20location_get%20address_all%20accelerometer_get&state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}`
           );
           done();
         });
@@ -94,23 +88,19 @@ describe('OAuth XEE endpoints', function() {
 
   });
 
-  describe('callback endpoint', function() {
-    var accessTokenCall;
-    var profileCall;
+  describe('callback endpoint', () => {
+    let accessTokenCall;
+    let profileCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       accessTokenCall = nock('https://cloud.xee.com:443', {
         encodedQueryParams: true,
       })
       .post(
         '/v1/auth/access_token.json',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/xee/callback'
-        ) +
-        '&client_id=' + context.env.XEE_ID +
-        '&client_secret=' + context.env.XEE_SECRET +
-        '&code=THISISIT'
+        `grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/xee/callback`
+)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT`
       )
       .basicAuth({
         user: context.env.XEE_ID,
@@ -149,20 +139,16 @@ describe('OAuth XEE endpoints', function() {
       });
     });
 
-    describe('when user is not known', function() {
+    describe('when user is not known', () => {
 
-      it('should work', function(done) {
-        var newUserId = context.createObjectId.next();
+      it('should work', done => {
+        const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/xee/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.XEE_ID +
-          '&client_secret=' + context.env.XEE_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          `/auth/xee/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT` // eslint-disable-line
         )
           .expect(301)
-          .end(function(err, res) {
+          .end((err, res) => {
             if(err) {
               return done(err);
             }
@@ -170,7 +156,7 @@ describe('OAuth XEE endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               'contents.name': 'Nicolas Froidure',
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: newUserId,
@@ -211,9 +197,9 @@ describe('OAuth XEE endpoints', function() {
 
     });
 
-    describe('when user is known', function() {
+    describe('when user is known', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').insertOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
           contents: {
@@ -232,16 +218,12 @@ describe('OAuth XEE endpoints', function() {
         }, done);
       });
 
-      it('should work', function(done) {
+      it('should work', done => {
         request(context.app).get(
-          '/auth/xee/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.XEE_ID +
-          '&client_secret=' + context.env.XEE_SECRET +
-          '&code=THISISIT'
+          `/auth/xee/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.XEE_ID}&client_secret=${context.env.XEE_SECRET}&code=THISISIT`
         )
           .expect(301)
-          .end(function(err) {
+          .end(err => {
             if(err) {
               return done(err);
             }
@@ -249,7 +231,7 @@ describe('OAuth XEE endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               _id: castToObjectId('abbacacaabbacacaabbacaca'),
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),

@@ -1,13 +1,13 @@
 'use strict';
 
-var controllersUtils = {
+const controllersUtils = {
   getDateSeal: controllersUtilsGetDateSeal,
 };
 
 module.exports = controllersUtils;
 
 function controllersUtilsGetDateSeal(time, req) {
-  var dateSeal = {
+  const dateSeal = {
     seal_date: new Date(time),
   };
 

@@ -1,8 +1,8 @@
 'use strict';
 
-var transformsUtils = require('../utils/transforms');
+const transformsUtils = require('../utils/transforms');
 
-var tripsTransforms = {
+const tripsTransforms = {
   fromCollection: tripsTransformsFromCollection,
   toCollection: tripsTransformsToCollection,
 };
@@ -10,7 +10,7 @@ var tripsTransforms = {
 module.exports = tripsTransforms;
 
 function tripsTransformsFromCollection(src) {
-  var dest = {
+  const dest = {
     _id: src._id,
     contents: src.contents,
   };
@@ -28,7 +28,7 @@ function tripsTransformsFromCollection(src) {
 }
 
 function tripsTransformsToCollection(src) {
-  var dest = {
+  const dest = {
     contents: src.contents,
   };
 

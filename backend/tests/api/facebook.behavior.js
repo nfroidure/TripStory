@@ -1,23 +1,23 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var nock = require('nock');
-var initObjectIdStub = require('objectid-stub');
-var initRoutes = require('../../app/routes');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const nock = require('nock');
+const initObjectIdStub = require('objectid-stub');
+const initRoutes = require('../../app/routes');
 
-describe('OAuth Facebook endpoints', function() {
-  var context;
-  var fakeState = new Buffer(JSON.stringify({
+describe('OAuth Facebook endpoints', () => {
+  let context;
+  const fakeState = new Buffer(JSON.stringify({
     contents: { fake: 'token' },
   })).toString('base64');
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.tokens = {
       createToken: sinon.stub().returns({
@@ -42,49 +42,44 @@ describe('OAuth Facebook endpoints', function() {
     });
     context.base = 'http://tripstory.insertafter.com';
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('entry point', function() {
+  describe('entry point', () => {
 
-    it('should redirect to the OAuth page', function(done) {
+    it('should redirect to the OAuth page', done => {
       request(context.app).get('/auth/facebook')
         .expect(302)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
           assert(context.tokens.createToken.callCount, 1);
           assert.equal(
             res.headers.location,
-            'https://www.facebook.com/v2.2/dialog/oauth' +
-            '?response_type=code' +
-            '&redirect_uri=' + encodeURIComponent(
-              context.base + '/auth/facebook/callback'
-            ) +
-            '&scope=public_profile%2Cemail%2Cuser_friends' +
-            '&state=' + encodeURIComponent(fakeState) +
-            '&client_id=' + context.env.FACEBOOK_ID
+            `https://www.facebook.com/v2.2/dialog/oauth?response_type=code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/facebook/callback`
+)}&scope=public_profile%2Cemail%2Cuser_friends&state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}`
           );
           done();
         });
@@ -92,23 +87,19 @@ describe('OAuth Facebook endpoints', function() {
 
   });
 
-  describe('callback endpoint', function() {
-    var accessTokenCall;
-    var profileCall;
+  describe('callback endpoint', () => {
+    let accessTokenCall;
+    let profileCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       accessTokenCall = nock('https://graph.facebook.com:443', {
         encodedQueryParams: true,
       })
       .post(
         '/oauth/access_token',
-        'grant_type=authorization_code' +
-        '&redirect_uri=' + encodeURIComponent(
-          context.base + '/auth/facebook/callback'
-        ) +
-        '&client_id=' + context.env.FACEBOOK_ID +
-        '&client_secret=' + context.env.FACEBOOK_SECRET +
-        '&code=THISISIT')
+        `grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+  `${context.base}/auth/facebook/callback`
+)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT`)
       .reply(
         200, {
           access_token: 'COMMON_BOY',
@@ -150,20 +141,16 @@ describe('OAuth Facebook endpoints', function() {
       });
     });
 
-    describe('when user is not known', function() {
+    describe('when user is not known', () => {
 
-      it('should work', function(done) {
-        var newUserId = context.createObjectId.next();
+      it('should work', done => {
+        const newUserId = context.createObjectId.next();
 
         request(context.app).get(
-          '/auth/facebook/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT'
+          `/auth/facebook/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT`
         )
           .expect(301)
-          .end(function(err) {
+          .end(err => {
             if(err) {
               return done(err);
             }
@@ -171,7 +158,7 @@ describe('OAuth Facebook endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               emailKeys: { $all: ['clown@fake.fr'] },
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: newUserId,
@@ -215,9 +202,9 @@ describe('OAuth Facebook endpoints', function() {
 
     });
 
-    describe('when user is known', function() {
+    describe('when user is known', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').insertOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
           contents: {
@@ -236,16 +223,12 @@ describe('OAuth Facebook endpoints', function() {
         }, done);
       });
 
-      it('should work', function(done) {
+      it('should work', done => {
         request(context.app).get(
-          '/auth/facebook/callback' +
-          '?state=' + encodeURIComponent(fakeState) +
-          '&client_id=' + context.env.FACEBOOK_ID +
-          '&client_secret=' + context.env.FACEBOOK_SECRET +
-          '&code=THISISIT' // eslint-disable-line
+          `/auth/facebook/callback?state=${encodeURIComponent(fakeState)}&client_id=${context.env.FACEBOOK_ID}&client_secret=${context.env.FACEBOOK_SECRET}&code=THISISIT` // eslint-disable-line
         )
           .expect(301)
-          .end(function(err) {
+          .end(err => {
             if(err) {
               return done(err);
             }
@@ -253,7 +236,7 @@ describe('OAuth Facebook endpoints', function() {
             profileCall.done();
             context.db.collection('users').findOne({
               _id: castToObjectId('abbacacaabbacacaabbacaca'),
-            }).then(function(user) {
+            }).then(user => {
               assert(user, 'User was created!');
               assert.deepEqual(user, {
                 _id: castToObjectId('abbacacaabbacacaabbacaca'),

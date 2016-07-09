@@ -1,27 +1,26 @@
 'use strict';
 
-var request = require('request');
-var Promise = require('bluebird');
+const request = require('request');
+const Promise = require('bluebird');
 
-var locationUtils = {
+const locationUtils = {
   getFormatedAddress: locationGetFormatedAddress,
 };
 
 module.exports = locationUtils;
 
 function locationGetFormatedAddress(lat, lng) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     request.get(
-    'http://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-    lat + ',' + lng,
-    function(err, res, body) {
-      if (err) {
+    `http://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}`,
+    (err, res, body) => {
+      if(err) {
         return reject(err);
       }
 
       try {
         body = JSON.parse(body);
-      } catch(err2) {
+      } catch (err2) {
         return reject(err2);
       }
 

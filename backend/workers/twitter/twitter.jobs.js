@@ -1,11 +1,11 @@
 'use strict';
 
-var workersUtils = require('../utils');
-var controllersUtils = require('../../app/utils/controllers');
-var Twitter = require('twitter');
-var SINCE_ID_STORE_PREFIX = 'twitter:since_id:';
+const workersUtils = require('../utils');
+const controllersUtils = require('../../app/utils/controllers');
+const Twitter = require('twitter');
+const SINCE_ID_STORE_PREFIX = 'twitter:since_id:';
 
-var twitterJobs = {
+const twitterJobs = {
   A_TWITTER_SYNC: twitterSyncJob,
   A_TWITTER_SIGNUP: pairTwitterFriends,
   A_TWITTER_LOGIN: pairTwitterFriends,
@@ -21,15 +21,15 @@ function twitterSyncJob(context) {
     if(!tripsEvents.length) {
       return Promise.resolve();
     }
-    return Promise.all(tripsEvents.map(function(tripEvent) {
+    return Promise.all(tripsEvents.map(tripEvent => {
       context.logger.debug('Retrieving trip twitter users for:', tripEvent.trip.title);
       return context.db.collection('users').find({
         _id: { $in: tripEvent.trip.friends_ids.concat(tripEvent.owner_id) },
         'auth.twitter': { $exists: true },
       }).toArray()
-      .then(function(users) {
-        context.logger.debug('Found ' + users.length + ' twitter users for:', tripEvent.trip.title);
-        return Promise.all(users.map(function(user) {
+      .then((users) => {
+        context.logger.debug(`Found ${users.length} twitter users for:`, tripEvent.trip.title);
+        return Promise.all(users.map((user) => {
           var newSinceId;
           var twitter = new Twitter({
             consumer_key: process.env.TWITTER_ID,
@@ -38,13 +38,12 @@ function twitterSyncJob(context) {
             access_token_secret: user.auth.twitter.refreshToken,
           });
 
-          context.logger.debug('Getting ' + user.contents.name + ' twitts');
+          context.logger.debug(`Getting ${user.contents.name} twitts`);
           return context.store.get(
-            SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-            user._id.toString()
+            `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`
           )
           .then(function(sinceId) {
-            return new Promise(function(resolve, reject) {
+            return new Promise((resolve, reject) => {
               twitter.get(
                 'statuses/user_timeline', {
                   user_id: user.auth.twitter.id,
@@ -104,7 +103,7 @@ function twitterSyncJob(context) {
                       upsert: true,
                       returnOriginal: false,
                     })
-                    .then(function(result) {
+                    .then((result) => {
                       context.bus.trigger({
                         exchange: 'A_TRIP_UPDATED',
                         contents: {
@@ -117,14 +116,12 @@ function twitterSyncJob(context) {
                   }))
                   .then(context.store.set.bind(
                       null,
-                      SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-                      user._id.toString(),
+                      `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`,
                       newSinceId
                     ))
                   .then(resolve)
                   .catch(reject);
-                }
-              );
+                });
             });
           });
         }));
@@ -136,8 +133,8 @@ function twitterSyncJob(context) {
 function pairTwitterFriends(context, event) {
   return context.db.collection('users').findOne({
     _id: event.contents.user_id,
-  }).then(function(user) {
-    var twitter = new Twitter({
+  }).then(user => {
+    const twitter = new Twitter({
       consumer_key: process.env.TWITTER_ID,
       consumer_secret: process.env.TWITTER_SECRET,
       access_token_key: user.auth.twitter.accessToken,
@@ -156,10 +153,10 @@ function pairTwitterFriends(context, event) {
           context.logger.debug('Retrieved twitter friends', data);
           context.db.collection('users').find({
             'auth.twitter.id': { $in: (data.ids || [])
-                .map(function(id) { return id + ''; }) },
+                .map(id => `${id}`) },
           }, { _id: '' }).toArray()
-          .then(function(friends) {
-            var friendsIds = friends.map(function(friend) { return friend._id; });
+          .then(friends => {
+            const friendsIds = friends.map(friend => friend._id);
 
             if(!friendsIds.length) {
               return Promise.resolve();

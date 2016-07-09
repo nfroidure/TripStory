@@ -1,9 +1,9 @@
 'use strict';
 
-var initTripController = require('./trips.controller');
+const initTripController = require('./trips.controller');
 
 module.exports = function initTripsRoutes(context) {
-  var tripController = initTripController(context);
+  const tripController = initTripController(context);
 
   context.app.get(
     '/api/v0/trips',

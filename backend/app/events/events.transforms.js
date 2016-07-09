@@ -1,8 +1,8 @@
 'use strict';
 
-var transformsUtils = require('../utils/transforms');
+const transformsUtils = require('../utils/transforms');
 
-var eventsTransforms = {
+const eventsTransforms = {
   fromCollection: eventsTransformsFromCollection,
   toCollection: eventsTransformsToCollection,
 };
@@ -10,7 +10,7 @@ var eventsTransforms = {
 module.exports = eventsTransforms;
 
 function eventsTransformsFromCollection(src) {
-  var dest = {
+  const dest = {
     _id: src._id,
     contents: src.contents,
     created_date: src.created.seal_date,
@@ -20,7 +20,7 @@ function eventsTransformsFromCollection(src) {
 }
 
 function eventsTransformsToCollection(src) {
-  var dest = {
+  const dest = {
     contents: src.contents,
   };
 

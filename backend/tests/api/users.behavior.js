@@ -1,21 +1,21 @@
 'use strict';
 
-var request = require('supertest');
-var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var Promise = require('bluebird');
-var initObjectIdStub = require('objectid-stub');
+const request = require('supertest');
+const express = require('express');
+const path = require('path');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const Promise = require('bluebird');
+const initObjectIdStub = require('objectid-stub');
 
-var initRoutes = require('../../app/routes');
+const initRoutes = require('../../app/routes');
 
-describe('Users endpoints', function() {
-  var context;
+describe('Users endpoints', () => {
+  let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {
@@ -31,32 +31,32 @@ describe('Users endpoints', function() {
       ctor: castToObjectId,
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  before(function(done) {
+  before(done => {
     context.app = express();
     initRoutes(context);
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  describe('for simple users', function() {
+  describe('for simple users', () => {
 
-    beforeEach(function(done) {
+    beforeEach(done => {
       context.db.collection('users').insertOne({
         _id: castToObjectId('abbacacaabbacacaabbacaca'),
         contents: {
@@ -73,7 +73,7 @@ describe('Users endpoints', function() {
       }, done);
     });
 
-    it('should allow to update its profile', function(done) {
+    it('should allow to update its profile', done => {
       request(context.app).put('/api/v0/users/abbacacaabbacacaabbacaca')
         .auth('popol@moon.u', 'test')
         .send({
@@ -83,7 +83,7 @@ describe('Users endpoints', function() {
           },
         })
         .expect(201)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -98,11 +98,11 @@ describe('Users endpoints', function() {
         });
     });
 
-    it('should allow to delete its profile', function(done) {
+    it('should allow to delete its profile', done => {
       request(context.app).delete('/api/v0/users/abbacacaabbacacaabbacaca')
         .auth('popol@moon.u', 'test')
         .expect(410)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -111,9 +111,9 @@ describe('Users endpoints', function() {
         });
     });
 
-    describe('with friends', function() {
+    describe('with friends', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').insertOne({
           _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
           contents: {
@@ -124,7 +124,7 @@ describe('Users endpoints', function() {
         }, done);
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').updateOne({
           _id: castToObjectId('abbacacaabbacacaabbacaca'),
         }, {
@@ -134,11 +134,11 @@ describe('Users endpoints', function() {
         }, done);
       });
 
-      it('should allow to list them', function(done) {
+      it('should allow to list them', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca/friends')
           .auth('popol@moon.u', 'test')
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             if(err) {
               return done(err);
             }
@@ -155,14 +155,14 @@ describe('Users endpoints', function() {
 
     });
 
-    it('should allow to invite friends', function(done) {
+    it('should allow to invite friends', done => {
       request(context.app).post('/api/v0/users/abbacacaabbacacaabbacaca/friends')
         .auth('popol@moon.u', 'test')
         .send({
           email: 'jdlf@academie.fr',
         })
         .expect(204)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -177,9 +177,9 @@ describe('Users endpoints', function() {
         });
     });
 
-    describe('for signuped friends', function() {
+    describe('for signuped friends', () => {
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('users').insertOne({
           _id: castToObjectId('babababababababababababa'),
           contents: {
@@ -196,14 +196,14 @@ describe('Users endpoints', function() {
         }, done);
       });
 
-      it('should allow to add friends', function(done) {
+      it('should allow to add friends', done => {
         request(context.app).post('/api/v0/users/abbacacaabbacacaabbacaca/friends')
           .auth('popol@moon.u', 'test')
           .send({
             email: 'jdlf@academie.fr',
           })
           .expect(204)
-          .end(function(err, res) {
+          .end((err, res) => {
             if(err) {
               return done(err);
             }
@@ -222,7 +222,7 @@ describe('Users endpoints', function() {
                 _id: castToObjectId('babababababababababababa'),
               }),
             ])
-            .spread(function(user, friend) {
+            .spread((user, friend) => {
               assert.deepEqual(user.friends_ids, [
                 castToObjectId('babababababababababababa'),
               ]);
@@ -237,11 +237,11 @@ describe('Users endpoints', function() {
 
     });
 
-    it('should disallow to get others profile', function(done) {
+    it('should disallow to get others profile', done => {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')
         .expect(403)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -250,11 +250,11 @@ describe('Users endpoints', function() {
         });
     });
 
-    it('should disallow to list other users', function(done) {
+    it('should disallow to list other users', done => {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')
         .expect(403)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -265,9 +265,9 @@ describe('Users endpoints', function() {
 
   });
 
-  describe('for root users', function() {
+  describe('for root users', () => {
 
-    beforeEach(function(done) {
+    beforeEach(done => {
       context.db.collection('users').insertOne({
         _id: castToObjectId('abbacacaabbacacaabbacaca'),
         contents: {
@@ -283,11 +283,11 @@ describe('Users endpoints', function() {
       }, done);
     });
 
-    it('should allow to get others profile', function(done) {
+    it('should allow to get others profile', done => {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')
         .expect(404)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }
@@ -296,11 +296,11 @@ describe('Users endpoints', function() {
         });
     });
 
-    it('should list users', function(done) {
+    it('should list users', done => {
       request(context.app).get('/api/v0/users')
         .auth('popol@moon.u', 'test')
         .expect(200)
-        .end(function(err, res) {
+        .end((err, res) => {
           if(err) {
             return done(err);
           }

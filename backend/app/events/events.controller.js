@@ -1,15 +1,15 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var eventsTransforms = require('./events.transforms');
-var controllersUtils = require('../utils/controllers');
-var Promise = require('bluebird');
-var YHTTPError = require('yhttperror');
+const castToObjectId = require('mongodb').ObjectId;
+const eventsTransforms = require('./events.transforms');
+const controllersUtils = require('../utils/controllers');
+const Promise = require('bluebird');
+const YHTTPError = require('yhttperror');
 
 module.exports = initEventsController;
 
 function initEventsController(context) {
-  var eventController = {
+  const eventController = {
     list: eventControllerList,
     get: eventControllerGet,
     put: eventControllerPut,
@@ -19,7 +19,7 @@ function initEventsController(context) {
   return eventController;
 
   function eventControllerList(req, res, next) {
-    var query = {};
+    const query = {};
 
     if(req.params.user_id) {
       query.$or = [{
@@ -29,7 +29,7 @@ function initEventsController(context) {
       }];
     }
     context.db.collection('events').find(query).sort({ 'created.seal_date': 1 }).toArray()
-    .then(function(entries) {
+    .then((entries) => {
       context.logger.debug('Sending:', entries);
       res.status(200).send(entries.map(eventsTransforms.fromCollection));
     }).catch(next);
@@ -44,7 +44,7 @@ function initEventsController(context) {
       }],
       _id: castToObjectId(req.params.event_id),
     })
-    .then(function(entry) {
+    .then((entry) => {
       if(!entry) {
         return res.sendStatus(404);
       }
@@ -53,7 +53,7 @@ function initEventsController(context) {
   }
 
   function eventControllerPut(req, res, next) {
-    Promise.resolve().then(function() {
+    Promise.resolve().then(() => {
       if(-1 !== ['trip-start'].indexOf(req.body.contents.type)) {
         throw new YHTTPError(400, 'E_UNCREATABLE_EVENT', req.params.event_id);
       }
@@ -62,8 +62,8 @@ function initEventsController(context) {
         'contents.type': 'trip-start',
         'contents.trip_id': castToObjectId(req.body.contents.trip_id),
       });
-    }).then(function(startEvent) {
-      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    }).then((startEvent) => {
+      const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
       if(!startEvent) {
         return res.send(400);
@@ -91,7 +91,7 @@ function initEventsController(context) {
         upsert: true,
         returnOriginal: false,
       })
-      .then(function(result) {
+      .then((result) => {
         context.bus.trigger({
           exchange: 'A_TRIP_UPDATED',
           contents: {
@@ -111,7 +111,7 @@ function initEventsController(context) {
       _id: castToObjectId(req.params.event_id),
       owner_id: castToObjectId(req.params.user_id),
     })
-    .then(function(event) {
+    .then((event) => {
       if(!event) {
         return Promise.resolve();
       }
@@ -121,7 +121,7 @@ function initEventsController(context) {
       return context.db.collection('events').deleteOne({
         _id: castToObjectId(req.params.event_id),
       })
-      .then(function() {
+      .then(() => {
         context.bus.trigger({
           exchange: 'A_TRIP_UPDATED',
           contents: {
@@ -131,7 +131,7 @@ function initEventsController(context) {
           },
         });
       });
-    }).then(function() {
+    }).then(() => {
       res.status(410).send();
     }).catch(next);
   }

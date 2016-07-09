@@ -1,20 +1,20 @@
 'use strict';
 
-var bcrypt = require('bcrypt');
-var clone = require('clone');
-var reaccess = require('express-reaccess');
-var YHTTPError = require('yhttperror');
+const bcrypt = require('bcrypt');
+const clone = require('clone');
+const reaccess = require('express-reaccess');
+const YHTTPError = require('yhttperror');
 
-var DEFAULT_TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
+const DEFAULT_TOKEN_DURATION = 60 * 60 * 1000; // 1 hour to log in
 
-var authenticationUtils = {
+const authenticationUtils = {
   normalizeEmail: authenticationUtilsNormalizeEmail,
   createDefaultRights: authenticationUtilsCreateDefaultRights,
   createRights: authenticationUtilsCreateRights,
   createPasswordHash: authenticationUtilsCreatePasswordHash,
   comparePasswordToHash: authenticationUtilsComparePasswordToHash,
-  initPassportWithAStateObject: initPassportWithAStateObject,
-  checkStateObjectAndPassport: checkStateObjectAndPassport,
+  initPassportWithAStateObject,
+  checkStateObjectAndPassport,
   redirectToApp: authenticationUtilsRedirectToApp,
   redirectToProfile: authenticationUtilsRedirectToProfile,
 };
@@ -62,12 +62,12 @@ function authenticationUtilsCreateRights() {
 }
 
 function authenticationUtilsCreatePasswordHash(password) {
-  return new Promise(function(resolve, reject) {
-    bcrypt.genSalt(10, function genSaltHandler(err, salt) {
+  return new Promise((resolve, reject) => {
+    bcrypt.genSalt(10, (err, salt) => {
       if(err) {
         return reject(err);
       }
-      bcrypt.hash(password, salt, function hashHandler(err2, hash) {
+      bcrypt.hash(password, salt, (err2, hash) => {
         if(err2) {
           return reject(err2);
         }
@@ -78,8 +78,8 @@ function authenticationUtilsCreatePasswordHash(password) {
 }
 
 function authenticationUtilsComparePasswordToHash(password, hash) {
-  return new Promise(function(resolve, reject) {
-    bcrypt.compare(password, hash, function compareHandler(err, res) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, (err, res) => {
       if(err) {
         return reject(err);
       }
@@ -90,10 +90,10 @@ function authenticationUtilsComparePasswordToHash(password, hash) {
 
 function initPassportWithAStateObject(context, type, params) {
   return function initPassportWithAStateObjectCb(req, res, next) {
-    var stateContents = {
-      type: type,
+    const stateContents = {
+      type,
     };
-    var state;
+    let state;
 
     params = clone(params);
 
@@ -113,8 +113,7 @@ function initPassportWithAStateObject(context, type, params) {
     params.state = (new Buffer(JSON.stringify(state))).toString('base64');
     // Extra glue for twitter OAuth1...
     if('twitter' === type) {
-      params.callbackURL = context.base + '/auth/twitter/callback?state=' +
-        params.state;
+      params.callbackURL = `${context.base}/auth/twitter/callback?state=${params.state}`;
     }
     context.logger.debug('Assigned a state', state);
     context.passport.authenticate(type, params)(req, res, next);
@@ -123,12 +122,12 @@ function initPassportWithAStateObject(context, type, params) {
 
 function checkStateObjectAndPassport(context, type, options) {
   return function checkStateObjectAndPassportCb(req, res, next) {
-    var state;
+    let state;
 
     try {
       state = JSON.parse(new Buffer(req.query.state, 'base64').toString('utf8'));
       context.tokens.checkToken(state, state.hash);
-    } catch(err) {
+    } catch (err) {
       return next(YHTTPError.cast(err));
     }
     context.logger.debug('Collected a state', state);
@@ -141,7 +140,7 @@ function authenticationUtilsRedirectToApp(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
-  res.setHeader('Location', context.base + '/#/app/trips');
+  res.setHeader('Location', `${context.base}/#/app/trips`);
   res.sendStatus(301);
 }
 
@@ -149,6 +148,6 @@ function authenticationUtilsRedirectToProfile(context, req, res) {
   if(!req.user) {
     return res.send(401);
   }
-  res.setHeader('Location', context.base + '/api/v0/users/' + req.user._id.toString());
+  res.setHeader('Location', `${context.base}/api/v0/users/${req.user._id.toString()}`);
   res.sendStatus(301);
 }

@@ -1,22 +1,22 @@
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var castToObjectId = require('mongodb').ObjectId;
-var sinon = require('sinon');
-var assert = require('assert');
-var Promise = require('bluebird');
-var nock = require('nock');
-var fs = require('fs');
-var path = require('path');
-var Twitter = require('twitter');
-var initObjectIdStub = require('objectid-stub');
+const MongoClient = require('mongodb').MongoClient;
+const castToObjectId = require('mongodb').ObjectId;
+const sinon = require('sinon');
+const assert = require('assert');
+const Promise = require('bluebird');
+const nock = require('nock');
+const Twitter = require('twitter');
+const initObjectIdStub = require('objectid-stub');
+const fs = require('fs');
+const path = require('path');
 
-var twitterJobs = require('../../workers/twitter/twitter.jobs.js');
+const twitterJobs = require('../../workers/twitter/twitter.jobs.js');
 
-describe('Twitter jobs', function() {
-  var context;
+describe('Twitter jobs', () => {
+  let context;
 
-  before(function(done) {
+  before(done => {
     context = {};
     context.time = sinon.stub().returns(1664);
     context.env = {};
@@ -36,13 +36,13 @@ describe('Twitter jobs', function() {
       access_token_secret: 'process.env.TWITTER_ACCESS_TOKEN_SECRET',
     });
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
-      .then(function(db) {
+      .then(db => {
         context.db = db;
         done();
       });
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.bus = {
       trigger: sinon.spy(),
     };
@@ -53,11 +53,11 @@ describe('Twitter jobs', function() {
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     context.db.collection('users').deleteMany({}, done);
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     context.db.collection('users').insertMany([{
       _id: castToObjectId('abbacacaabbacacaabbacaca'),
       contents: {
@@ -91,13 +91,13 @@ describe('Twitter jobs', function() {
     }], done);
   });
 
-  describe('for Twitter friends sync', function() {
-    var friendsCall;
+  describe('for Twitter friends sync', () => {
+    let friendsCall;
 
-    beforeEach(function() {
+    beforeEach(() => {
       friendsCall =
       nock('https://api.twitter.com:443', {
-        encodedQueryParams: true
+        encodedQueryParams: true,
       })
       .get('/1.1/friends/ids.json')
       .reply(200, {
@@ -105,7 +105,7 @@ describe('Twitter jobs', function() {
         next_cursor: 0,
         next_cursor_str: '0',
         previous_cursor: 0,
-        previous_cursor_str: '0'
+        previous_cursor_str: '0',
       }, {
         'content-disposition': 'attachment; filename=json.json',
         'content-length': '3773',
@@ -131,15 +131,15 @@ describe('Twitter jobs', function() {
 
     });
 
-    ['A_TWITTER_SIGNUP', 'A_TWITTER_LOGIN'].forEach(function(exchange) {
-      it('should pair friends', function(done) {
+    ['A_TWITTER_SIGNUP', 'A_TWITTER_LOGIN'].forEach(exchange => {
+      it('should pair friends', done => {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {
             user_id: castToObjectId('abbacacaabbacacaabbacaca'),
           },
         })
-        .then(function() {
+        .then(() => {
           friendsCall.done();
           return Promise.all([
             context.db.collection('users').findOne({
@@ -148,7 +148,7 @@ describe('Twitter jobs', function() {
             context.db.collection('users').findOne({
               _id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             }),
-          ]).spread(function(user, friend) {
+          ]).spread((user, friend) => {
             assert.deepEqual(user.friends_ids, [
               castToObjectId('b17eb17eb17eb17eb17eb17e'),
             ]);
@@ -165,24 +165,24 @@ describe('Twitter jobs', function() {
 
   });
 
-  describe('for Twitter statuses sync', function() {
-    var exchange = 'A_TWITTER_SYNC';
+  describe('for Twitter statuses sync', () => {
+    const exchange = 'A_TWITTER_SYNC';
 
-    afterEach(function(done) {
+    afterEach(done => {
       context.db.collection('events').deleteMany({}, done);
     });
 
-    describe('when there are no trip', function() {
+    describe('when there are no trip', () => {
 
-      it('should do nothing', function(done) {
+      it('should do nothing', done => {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           assert.deepEqual(context.bus.trigger.args, []);
           return context.db.collection('events').count({})
-          .then(function(count) {
+          .then(count => {
             assert.equal(count, 0);
           });
         })
@@ -193,11 +193,11 @@ describe('Twitter jobs', function() {
 
     });
 
-    describe('when there are running trips', function() {
-      var twitterStatusesCall;
-      var newEventId;
+    describe('when there are running trips', () => {
+      let twitterStatusesCall;
+      let newEventId;
 
-      beforeEach(function() {
+      beforeEach(() => {
         context.store.get.returns(Promise.resolve());
         context.store.set.returns(Promise.resolve());
         newEventId = context.createObjectId.next();
@@ -308,7 +308,7 @@ describe('Twitter jobs', function() {
         });
       });
 
-      beforeEach(function(done) {
+      beforeEach(done => {
         context.db.collection('events').insertOne({
           _id: castToObjectId('babababababababababababa'),
           contents: {
@@ -336,12 +336,12 @@ describe('Twitter jobs', function() {
         }, done);
       });
 
-      it('should retrieve tweets', function(done) {
+      it('should retrieve tweets', done => {
         twitterJobs[exchange](context, {
-          exchange: exchange,
+          exchange,
           contents: {},
         })
-        .then(function() {
+        .then(() => {
           twitterStatusesCall.done();
           assert.deepEqual(context.bus.trigger.args, [[{
             exchange: 'A_TRIP_UPDATED',
@@ -353,7 +353,7 @@ describe('Twitter jobs', function() {
           }]]);
           return context.db.collection('events').findOne({
             _id: newEventId,
-          }).then(function(event) {
+          }).then(event => {
             assert.deepEqual(event, {
               _id: newEventId,
               contents: {

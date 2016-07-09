@@ -1,29 +1,29 @@
 'use strict';
 
-var request = require('request');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var BasicStrategy = require('passport-http').BasicStrategy;
-var FacebookStrategy = require('passport-facebook');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var TwitterStrategy = require('passport-twitter').Strategy;
-var OAuth2Strategy = require('passport-oauth2');
-var YError = require('yerror');
-var castToObjectId = require('mongodb').ObjectId;
-var authenticationUtils = require('./authentication.utils');
-var Promise = require('bluebird');
-var YHTTPError = require('yhttperror');
+const request = require('request');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const BasicStrategy = require('passport-http').BasicStrategy;
+const FacebookStrategy = require('passport-facebook');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
+const OAuth2Strategy = require('passport-oauth2');
+const YError = require('yerror');
+const castToObjectId = require('mongodb').ObjectId;
+const authenticationUtils = require('./authentication.utils');
+const Promise = require('bluebird');
+const YHTTPError = require('yhttperror');
 
 module.exports = initAuthenticationController;
 
 function initAuthenticationController(context) {
 
   // Serialization
-  passport.serializeUser(function passportSerializeUser(user, done) {
+  passport.serializeUser((user, done) => {
     context.logger.debug('Serialized user:', user._id.toString());
     done(null, user._id.toString());
   });
-  passport.deserializeUser(function passportDeserializeUser(id, done) {
+  passport.deserializeUser((id, done) => {
     context.logger.debug('Deserialized user:', id);
     Promise.resolve(context.db.collection('users').findOne({
       _id: castToObjectId(id),
@@ -52,7 +52,7 @@ function initAuthenticationController(context) {
     passport.use(new FacebookStrategy({
       clientID: context.env.FACEBOOK_ID,
       clientSecret: context.env.FACEBOOK_SECRET,
-      callbackURL: context.base + '/auth/facebook/callback',
+      callbackURL: `${context.base}/auth/facebook/callback`,
       enableProof: false,
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       passReqToCallback: true,
@@ -64,7 +64,7 @@ function initAuthenticationController(context) {
     passport.use(new GoogleStrategy({
       clientID: context.env.GOOGLE_ID,
       clientSecret: context.env.GOOGLE_SECRET,
-      callbackURL: context.base + '/auth/google/callback',
+      callbackURL: `${context.base}/auth/google/callback`,
       passReqToCallback: true,
     }, googleLoginLogic));
   } else {
@@ -74,7 +74,7 @@ function initAuthenticationController(context) {
     passport.use(new TwitterStrategy({
       consumerKey: context.env.TWITTER_ID,
       consumerSecret: context.env.TWITTER_SECRET,
-      callbackURL: context.base + '/auth/twitter/callback',
+      callbackURL: `${context.base}/auth/twitter/callback`,
       passReqToCallback: true,
     }, twitterLoginLogic));
   } else {
@@ -86,7 +86,7 @@ function initAuthenticationController(context) {
       tokenURL: 'https://cloud.xee.com/v1/auth/access_token.json',
       clientID: context.env.XEE_ID,
       clientSecret: context.env.XEE_SECRET,
-      callbackURL: context.base + '/auth/xee/callback',
+      callbackURL: `${context.base}/auth/xee/callback`,
       useAuthorizationHeaderForGET: true,
       useAuthorizationHeaderForPOST: true,
       passReqToCallback: true,
@@ -99,17 +99,17 @@ function initAuthenticationController(context) {
     context.logger.debug('Authentication attempt:', email);
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
-    }, function(err, user) {
-      if (err) {
+    }, (err, user) => {
+      if(err) {
         return done(err);
       }
-      if (!user) {
+      if(!user) {
         return done(null, false, { message: 'E_BAD_EMAIL' }, 400);
       }
 
       authenticationUtils.comparePasswordToHash(password, user.passwordHash)
-        .then(function(matched) {
-          if (!matched) {
+        .then(matched => {
+          if(!matched) {
             return done(null, false, { message: 'E_BAD_PASSWORD' }, 400);
           }
           context.logger.info('Authenticated a user:', user._id, user.contents.name);
@@ -119,8 +119,8 @@ function initAuthenticationController(context) {
   }
 
   function localSignupLogic(req, email, password, done) {
-    var upsertId = context.createObjectId();
-    var name = req.body.name;
+    const upsertId = context.createObjectId();
+    const name = req.body.name;
 
     context.logger.debug('Signup attempt:', email, name, upsertId);
     Promise.all([
@@ -128,7 +128,7 @@ function initAuthenticationController(context) {
         emailKeys: { $all: [authenticationUtils.normalizeEmail(email)] },
       }),
       authenticationUtils.createPasswordHash(password),
-    ]).spread(function(user, passwordHash) {
+    ]).spread((user, passwordHash) => {
       if(user) {
         throw new YHTTPError(400, 'E_USER_EXISTS', user._id);
       }
@@ -144,29 +144,29 @@ function initAuthenticationController(context) {
       }, {
         $set: {
           contents: {
-            name: name,
-            email: email,
+            name,
+            email,
           },
           emailKeys: [authenticationUtils.normalizeEmail(email)],
         },
         $setOnInsert: {
-          passwordHash: passwordHash,
+          passwordHash,
           _id: upsertId,
           rights: authenticationUtils.createRights(),
         },
       }, {
         upsert: true,
         returnOriginal: false,
-      }).then(function(result) {
+      }).then(result => {
         done(null, result.value);
       });
     }).catch(done);
   }
 
   function facebookLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Facebook auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -181,15 +181,13 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.facebook': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
         },
       },
       $addToSet: {
         emailKeys: {
-          $each: profile.emails.map(function(email) {
-            return authenticationUtils.normalizeEmail(email.value);
-          }),
+          $each: profile.emails.map(email => authenticationUtils.normalizeEmail(email.value)),
         },
       },
     };
@@ -200,9 +198,7 @@ function initAuthenticationController(context) {
       findQuery.$or = [{
         'auth.facebook.id': profile.id,
       }, {
-        'contents.email': { $in: profile.emails.map(function(email) {
-          return email.value;
-        }) },
+        'contents.email': { $in: profile.emails.map(email => email.value) },
       }];
       // It looks like Mongo can't recognize when an upsert is beeing processed...
       // So we avoid setting the upsert id ourself when we are sure the user exists.
@@ -220,14 +216,14 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function facebookLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
       if(!result.lastErrorObject.updatedExisting) {
         context.logger.info(
           'Facebook signup:', profile.displayName,
-          ' https://facebook.com/' + profile.id
+          ` https://facebook.com/${profile.id}`
         );
         context.bus.trigger({
           exchange: 'A_FB_SIGNUP',
@@ -250,9 +246,9 @@ function initAuthenticationController(context) {
   }
 
   function googleLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Google auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -267,16 +263,14 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.google': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
           emails: profile.emails,
         },
       },
       $addToSet: {
         emailKeys: {
-          $each: profile.emails.map(function(email) {
-            return authenticationUtils.normalizeEmail(email.value);
-          }),
+          $each: profile.emails.map(email => authenticationUtils.normalizeEmail(email.value)),
         },
       },
     };
@@ -287,9 +281,7 @@ function initAuthenticationController(context) {
       findQuery.$or = [{
         'auth.google.id': profile.id,
       }, {
-        'contents.email': { $in: profile.emails.map(function(email) {
-          return email.value;
-        }) },
+        'contents.email': { $in: profile.emails.map(email => email.value) },
       }];
       // It looks like Mongo can't recognize when an upsert is beeing processed...
       // So we avoid setting the upsert id ourself when we are sure the user exists.
@@ -307,7 +299,7 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function googleLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
@@ -336,9 +328,9 @@ function initAuthenticationController(context) {
   }
 
   function twitterLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
-    var findQuery = {};
-    var updateQuery;
+    const upsertId = context.createObjectId();
+    const findQuery = {};
+    let updateQuery;
 
     context.logger.debug('Twitter auth info:', JSON.stringify(profile, null, 2), accessToken);
 
@@ -352,8 +344,8 @@ function initAuthenticationController(context) {
         avatar_url: profile.photos[0].value,
         'auth.twitter': {
           id: profile.id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken,
+          refreshToken,
         },
       },
     };
@@ -378,7 +370,7 @@ function initAuthenticationController(context) {
     context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
       upsert: true,
       returnOriginal: false,
-    }, function twitterLoginHandler(err, result) {
+    }, (err, result) => {
       if(err) {
         return done(err);
       }
@@ -408,34 +400,34 @@ function initAuthenticationController(context) {
   }
 
   function xeeLoginLogic(req, accessToken, refreshToken, profile, done) { // eslint-disable-line
-    var upsertId = context.createObjectId();
+    const upsertId = context.createObjectId();
 
     if(!req._authState.contents) {
       return done(new YError('E_NO_STATE'));
     }
 
-    new Promise(function(resolve, reject) {
+    new Promise((resolve, reject) => {
       request.get(
-      'https://cloud.xee.com/v1/user/me.json?access_token=' + accessToken,
-      function(err, httpRes, httpData) {
+      `https://cloud.xee.com/v1/user/me.json?access_token=${accessToken}`,
+      (err, httpRes, httpData) => {
         if(err) {
           return reject(err);
         }
         resolve(JSON.parse(httpData));
       });
-    }).then(function(profile) {
-      var findQuery = {};
-      var updateQuery;
+    }).then(profile => {
+      const findQuery = {};
+      let updateQuery;
 
       context.logger.debug('Xee auth info:', JSON.stringify(profile, null, 2), accessToken);
 
       updateQuery = {
         $set: {
-          'contents.name': profile.firstName + ' ' + profile.name,
+          'contents.name': `${profile.firstName} ${profile.name}`,
           'auth.xee': {
             id: profile.id,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken,
+            refreshToken,
           },
         },
       };
@@ -460,13 +452,13 @@ function initAuthenticationController(context) {
       context.db.collection('users').findOneAndUpdate(findQuery, updateQuery, {
         upsert: true,
         returnOriginal: false,
-      }, function xeeLoginHandler(err, result) {
+      }, (err, result) => {
         if(err) {
           return done(err);
         }
         if(!result.lastErrorObject.updatedExisting) {
           context.logger.info(
-            'Xee signup:', profile.firstName + ' ' + profile.name
+            'Xee signup:', `${profile.firstName} ${profile.name}`
           );
           context.bus.trigger({
             exchange: 'A_XEE_SIGNUP',

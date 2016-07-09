@@ -1,8 +1,8 @@
 'use strict';
 
-var transformsUtils = require('../utils/transforms');
+const transformsUtils = require('../utils/transforms');
 
-var usersTransforms = {
+const usersTransforms = {
   fromCollection: usersTransformsFromCollection,
   toCollection: usersTransformsToCollection,
 };
@@ -10,7 +10,7 @@ var usersTransforms = {
 module.exports = usersTransforms;
 
 function usersTransformsFromCollection(src) {
-  var dest = {
+  const dest = {
     _id: src._id,
     contents: src.contents,
   };
@@ -20,7 +20,7 @@ function usersTransformsFromCollection(src) {
   }
 
   if(src.auth) {
-    Object.keys(src.auth).forEach(function(provider) {
+    Object.keys(src.auth).forEach((provider) => {
       dest[provider] = {
         id: src.auth[provider].id,
       };
@@ -34,7 +34,7 @@ function usersTransformsFromCollection(src) {
 }
 
 function usersTransformsToCollection(src) {
-  var dest = {
+  const dest = {
     contents: src.contents,
   };
 

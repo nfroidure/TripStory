@@ -1,9 +1,9 @@
 'use strict';
 
-var clone = require('clone');
-var transformsUtils = require('../utils/transforms');
+const clone = require('clone');
+const transformsUtils = require('../utils/transforms');
 
-var carsTransforms = {
+const carsTransforms = {
   fromCollection: carsTransformsFromCollection,
   toCollection: carsTransformsToCollection,
 };
@@ -11,7 +11,7 @@ var carsTransforms = {
 module.exports = carsTransforms;
 
 function carsTransformsFromCollection(src) {
-  var dest = {
+  const dest = {
     _id: src._id,
     contents: clone(src.contents),
   };
@@ -22,7 +22,7 @@ function carsTransformsFromCollection(src) {
 }
 
 function carsTransformsToCollection(src) {
-  var dest = {
+  const dest = {
     contents: src.contents,
   };
 

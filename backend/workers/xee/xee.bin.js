@@ -1,6 +1,6 @@
 'use strict';
 
-var jobs = require('./xee.jobs.js');
+const jobs = require('./xee.jobs.js');
 
 // One day, i'll be a real process!!! Let just be a lib now :)
 module.exports = function initXEEWorker(context) {

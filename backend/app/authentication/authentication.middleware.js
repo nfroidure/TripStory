@@ -1,13 +1,13 @@
 'use strict';
 
-var authUtils = require('http-auth-utils');
-var authenticationUtils = require('./authentication.utils');
+const authUtils = require('http-auth-utils');
+const authenticationUtils = require('./authentication.utils');
 
 module.exports = initBasicAuth;
 
 function initBasicAuth(context) {
-  return function(req, res, next) {
-    var data;
+  return (req, res, next) => {
+    let data;
 
     if(!req.headers.authorization) {
       return next();
@@ -16,15 +16,15 @@ function initBasicAuth(context) {
 
     context.db.collection('users').findOne({
       emailKeys: { $all: [authenticationUtils.normalizeEmail(data.username)] },
-    }).then(function basicAuthUserHandler(user) {
+    }).then((user) => {
       if(!user) {
         context.logger.debug('Unknown user:', data.username);
         return res.sendStatus(401);
       }
 
       return authenticationUtils.comparePasswordToHash(data.password, user.passwordHash)
-        .then(function(matched) {
-          if (!matched) {
+        .then((matched) => {
+          if(!matched) {
             context.logger.debug('Bad password:', data.username);
             return res.sendStatus(401);
           }

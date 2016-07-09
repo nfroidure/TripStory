@@ -1,9 +1,9 @@
 'use strict';
 
-var initCarController = require('./cars.controller');
+const initCarController = require('./cars.controller');
 
 module.exports = function initCarsRoutes(context) {
-  var carController = initCarController(context);
+  const carController = initCarController(context);
 
   context.app.get(
     '/api/v0/cars',

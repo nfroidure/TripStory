@@ -1,9 +1,9 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var transformPerPrefixes = require('transform-per-suffixes');
+const castToObjectId = require('mongodb').ObjectId;
+const transformPerPrefixes = require('transform-per-suffixes');
 
-var TO_SUFFIXES = [{
+const TO_SUFFIXES = [{
   value: '_id',
   transform: castToObjectId,
 }, {
@@ -14,7 +14,7 @@ var TO_SUFFIXES = [{
   transform: transformsUtilsToDate,
 }];
 
-var FROM_SUFFIXES = [{
+const FROM_SUFFIXES = [{
   value: '_id',
   transform: transformsUtilsToString,
 }, {
@@ -25,7 +25,7 @@ var FROM_SUFFIXES = [{
   transform: transformsUtilsToISOString,
 }];
 
-var transformsUtils = {
+const transformsUtils = {
   fromCollection: transformPerPrefixes.bind(null, FROM_SUFFIXES),
   toCollection: transformPerPrefixes.bind(null, TO_SUFFIXES),
 };

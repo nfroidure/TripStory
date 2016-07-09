@@ -1,12 +1,12 @@
 'use strict';
 
-var workersUtils = require('../utils');
-var controllersUtils = require('../../app/utils/controllers');
-var request = require('request');
-var YError = require('yerror');
-var SINCE_ID_STORE_PREFIX = 'facebook:since:';
-var SERVER = 'https://graph.facebook.com/v2.5';
-var facebookJobs = {
+const workersUtils = require('../utils');
+const controllersUtils = require('../../app/utils/controllers');
+const request = require('request');
+const YError = require('yerror');
+const SINCE_ID_STORE_PREFIX = 'facebook:since:';
+const SERVER = 'https://graph.facebook.com/v2.5';
+const facebookJobs = {
   A_FB_SYNC: facebookSyncJob,
   A_FB_SIGNUP: facebookSignupJob,
   A_FB_LOGIN: facebookLoginJob,
@@ -32,8 +32,7 @@ function facebookLoginJob(context, event) {
 function pairFacebookFriends(context, user) {
   return new Promise(function pairFriendsPromise(resolve, reject) {
     request.get(
-      SERVER + '/me/friends?access_token=' +
-      user.auth.facebook.accessToken,
+      `${SERVER}/me/friends?access_token=${user.auth.facebook.accessToken}`,
       function pairFriendsCallback(err, res, body) {
         if(err) {
           return reject(err);
@@ -44,15 +43,11 @@ function pairFacebookFriends(context, user) {
         context.logger.debug('Retrieved facebook friends:', res.statusCode, body);
         // Update friends that are know in the platform
         return context.db.collection('users').find({
-          'auth.facebook.id': { $in: JSON.parse(body).data.map(function(friend) {
-            return friend.id;
-          }) },
+          'auth.facebook.id': { $in: JSON.parse(body).data.map(friend => friend.id) },
         }, {
           _id: '',
-        }).toArray().then(function(friends) {
-          var friendsIds = friends.map(function(friend) {
-            return friend._id;
-          });
+        }).toArray().then(friends => {
+          const friendsIds = friends.map(friend => friend._id);
 
           if(!friendsIds.length) {
             return Promise.resolve();
@@ -89,36 +84,30 @@ function facebookSyncJob(context) {
     if(!tripsEvents.length) {
       return Promise.resolve();
     }
-    return Promise.all(tripsEvents.map(function(tripEvent) {
+    return Promise.all(tripsEvents.map(tripEvent => {
       context.logger.debug('Retrieving trip facebook users for:', tripEvent.trip.title);
       return context.db.collection('users').find({
         _id: { $in: tripEvent.trip.friends_ids.concat(tripEvent.owner_id) },
         'auth.facebook': { $exists: true },
       }).toArray()
-      .then(function(users) {
-        context.logger.debug('Found ' + users.length + ' facebook users for:', tripEvent.trip.title);
-        return Promise.all(users.map(function(user) {
-          var newSince;
+      .then(users => {
+        context.logger.debug(`Found ${users.length} facebook users for:`, tripEvent.trip.title);
+        return Promise.all(users.map(user => {
+          let newSince;
 
-          context.logger.debug('Getting ' + user.contents.name + ' statuses.');
+          context.logger.debug(`Getting ${user.contents.name} statuses.`);
           return context.store.get(
-            SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-            user._id.toString()
+            `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`
           )
-          .then(function(since) {
+          .then(since => {
             since = since || Math.floor(
               (tripEvent.created.seal_date).getTime() / 1000
             );
             return new Promise(function pairFriendsPromise(resolve, reject) {
               request.get(
-                SERVER + '/me/posts' +
-                '?access_token=' + user.auth.facebook.accessToken +
-                '&fields=description,caption,link,created_time,id,' +
-                'application,from,icon,message,message_tags,name,picture,place,' +
-                'status_type,type' +
-                '&since=' + since,
+                `${SERVER}/me/posts?access_token=${user.auth.facebook.accessToken}&fields=description,caption,link,created_time,id,application,from,icon,message,message_tags,name,picture,place,status_type,type&since=${since}`,
                 function retrieveStatusCallback(err, res, body) {
-                  var statuses;
+                  let statuses;
 
                   if(err) {
                     return reject(err);
@@ -131,14 +120,12 @@ function facebookSyncJob(context) {
                   }
                   try {
                     statuses = JSON.parse(body).data || [];
-                  } catch(err) {
+                  } catch (err) {
                     return reject(err);
                   }
                   context.logger.debug('Retrieved facebook statuses:', res.statusCode, body);
                   context.logger.debug(
-                    'Fetched ' + statuses.length +
-                    ' statuses sent by ' + user.contents.name + ' since ' +
-                    (new Date(since * 1000)).toISOString()
+                    `Fetched ${statuses.length} statuses sent by ${user.contents.name} since ${(new Date(since * 1000)).toISOString()}`
                   );
                   if(!statuses.length) {
                     return resolve();
@@ -146,12 +133,9 @@ function facebookSyncJob(context) {
                   newSince = Math.round(
                     (new Date(statuses[0].created_time)).getTime() / 1000
                   );
-                  statuses = statuses.filter(function(status) {
-                    return status.message &&
-                      -1 !== ['photo', 'status', 'link'].indexOf(status.type);
-                  });
-                  Promise.all(statuses.map(function(status) {
-                    var statusDate = new Date(status.created_time);
+                  statuses = statuses.filter(status => status.message && -1 !== ['photo', 'status', 'link'].indexOf(status.type));
+                  Promise.all(statuses.map(status => {
+                    const statusDate = new Date(status.created_time);
 
                     if(tripEvent.created.seal_date.getTime() > statusDate.getTime()) {
                       return Promise.resolve();
@@ -175,7 +159,7 @@ function facebookSyncJob(context) {
                         _id: context.createObjectId(),
                         owner_id: user._id,
                         'contents.trip_id': tripEvent._id,
-                        'contents.type': 'facebook-' + status.type,
+                        'contents.type': `facebook-${status.type}`,
                         trip: tripEvent.trip,
                         created: controllersUtils.getDateSeal(statusDate),
                       },
@@ -183,7 +167,7 @@ function facebookSyncJob(context) {
                       upsert: true,
                       returnOriginal: false,
                     })
-                    .then(function(result) {
+                    .then(result => {
                       context.bus.trigger({
                         exchange: 'A_TRIP_UPDATED',
                         contents: {
@@ -196,8 +180,7 @@ function facebookSyncJob(context) {
                   }))
                   .then(context.store.set.bind(
                     null,
-                    SINCE_ID_STORE_PREFIX + tripEvent._id.toString() + ':' +
-                    user._id.toString(),
+                    `${SINCE_ID_STORE_PREFIX}${tripEvent._id.toString()}:${user._id.toString()}`,
                     newSince
                   ))
                   .then(resolve)

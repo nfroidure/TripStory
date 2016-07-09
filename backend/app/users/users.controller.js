@@ -1,14 +1,14 @@
 'use strict';
 
-var castToObjectId = require('mongodb').ObjectId;
-var usersTransforms = require('./users.transforms');
-var controllersUtils = require('../utils/controllers');
-var YHTTPError = require('yhttperror');
+const castToObjectId = require('mongodb').ObjectId;
+const usersTransforms = require('./users.transforms');
+const controllersUtils = require('../utils/controllers');
+const YHTTPError = require('yhttperror');
 
 module.exports = initUsersController;
 
 function initUsersController(context) {
-  var userController = {
+  const userController = {
     list: userControllerList,
     get: userControllerGet,
     put: userControllerPut,
@@ -22,7 +22,7 @@ function initUsersController(context) {
 
   function userControllerList(req, res, next) {
     context.db.collection('users').find({}).toArray()
-    .then(function(entries) {
+    .then((entries) => {
       res.status(200).send(entries.map(usersTransforms.fromCollection));
     }).catch(next);
   }
@@ -31,7 +31,7 @@ function initUsersController(context) {
     context.db.collection('users').findOne({
       _id: castToObjectId(req.params.user_id),
     })
-    .then(function(entry) {
+    .then((entry) => {
       if(!entry) {
         throw new YHTTPError(404, 'E_NOT_FOUND', req.params.user_id);
       }
@@ -40,7 +40,7 @@ function initUsersController(context) {
   }
 
   function userControllerPut(req, res, next) {
-    var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
     context.db.collection('users').findOneAndUpdate({
       _id: castToObjectId(req.params.user_id),
@@ -65,25 +65,25 @@ function initUsersController(context) {
       upsert: true,
       returnOriginal: false,
     })
-    .then(function(result) {
+    .then((result) => {
       res.status(201).send(usersTransforms.fromCollection(result.value));
     }).catch(next);
   }
 
   function userControllerPutAvatar(req, res, next) {
-    new Promise(function(resolve, reject) {
-      req.pipe(context.cloudinary.uploader.upload_stream(function(result) {
-        console.log('result', result)
+    new Promise((resolve, reject) => {
+      req.pipe(context.cloudinary.uploader.upload_stream((result) => {
+        console.log('result', result);
         resolve(context.cloudinary.url(
-          result.public_id + '.' + result.format, {
+          `${result.public_id}.${result.format}`, {
             width: 300, height: 300,
             crop: 'thumb', gravity: 'face',
             secure: true,
           }));
       })).on('error', reject);
     })
-    .then(function(url) {
-      var dateSeal = controllersUtils.getDateSeal(context.time(), req);
+    .then((url) => {
+      const dateSeal = controllersUtils.getDateSeal(context.time(), req);
 
       return context.db.collection('users').updateOne({
         _id: castToObjectId(req.params.user_id),
@@ -99,7 +99,7 @@ function initUsersController(context) {
         },
       });
     })
-    .then(function() {
+    .then(() => {
       res.sendStatus(201);
     }).catch(next);
   }
@@ -128,14 +128,14 @@ function initUsersController(context) {
         },
       }),
     ])
-    .then(function() {
+    .then(() => {
       res.status(410).send();
     }).catch(next);
   }
 
   function userControllerInviteFriend(req, res, next) {
     return Promise.resolve()
-    .then(function() {
+    .then(() => {
       if(!req.body.email) {
         throw new YHTTPError(400, 'E_NO_EMAIL');
       }
@@ -146,7 +146,7 @@ function initUsersController(context) {
         friends_ids: { $not: {
           $all: [castToObjectId(req.params.user_id)],
         } },
-      }).then(function(friend) {
+      }).then((friend) => {
         if(friend) {
           return Promise.all([
             context.db.collection('users').updateOne({
@@ -159,7 +159,7 @@ function initUsersController(context) {
             }, {
               $push: { friends_ids: friend._id },
             }),
-          ]).then(function() {
+          ]).then(() => {
             context.bus.trigger({
               exchange: 'A_FRIEND_ADD',
               contents: {
@@ -178,7 +178,7 @@ function initUsersController(context) {
         });
       });
     })
-    .then(function() {
+    .then(() => {
       res.sendStatus(204);
     })
     .catch(next);
@@ -188,7 +188,7 @@ function initUsersController(context) {
     context.db.collection('users').findOne({
       _id: castToObjectId(req.params.user_id),
     })
-    .then(function(entry) {
+    .then((entry) => {
       if(!entry) {
         return res.sendStatus(404);
       }
@@ -197,7 +197,7 @@ function initUsersController(context) {
           $in: entry.friends_ids || [],
         },
       }).toArray()
-      .then(function(entries) {
+      .then((entries) => {
         res.status(200).send(entries.map(usersTransforms.fromCollection));
       });
     }).catch(next);
