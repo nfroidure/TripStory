@@ -113,7 +113,7 @@ function facebookSyncJob(context) {
               request.get(
                 SERVER + '/me/posts' +
                 '?access_token=' + user.auth.facebook.accessToken +
-                '&fields=description,caption,link,created_time,id,photos,' +
+                '&fields=description,caption,link,created_time,id,' +
                 'application,from,icon,message,message_tags,name,picture,place,' +
                 'status_type,type' +
                 '&since=' + since,
@@ -169,7 +169,7 @@ function facebookSyncJob(context) {
                             status.place.location.longitude,
                             0,
                           ] : [],
-                        'contents.user_name': status.from.name,
+                        'contents.author_id': user._id,
                       },
                       $setOnInsert: {
                         _id: context.createObjectId(),
