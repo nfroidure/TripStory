@@ -18,6 +18,7 @@
     "HOST": "localhost",
     "PORT": "3000",
     "CORS": "",
+    "AGENTS": "MyAgent:1.0.0,AnotherAgent:0.0.0",
     "EMAIL": "",
     "STATIC_PATH": "/mobile/www",
     "FAVICON_PATH": "/mobile/app/images/favicon.png",

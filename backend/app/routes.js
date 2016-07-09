@@ -8,6 +8,7 @@ const path = require('path');
 
 const initBasicAuth = require('./authentication/authentication.middleware');
 const initCors = require('./system/cors.middleware');
+const initAgentVersionChecker = require('./system/version.middleware');
 const initAuthenticationRoutes = require('./authentication/authentication.routes');
 const initTripsRoutes = require('./trips/trips.routes');
 const initEventsRoutes = require('./events/events.routes');
@@ -23,6 +24,9 @@ function initRoutes(context) {
   // Middlewares
   if(context.env.CORS) {
     context.app.use(initCors(context));
+  }
+  if(context.env.AGENTS) {
+    context.app.use(initAgentVersionChecker(context));
   }
   if(context.env.STATIC_PATH) {
     context.app.use(express.static(path.join(
