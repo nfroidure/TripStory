@@ -219,23 +219,7 @@ describe('Twitter jobs', function() {
             symbols: [],
             user_mentions: [],
             urls: [],
-            media: [{
-              id: 714550209066451000,
-              id_str: '714550209066450944',
-              indices: [75, 98],
-              media_url: 'http://pbs.twimg.com/media/CeqXoRmWQAAp3Tl.jpg',
-              media_url_https: 'https://pbs.twimg.com/media/CeqXoRmWQAAp3Tl.jpg',
-              url: 'https://t.co/i1tiWZ3lIk',
-              display_url: 'pic.twitter.com/i1tiWZ3lIk',
-              expanded_url: 'http://twitter.com/benoit_marques/status/714550269917446146/photo/1',
-              type: 'photo',
-              sizes: {
-                large: { w: 600, h: 800, resize: 'fit' },
-                thumb: { w: 150, h: 150, resize: 'crop' },
-                medium: { w: 600, h: 800, resize: 'fit' },
-                small: { w: 340, h: 453, resize: 'fit' },
-              },
-            }],
+            media: [],
           },
           truncated: false,
           metadata: {
@@ -400,7 +384,7 @@ describe('Twitter jobs', function() {
 
     });
 
-    describe.only('when there are running trips and media tweets', function() {
+    describe('when there are running trips and media tweets', function() {
       var twitterStatusesCall;
       var newEventId;
 

@@ -202,7 +202,7 @@ describe('Facebook jobs', function() {
         .get('/v2.5/me/posts')
         .query({
           access_token: 'COMMON_BOY',
-          fields: 'description,caption,link,created_time,id,photos,' +
+          fields: 'description,caption,link,created_time,id,' +
           'application,from,icon,message,message_tags,name,picture,' +
           'place,status_type,type',
           since: Math.floor(context.time() / 1000),
@@ -383,7 +383,7 @@ describe('Facebook jobs', function() {
                 type: 'facebook-status',
                 geo: [],
                 text: 'Plop',
-                user_name: 'Popol',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
@@ -405,7 +405,7 @@ describe('Facebook jobs', function() {
                 type: 'facebook-link',
                 geo: [],
                 text: 'Visit ',
-                user_name: 'Popol',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
@@ -427,7 +427,7 @@ describe('Facebook jobs', function() {
                 type: 'facebook-photo',
                 geo: [],
                 text: 'Pic!',
-                user_name: 'Popol',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
@@ -449,7 +449,7 @@ describe('Facebook jobs', function() {
                 type: 'facebook-status',
                 geo: [],
                 text: 'Hello world!',
-                user_name: 'Popol',
+                author_id: castToObjectId('abbacacaabbacacaabbacaca'),
               },
               trip: {
                 friends_ids: [],
