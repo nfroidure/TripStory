@@ -7,18 +7,19 @@
 
   AuthCtrl.$inject = [
     '$scope', '$state', '$ionicModal', '$timeout',
-    'ENV', 'loadService', 'authService',
+    'ENV', 'sfLoadService', 'authService', 'oAuthService',
   ];
   /* @ngInject */
   function AuthCtrl(
     $scope, $state, $ionicModal, $timeout,
-    ENV, loadService, authService
+    ENV, sfLoadService, authService, oAuthService
   ) {
     $scope.user = {};
     $scope.loginData = {};
     $scope.apiEndpoint = ENV.apiEndpoint;
 
     $scope.doLogin = doLogin;
+    $scope.doOAuth = doOAuth;
     $scope.doSignup = doSignup;
 
     activate();
@@ -34,9 +35,16 @@
       if($scope.loginForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'login',
+      sfLoadService.runState($scope, 'login',
         authService.login($scope.loginData)
       )
+      .then(function() {
+        $state.go('app.trips');
+      });
+    }
+
+    function doOAuth(type) {
+      oAuthService.run(type)
       .then(function() {
         $state.go('app.trips');
       });
@@ -46,7 +54,7 @@
       if($scope.signupForm.$invalid) {
         return;
       }
-      loadService.runState($scope, 'signup',
+      sfLoadService.runState($scope, 'signup',
         authService.signup($scope.loginData)
       )
       .then(function(response) {

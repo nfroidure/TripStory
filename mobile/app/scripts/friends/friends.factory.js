@@ -7,12 +7,12 @@
 
   friendsFactory.$inject = [
     '$http', '$q',
-    'ENV', 'createObjectId', 'authService', 'analyticsService', 'loadService',
+    'ENV', 'createObjectId', 'authService', 'analyticsService', 'sfLoadService',
   ];
   /* @ngInject */
   function friendsFactory(
     $http, $q,
-    ENV, createObjectId, authService, analyticsService, loadService
+    ENV, createObjectId, authService, analyticsService, sfLoadService
   ) {
       var service = {
         list: list,
@@ -28,7 +28,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/friends';
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -38,7 +38,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/friends';
 
-          return loadService.wrapHTTPCall($http.post(url, data), 204)
+          return sfLoadService.wrapHTTPCall($http.post(url, data), 204)
           .then(function(response) {
             analyticsService.trackEvent('friends', 'invite', profile._id);
             return response;

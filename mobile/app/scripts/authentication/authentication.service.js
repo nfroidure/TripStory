@@ -7,12 +7,12 @@
 
   AuthService.$inject = [
     '$http', '$q', '$rootScope',
-    'ENV', 'analyticsService', 'loadService',
+    'ENV', 'analyticsService', 'sfLoadService',
   ];
   /* @ngInject */
   function AuthService(
     $http, $q, $rootScope,
-    ENV, analyticsService, loadService
+    ENV, analyticsService, sfLoadService
   ) {
     var profileDeffered = null;
     var service = {
@@ -44,7 +44,7 @@
         profileDeffered = $q.defer()
         url = ENV.apiEndpoint + '/api/v0/profile';
 
-        loadService.wrapHTTPCall($http.get(url), 200)
+        sfLoadService.wrapHTTPCall($http.get(url), 200)
         .then(function(response) {
           profileDeffered.resolve(response.data);
           return profileDeffered.promise;
@@ -58,7 +58,7 @@
       return getProfile().then(function(profile) {
         var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id;
 
-        return loadService.wrapHTTPCall(
+        return sfLoadService.wrapHTTPCall(
           $http.put(url, profile), 201
         ).then(function(response) {
           profileDeffered = $q.defer();
@@ -74,7 +74,7 @@
       return getProfile().then(function(profile) {
         var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id + '/avatar';
 
-        return loadService.wrapHTTPCall(
+        return sfLoadService.wrapHTTPCall(
           $http.put(
             url,
             file, {
@@ -96,7 +96,7 @@
     function deleteProfile(profile) {
       return getProfile().then(function(profile) {
         var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id;
-        return loadService.wrapHTTPCall(
+        return sfLoadService.wrapHTTPCall(
           $http.delete(url), 410
         ).then(function(response) {
           analyticsService.trackEvent('auth', 'signout', profile._id);
@@ -112,7 +112,7 @@
     function login(credentials) {
       var url = ENV.apiEndpoint + '/api/v0/login';
 
-      return loadService.wrapHTTPCall(
+      return sfLoadService.wrapHTTPCall(
         $http.post(url, credentials), 200
       )
       .then(function(response) {
@@ -126,7 +126,7 @@
       return getProfile().then(function(profile) {
         var url = ENV.apiEndpoint + '/api/v0/logout';
 
-        return loadService.wrapHTTPCall(
+        return sfLoadService.wrapHTTPCall(
           $http.post(url), 204
         ).then(function(response) {
           analyticsService.trackEvent('auth', 'logout', profile._id);
@@ -139,7 +139,7 @@
     function signup(credentials) {
       var url = ENV.apiEndpoint + '/api/v0/signup';
 
-      return loadService.wrapHTTPCall(
+      return sfLoadService.wrapHTTPCall(
         $http.post(url, credentials), 201
       )
       .then(function(response) {

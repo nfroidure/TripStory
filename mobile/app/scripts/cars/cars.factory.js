@@ -7,12 +7,12 @@
 
   carsFactory.$inject = [
     '$http', '$q',
-    'ENV', 'createObjectId', 'authService', 'loadService', 'analyticsService',
+    'ENV', 'createObjectId', 'authService', 'sfLoadService', 'analyticsService',
   ];
   /* @ngInject */
   function carsFactory(
     $http, $q,
-    ENV, createObjectId, authService, loadService, analyticsService
+    ENV, createObjectId, authService, sfLoadService, analyticsService
   ) {
       var service = {
         list: list,
@@ -30,7 +30,7 @@
             '/cars';
 
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -40,7 +40,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/cars/' + id;
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -50,7 +50,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/cars/' + id;
 
-          return loadService.wrapHTTPCall($http.delete(url), 410)
+          return sfLoadService.wrapHTTPCall($http.delete(url), 410)
           .then(function(response) {
             analyticsService.trackEvent('cars', 'remove', profile._id);
             return response;

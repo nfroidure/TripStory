@@ -65,6 +65,19 @@ module.exports = function (grunt) {
             analyticsAppTracker: 'auto',
           }
         }
+      },
+      browser: {
+        constants: {
+          ENV: {
+            agent: packageConfig.name + ':' + packageConfig.version,
+            name: 'browser',
+            apiEndpoint: 'https://tripstory.insertafter.com',
+            pusherKey: '1142ca3c31b809234e2e',
+            pusherCluster: 'eu',
+            analyticsAppId: 'UA-75859465-1',
+            analyticsAppTracker: 'auto',
+          }
+        }
       }
     },
 

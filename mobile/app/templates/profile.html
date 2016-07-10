@@ -82,8 +82,8 @@
           'item-icon-right': profile.facebook,
         }">
         Facebook
-        <a class="button" href="{{apiEndpoint}}/auth/facebook"
-          style="color: white; background:#3B5998;"
+        <a class="button" style="color: white; background:#3B5998;"
+          ng-click="doOAuth('facebook')"
           ng-if="!profile.facebook">
           <i class="icon ion-link"></i>&nbsp; Link account
         </a>
@@ -96,8 +96,8 @@
           'item-icon-right': profile.twitter,
         }">
         Twitter
-        <a class="button" href="{{apiEndpoint}}/auth/twitter"
-          style="color: white; background:#55ACEE;"
+        <a class="button" style="color: white; background:#55ACEE;"
+          ng-click="doOAuth('twitter')"
           ng-if="!profile.twitter">
           <i class="icon ion-link"></i>&nbsp; Link account
         </a>
@@ -110,8 +110,8 @@
           'item-icon-right': profile.google,
         }">
         Google
-        <a class="button" href="{{apiEndpoint}}/auth/google"
-          style="color: white; background:#DC4E41;"
+        <a class="button" style="color: white; background:#DC4E41;"
+          ng-click="doOAuth('google')"
           ng-if="!profile.google">
           <i class="icon ion-link"></i>&nbsp; Link account
         </a>

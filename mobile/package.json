@@ -59,17 +59,10 @@
     "cli": "env NPM_RUN_CLI=1 PATH=$PATH:/usr/local/var/lib/android-sdk/"
   },
   "cordovaPlugins": [
-    "org.apache.cordova.device",
-    "org.apache.cordova.console",
-    "com.ionic.keyboard",
-    "org.apache.cordova.device",
-    "org.apache.cordova.console",
-    "com.ionic.keyboard",
     "com.ionic.keyboard",
     "org.apache.cordova.console",
     "org.apache.cordova.device",
-    "org.apache.cordova.device",
-    "com.ionic.keyboard"
+    "https://git-wip-us.apache.org/repos/asf/cordova-plugin-inappbrowser.git",
   ],
   "cordovaPlatforms": [
     "android"

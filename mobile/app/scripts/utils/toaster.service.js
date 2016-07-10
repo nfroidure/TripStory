@@ -4,25 +4,21 @@
   var TOAST_POSITION = 'top';
   var TOAST_DURATION = 2500;
 
-  // Since it looks like there is no way to guess the platform is
-  // a simple web nrowser, let's assume it is when a device has no props
-  var platformIsWeb = 0 === Object.keys(ionic.Platform.device()).length;
-
   angular
     .module('app.utils')
     .service('toasterService', ToasterService);
 
     ToasterService.$inject = [
-      '$cordovaToast',
-      'ionicToast',
+      '$cordovaToast', 'ionicToast',
+      'ENV',
     ];
     /* @ngInject */
     function ToasterService(
-      ngCordova,
-      ionicToast
+      $cordovaToast, ionicToast,
+      ENV
     ) {
       return {
-        show: platformIsWeb ?
+        show: 'browser' === ENV.name ?
           showWebToast :
           showNativeToast,
       };

@@ -7,12 +7,12 @@
 
   tripsFactory.$inject = [
     '$http', '$q',
-    'ENV', 'createObjectId', 'authService', 'analyticsService', 'loadService',
+    'ENV', 'createObjectId', 'authService', 'analyticsService', 'sfLoadService',
   ];
   /* @ngInject */
   function tripsFactory(
     $http, $q,
-    ENV, createObjectId, authService, analyticsService, loadService
+    ENV, createObjectId, authService, analyticsService, sfLoadService
   ) {
       var service = {
         list: list,
@@ -30,7 +30,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/trips';
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -40,7 +40,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/trips/' + id;
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -50,7 +50,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/trips/' + trip._id;
 
-          return loadService.wrapHTTPCall($http.put(url, trip), 201)
+          return sfLoadService.wrapHTTPCall($http.put(url, trip), 201)
           .then(function(response) {
             analyticsService.trackEvent('trips', 'add', profile._id);
             return response;
@@ -64,7 +64,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/trips/' + tripId;
 
-          return loadService.wrapHTTPCall($http.delete(url), 410)
+          return sfLoadService.wrapHTTPCall($http.delete(url), 410)
           .then(function(response) {
             analyticsService.trackEvent('trips', 'delete', profile._id);
             return response;

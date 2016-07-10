@@ -6,28 +6,28 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-small icon-left ion-social-facebook"
-          href="{{apiEndpoint}}/auth/facebook"
+          ng-click="doOAuth('facebook')"
           style="color:white; background:#3B5998;">
           Fb
         </a>
       </div>
       <div class="col">
         <a class="button button-block button-small icon-left ion-social-twitter"
-          href="{{apiEndpoint}}/auth/twitter"
+           ng-click="doOAuth('twitter')"
           style="color:white; background:#55ACEE;">
           Twitter
         </a>
       </div>
       <div class="col">
         <a class="button button-block button-small icon-left icon ion-social-google"
-          href="{{apiEndpoint}}/auth/google"
+           ng-click="doOAuth('google')"
           style="color:white; background:#DC4E41;">
           Google
         </a>
       </div>
       <div class="col">
         <a class="button button-block button-small icon-left icon ion-model-s"
-          href="{{apiEndpoint}}/auth/xee"
+           ng-click="doOAuth('xee')"
           style="color:#97CA00; background:#474747;">
           Xee
         </a>

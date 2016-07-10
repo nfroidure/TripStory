@@ -7,12 +7,12 @@
 
   eventsFactory.$inject = [
     '$http', '$q',
-    'ENV', 'createObjectId', 'authService', 'loadService',
+    'ENV', 'createObjectId', 'authService', 'sfLoadService',
   ];
   /* @ngInject */
   function eventsFactory(
     $http, $q,
-    ENV, createObjectId, authService, loadService
+    ENV, createObjectId, authService, sfLoadService
   ) {
       var service = {
         list: list,
@@ -28,7 +28,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/events';
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -38,7 +38,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/events/' + id;
 
-          return loadService.wrapHTTPCall($http.get(url), 200);
+          return sfLoadService.wrapHTTPCall($http.get(url), 200);
         });
       }
 
@@ -47,7 +47,7 @@
           var url = ENV.apiEndpoint + '/api/v0/users/' + profile._id +
             '/events/' + event._id;
 
-          return loadService.wrapHTTPCall($http.put(url, event), 201);
+          return sfLoadService.wrapHTTPCall($http.put(url, event), 201);
         });
       }
   }
