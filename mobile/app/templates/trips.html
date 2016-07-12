@@ -11,6 +11,17 @@
     </button>
   </ion-nav-buttons>
   <ion-content>
+    <p class="item"
+      ng-if="states._all.failed.code"
+      ng-switch="states._all.failed.code">
+      <i class="icon ion-alert-circled assertive"></i>
+      <span ng-switch-when="E_NETWORK">
+        Looks like the network is bad, try later ;).
+      </span>
+      <span ng-switch-default>
+        Unexpected error! We are going to fix it soon!
+      </span>
+    </p>
     <ion-spinner icon="lines" ng-show="states._all.loading"></ion-spinner>
     <ion-list ng-show="states._all.loaded && trips.length">
       <ion-item class="item-button-right"

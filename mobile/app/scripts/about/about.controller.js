@@ -5,9 +5,16 @@
     .module('app.about')
     .controller('AboutCtrl', AboutCtrl);
 
-  AboutCtrl.$inject = ['$scope'];
+  AboutCtrl.$inject = [
+    '$scope',
+    'ENV',
+  ];
   /* @ngInject */
-  function AboutCtrl($scope) {
+  function AboutCtrl(
+    $scope,
+    ENV
+  ) {
+    $scope.debug = debug;
     $scope.credits = [{
       name: 'Nicolas Froidure',
       home_url: 'https://insertafter.com',
@@ -39,6 +46,10 @@
       twitter_url: 'https://twitter.com/Remythellier',
       linkedin_url: 'https://www.linkedin.com/in/remythellier',
     }];
+
+    function debug() {
+      $scope.ENV = angular.copy(ENV);
+    }
   }
 
 })();

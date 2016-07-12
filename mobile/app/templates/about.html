@@ -1,7 +1,7 @@
 <ion-view view-title="About Us">
   <ion-content>
     <div class="padding">
-      <h2>About us</h2>
+      <h2 ng-click="debug()">About us</h2>
       <p>
         Trip Story is an application created during an hackathon by the now
         famously known Team6.
@@ -27,6 +27,15 @@
             <a class="button button-icon ion-social-linkedin" href="{{ credit.linkedin_url }}"></a>
           </ion-item>
         </ion-list>
+      </div>
+      <div class="padding-vertical" ng-if="ENV">
+        <h4>
+          <i class="icon ion-settings"></i>
+          Environment
+        </h4>
+        <pre>
+          {{ ENV | json }}
+        </pre>
       </div>
     </div>
   </ion-content>

@@ -18,7 +18,7 @@
       ENV
     ) {
       return {
-        show: 'browser' === ENV.name ?
+        show: 'browser' === ENV.context ?
           showWebToast :
           showNativeToast,
       };
