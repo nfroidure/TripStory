@@ -45,6 +45,7 @@ module.exports = function (grunt) {
           ENV: {
             agent: packageConfig.name + ':' + packageConfig.version,
             name: 'development',
+            context: process.env.IONIC_APP ? 'app' : 'browser',
             apiEndpoint: 'http://localhost:3000',
             pusherKey: '67c63872cef9daddfedc',
             pusherCluster: 'eu',
@@ -58,6 +59,7 @@ module.exports = function (grunt) {
           ENV: {
             agent: packageConfig.name + ':' + packageConfig.version,
             name: 'production',
+            context: process.env.IONIC_APP ? 'app' : 'browser',
             apiEndpoint: 'https://tripstory.insertafter.com',
             pusherKey: '1142ca3c31b809234e2e',
             pusherCluster: 'eu',
@@ -66,19 +68,6 @@ module.exports = function (grunt) {
           }
         }
       },
-      browser: {
-        constants: {
-          ENV: {
-            agent: packageConfig.name + ':' + packageConfig.version,
-            name: 'browser',
-            apiEndpoint: 'https://tripstory.insertafter.com',
-            pusherKey: '1142ca3c31b809234e2e',
-            pusherCluster: 'eu',
-            analyticsAppId: 'UA-75859465-1',
-            analyticsAppTracker: 'auto',
-          }
-        }
-      }
     },
 
     // Watches files for changes and runs tasks based on the changed files
