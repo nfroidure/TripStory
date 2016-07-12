@@ -2,12 +2,6 @@
 
 [![Build status](https://secure.travis-ci.org/nfroidure/TripStory.png)](https://travis-ci.org/nfroidure/TripStory)
 
-## Frontend
-
-Currently the frontend is in fact an Ionic app mounted as a simple web mobile
- application. Here is the generator used to create it for reference:
-https://github.com/diegonetto/generator-ionic
-
 ## SAAS
 
 The SAAS service used here:
@@ -21,6 +15,48 @@ The SAAS service used here:
 - [Cloudinary](https://cloudinary.com)
 - [Pusher](https://pusher.com)
 - [Loggly](https://loggly.com)
+
+## Environment
+
+To start working on this project, you simply have to run this
+ command on the command line with at least
+ [NodeJS 6.2](http://nodejs.org) installed:
+
+```sh
+npm install
+```
+
+This may take a while!
+
+You can reset your environment by running:
+```sh
+npm reset
+```
+
+And download the internet again ;).
+
+## Mobile
+
+The mobile client can be build as a mobile web app or as a native web app.
+
+It is in fact an Ionic app mounted, here is the generator used to create
+ it for reference:
+https://github.com/diegonetto/generator-ionic
+
+The mobile web app build instruction can be found in the backend following
+ deployment ones.
+
+To isntall native app environment:
+```sh
+npm run cli -- grunt platform:add:android
+npm run cli -- grunt platform:add:ios
+```
+
+To test the native app:
+```sh
+env IONIC_APP=1 npm run cli -- grunt run:android
+env IONIC_APP=1 npm run cli -- grunt run:ios
+```
 
 ## API
 
