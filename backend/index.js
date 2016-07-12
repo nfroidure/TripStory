@@ -53,7 +53,13 @@ context.logger = new (winston.Logger)({
   ),
 });
 Promise.all([
-  MongoClient.connect(context.env.MONGODB_URL),
+  // Configuration to avoid wierd Mongo Error in production
+  // No F*** idea what i'm doing...
+  // http://stackoverflow.com/questions/30909492/mongoerror-topology-was-destroyed
+  MongoClient.connect(context.env.MONGODB_URL, {
+    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
+    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
+  }),
 ]).spread(function handleServerServices(db) {
   // Services
   context.time = Date.now.bind(Date);
