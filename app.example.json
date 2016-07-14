@@ -13,6 +13,7 @@
   },
   "restart_delay": 100,
   "env": {
+    "NODE_ENV": "development",
     "PROTOCOL": "http",
     "DOMAIN": "",
     "HOST": "localhost",
@@ -23,6 +24,7 @@
     "STATIC_PATH": "/mobile/www",
     "FAVICON_PATH": "/mobile/app/images/favicon.png",
     "SESSION_SECRET": "secret",
+    "JWT_SECRET": "secret",
     "TOKEN_SECRET": "secret",
     "MONGODB_URL": "mongodb://localhost/x",
     "LOG_LEVEL": "silly",

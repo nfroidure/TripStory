@@ -46,7 +46,7 @@ https://github.com/diegonetto/generator-ionic
 The mobile web app build instruction can be found in the backend following
  deployment ones.
 
-To isntall native app environment:
+To install native app environment:
 ```sh
 npm run cli -- grunt platform:add:android
 npm run cli -- grunt platform:add:ios
@@ -54,8 +54,16 @@ npm run cli -- grunt platform:add:ios
 
 To test the native app:
 ```sh
-env IONIC_APP=1 npm run cli -- grunt run:android
-env IONIC_APP=1 npm run cli -- grunt run:ios
+IONIC_APP=1  npm run cli -- grunt staging --force
+
+npm run cli -- ionic run android
+npm run cli -- ionic run ios
+```
+
+To build the native app:
+```sh
+IONIC_APP=1  npm run cli -- grunt compress --force
+npm run cli -- ionic build android
 ```
 
 ## API

@@ -1,12 +1,12 @@
 {
-  "name": "IonicApp",
+  "name": "TripStoryApp",
   "version": "0.0.0",
   "private": true,
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.6.5",
     "chai": "^3.5.0",
-    "cordova": "~4.2.0",
+    "cordova": "~6.2.0",
     "elementtree": "0.1.6",
     "glob": "~4.3.5",
     "grunt": "~0.4.5",
@@ -28,7 +28,8 @@
     "grunt-ng-constant": "^1.0.0",
     "grunt-usemin": "~3.0.0",
     "grunt-wiredep": "^2.0.0",
-    "ionic": "^1.3.7",
+    "ionic": "^1.7.16",
+    "ip": "^1.1.3",
     "jshint-stylish": "~1.0.0",
     "karma": "~0.12.31",
     "karma-chai": "~0.1.0",
@@ -55,14 +56,14 @@
     "dev": "grunt serve --force",
     "test": "grunt test",
     "postinstall": "bower install",
-    "droid": "env PATH=$PATH:/usr/local/var/lib/android-sdk/",
-    "cli": "env NPM_RUN_CLI=1 PATH=$PATH:/usr/local/var/lib/android-sdk/"
+    "droid": "env ANDROID_HOME=/usr/local/var/lib/android-sdk/ ANDROID_PLATFORM_TOOLS=/usr/local/var/lib/android-sdk/platform-tools",
+    "cli": "env NPM_RUN_CLI=1"
   },
   "cordovaPlugins": [
-    "com.ionic.keyboard",
     "org.apache.cordova.console",
-    "org.apache.cordova.device",
-    "https://git-wip-us.apache.org/repos/asf/cordova-plugin-inappbrowser.git",
+    "cordova-plugin-device",
+    "cordova-plugin-whitelist",
+    "cordova-plugin-inappbrowser"
   ],
   "cordovaPlatforms": [
     "android"

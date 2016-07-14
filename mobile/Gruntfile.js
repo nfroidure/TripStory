@@ -6,6 +6,7 @@ var _ = require('lodash');
 var path = require('path');
 var cordovaCli = require('cordova');
 var spawn = process.platform === 'win32' ? require('win-spawn') : require('child_process').spawn;
+var ip = require('ip');
 
 module.exports = function (grunt) {
 
@@ -46,7 +47,7 @@ module.exports = function (grunt) {
             agent: packageConfig.name + ':' + packageConfig.version,
             name: 'development',
             context: process.env.IONIC_APP ? 'app' : 'browser',
-            apiEndpoint: 'http://localhost:3000',
+            apiEndpoint: process.env.IONIC_APP ? 'http://' + ip.address() + ':3000' : 'http://localhost:3000',
             pusherKey: '67c63872cef9daddfedc',
             pusherCluster: 'eu',
             analyticsAppId: 'UA-75859465-2',
@@ -527,8 +528,24 @@ module.exports = function (grunt) {
     'htmlmin'
   ]);
 
-  grunt.registerTask('coverage',
-    ['karma:continuous',
+  grunt.registerTask('staging', [
+    'clean',
+    'ngconstant:development',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    'cssmin',
+    'uglify',
+    'usemin',
+    'htmlmin'
+  ]);
+
+  grunt.registerTask('coverage', [
+    'karma:continuous',
     'connect:coverage:keepalive'
   ]);
 

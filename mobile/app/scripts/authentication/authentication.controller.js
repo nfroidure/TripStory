@@ -16,7 +16,6 @@
   ) {
     $scope.user = {};
     $scope.loginData = {};
-    $scope.apiEndpoint = ENV.apiEndpoint;
 
     $scope.doLogin = doLogin;
     $scope.doOAuth = doOAuth;
@@ -27,6 +26,7 @@
     function activate() {
       authService.getProfile()
       .then(function(profile) {
+        console.log('going to trips');
         $state.go('app.trips');
       });
     }
@@ -45,8 +45,9 @@
 
     function doOAuth(type) {
       oAuthService.run(type)
-      .then(function() {
-        $state.go('app.trips');
+      .then(function(token) {
+        authService.setToken(token);
+        activate();
       });
     }
 
@@ -58,7 +59,7 @@
         authService.signup($scope.loginData)
       )
       .then(function(response) {
-        $state.go("app.trips");
+        $state.go('app.trips');
       });
     }
   }

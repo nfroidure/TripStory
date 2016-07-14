@@ -3,12 +3,11 @@
 
   // We're relying on the server OAuth implementation
   // in order to keep track of connections and to
-  // keep access/refesh tokens after logout usin the
+  // keep access/refesh tokens after logout using the
   // in app browser
   // https://github.com/apache/cordova-plugin-inappbrowser
 
   var OAUTH_PATH = '/auth/';
-  var OAUTH_CB = '/callback';
 
   angular
     .module('app.utils')
@@ -23,6 +22,8 @@
       $q, $window, $log,
       ENV
     ) {
+      const redirectUrl =  ENV.apiEndpoint + '/api/virtual/token';
+
       return {
         run: 'browser' === ENV.context ?
           runBrowser :
@@ -30,8 +31,8 @@
       };
 
       //
-      function runBrowser(type) {
-        var url = buildEndpoint(type);
+      function runBrowser(type, location) {
+        var url = buildEndpoint(type, location);
 
         $log.debug('Browsing url: ' + url);
         $window.location.href = url;
@@ -39,41 +40,50 @@
       }
       function runNative(type) {
         var deferred = $q.defer();
-        var url = buildEndpoint(type);
+        var url = buildEndpoint(type, redirectUrl);
         var oauthWindow = $window.open(
           url,
           '_blank',
-          'location=no,clearsessioncache=yes,clearcache=yes'
+          'location=yes,clearsessioncache=no,clearcache=no'
         );
 
         $log.debug('Opening url: ' + url);
 
-        oauthWindow.addEventListener('loaderror', function onLoadError(event) {
-          $log.debug('OAuth error.', event.code, event.message);
-          oauthWindow.close();
-          deferred.reject(new Error('OAUTH_LOAD_ERROR'));
-        });
-        oauthWindow.addEventListener('loadstart', function onLoadStart(event) {
-          $log.debug('OAuth url: ' + event.url);
-          if((event.url).startsWith(buildCallback(type))) {
-            var accesToken = (event.url).split("code=")[1];
-            oauthWindow.close();
-            deferred.resolve(new Error('OAUTH_LOAD_ERROR'));
-          }
-        });
-        oauthWindow.addEventListener('exit', function onExit() {
+        oauthWindow.addEventListener('loaderror', onLoadError);
+        oauthWindow.addEventListener('loadstart', onLoadStart);
+        oauthWindow.addEventListener('exit', onExit);
+
+        function onExit() {
           $log.debug('OAuth exit.');
+          deferred.reject();
+        }
+        function onLoadStart(event) {
+          $log.debug('OAuth loadstart url:' + event.url);
+          if(
+            (event.url).startsWith(redirectUrl)
+          ) {
+            deferred.resolve(event.url.substring((redirectUrl + '/').length));
+            oauthWindow.removeEventListener('exit', onExit);
+            oauthWindow.removeEventListener('loaderror', onLoadError);
+            oauthWindow.removeEventListener('loaderror', onLoadStart);
+            oauthWindow.close();
+          }
+        }
+        function onLoadError(event) {
+          $log.debug(
+            'OAuth loaderror: ' + event.url + ' - ' + event.code + ' - ' +
+            event.message
+          );
           oauthWindow.close();
           deferred.reject(new Error('OAUTH_LOAD_ERROR'));
-        });
+        }
 
         return deferred.promise;
       }
-      function buildEndpoint(type) {
-        return ENV.apiEndpoint + OAUTH_PATH + type;
-      }
-      function buildCallback(type) {
-        return buildEndpoint(type) + OAUTH_CB;
+      function buildEndpoint(type, location) {
+        return ENV.apiEndpoint + OAUTH_PATH + type + (
+          location ? '?url=' + encodeURIComponent(location) : ''
+        );
       }
     }
 

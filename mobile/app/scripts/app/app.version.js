@@ -4,7 +4,29 @@
   angular
     .module('app')
     .factory('versionInterceptor', versionInterceptor)
+    .factory('authInterceptor', authInterceptor)
     .config(httpVersion);
+
+      authInterceptor.$inject = [
+        '$injector',
+      ];
+
+      /* @ngInject */
+      function authInterceptor($injector) {
+        return { request: requestHandler };
+
+        function requestHandler(config) {
+          var token = $injector.get('authService').getToken();
+
+          // Add token for Simplifield API url
+          if(token) {
+            config.headers = config.headers || {};
+            config.headers.Authorization = 'Bearer ' + token;
+          }
+
+          return config;
+        }
+      }
 
       versionInterceptor.$inject = [
         '$q', '$injector',
@@ -44,6 +66,7 @@
         ENV
       ) {
         $httpProvider.interceptors.push('versionInterceptor');
+        $httpProvider.interceptors.push('authInterceptor');
         $httpProvider.defaults.headers.common['X-Agent'] = ENV.agent;
       }
 

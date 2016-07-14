@@ -1,7 +1,5 @@
 'use strict';
 
-const JWT_DEFAULT_DURATION = 24 * 60 * 60 * 1000; // 1 day
-
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const reaccess = require('express-reaccess');
@@ -11,7 +9,6 @@ const usersTransforms = require('../users/users.transforms');
 const YHTTPError = require('yhttperror');
 const authenticationUtils = require('./authentication.utils');
 const initBasicAuth = require('./authentication.middleware');
-const jwt = require('json-web-token');
 
 module.exports = initAuthenticationRoutes;
 
@@ -70,8 +67,6 @@ function initAuthenticationRoutes(context) {
       failWithError: true,
       badRequestMessage: 'E_BAD_CREDENTIALS',
     }, (err, user, message, status) => {
-      let tokenPayload;
-
       if(err) {
         next(YHTTPError.cast(err));
         return;
@@ -82,29 +77,9 @@ function initAuthenticationRoutes(context) {
         return;
       }
 
-      tokenPayload = {
-        iss: 'TripStory',
-        aud: 'World',
-        sub: user._id.toString(),
-        iat: Math.round((
-          context.time() + (
-            context.env.JWT_DURATION ?
-            parseInt(context.env.JWT_DURATION, 10) :
-            JWT_DEFAULT_DURATION
-          )
-        ) / 1000),
-      };
-
-      jwt.encode(context.env.JWT_SECRET, tokenPayload, (err, token) => {
-        if(err) {
-          next(YHTTPError.wrap(err, 'E_TOKEN_ERROR', user._id));
-          return;
-        }
-        res.status(200).send({
-          _id: user._id,
-          token,
-          payload: tokenPayload,
-        });
+      authenticationUtils.createJWT(context, user)
+      .then((token) => {
+        res.status(200).send(token);
         context.bus.trigger({
           exchange: 'A_JWT_TOKEN',
           contents: {
@@ -112,7 +87,8 @@ function initAuthenticationRoutes(context) {
             ip: req.ip,
           },
         });
-      });
+      })
+      .catch(next);
     })(req, res, next);
   });
 

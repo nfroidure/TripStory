@@ -14,8 +14,11 @@
     $http, $q, $rootScope,
     ENV, analyticsService, sfLoadService
   ) {
-    var profileDeffered = null;
+    var profileDeferred = null;
+    var _token = '';
     var service = {
+      setToken: setToken,
+      getToken: getToken,
       getProfile: getProfile,
       setProfile: setProfile,
       setAvatar: setAvatar,
@@ -35,23 +38,36 @@
 
     ////////////////
 
+    function setToken(token) {
+      _token = token;
+    }
+
+    function getToken() {
+      return _token;
+    }
+
     function getProfile(options) {
       var url;
 
       options = options || {};
 
-      if(options.force || !profileDeffered) {
-        profileDeffered = $q.defer()
+      if(options.force || !profileDeferred) {
+        profileDeferred = $q.defer()
         url = ENV.apiEndpoint + '/api/v0/profile';
 
         sfLoadService.wrapHTTPCall($http.get(url), 200)
         .then(function(response) {
-          profileDeffered.resolve(response.data);
-          return profileDeffered.promise;
-        }).catch(profileDeffered.reject);
+          profileDeferred.resolve(response.data);
+          return profileDeferred.promise;
+        }).catch(function(err) {
+          var deferred = profileDeferred;
+
+          profileDeferred = null;
+          deferred.reject(err);
+        });
       }
 
-      return profileDeffered.promise;
+      return profileDeferred.promise;
     }
 
     function setProfile(profile) {
@@ -61,11 +77,11 @@
         return sfLoadService.wrapHTTPCall(
           $http.put(url, profile), 201
         ).then(function(response) {
-          profileDeffered = $q.defer();
-          profileDeffered.resolve(response.data);
+          profileDeferred = $q.defer();
+          profileDeferred.resolve(response.data);
           $rootScope.$broadcast('profile:update');
           analyticsService.trackEvent('auth', 'update', profile._id);
-          return profileDeffered.promise;
+          return profileDeferred.promise;
         });
       });
     }
@@ -104,8 +120,8 @@
         });
       })
       .then(function() {
-        profileDeffered = $q.defer();
-        profileDeffered.reject();
+        profileDeferred = $q.defer();
+        profileDeferred.reject();
       });
     }
 
@@ -116,9 +132,9 @@
         $http.post(url, credentials), 200
       )
       .then(function(response) {
-        profileDeffered = $q.defer();
+        profileDeferred = $q.defer();
         analyticsService.trackEvent('auth', 'login', response.data._id);
-        profileDeffered.resolve(response.data);
+        profileDeferred.resolve(response.data);
       });
     }
 
@@ -130,8 +146,8 @@
           $http.post(url), 204
         ).then(function(response) {
           analyticsService.trackEvent('auth', 'logout', profile._id);
-          profileDeffered = $q.defer();
-          profileDeffered.reject();
+          profileDeferred = null;
+          _token = '';
         });
       });
     }
@@ -143,8 +159,8 @@
         $http.post(url, credentials), 201
       )
       .then(function(response) {
-        profileDeffered = $q.defer();
-        profileDeffered.resolve(response.data);
+        profileDeferred = $q.defer();
+        profileDeferred.resolve(response.data);
         analyticsService.trackEvent('auth', 'signup', response.data._id);
       });
     }
