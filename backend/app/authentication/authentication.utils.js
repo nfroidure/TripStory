@@ -31,8 +31,8 @@ function authenticationUtilsCreateDefaultRights() {
     path: '/auth/(facebook|xee|google|twitter)(/callback)?',
     methods: reaccess.READ_MASK,
   }, {
-    // Login/signup
-    path: '/api/v0/(login|signup)',
+    // Login/signup/jwt
+    path: '/api/v0/(login|signup|tokens)',
     methods: reaccess.POST,
   }, {
     // Basic authentication

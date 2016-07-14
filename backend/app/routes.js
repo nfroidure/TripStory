@@ -6,7 +6,6 @@ const favicon = require('serve-favicon');
 const express = require('express');
 const path = require('path');
 
-const initBasicAuth = require('./authentication/authentication.middleware');
 const initCors = require('./system/cors.middleware');
 const initAgentVersionChecker = require('./system/version.middleware');
 const initAuthenticationRoutes = require('./authentication/authentication.routes');
@@ -51,7 +50,6 @@ function initRoutes(context) {
     extended: false,
   }));
   context.app.use(cookieParser(context.env.SESSION_SECRET));
-  context.app.use(initBasicAuth(context)); // Fix for passport granularity issue
 
   if(context.analyticsAgent) {
     context.app.use(context.analyticsAgent);

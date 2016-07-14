@@ -8,6 +8,7 @@ const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const OAuth2Strategy = require('passport-oauth2');
+const JwtBearerStrategy = require('passport-http-jwt-bearer');
 const YError = require('yerror');
 const castToObjectId = require('mongodb').ObjectId;
 const authenticationUtils = require('./authentication.utils');
@@ -93,6 +94,14 @@ function initAuthenticationController(context) {
     }, xeeLoginLogic));
   } else {
     context.logger.error('No Xee ID!');
+  }
+  if(context.env.JWT_SECRET) {
+    passport.use('jwt', new JwtBearerStrategy(
+      context.env.JWT_SECRET, {
+        passReqToCallback: true,
+      }, jwtLoginLogic));
+  } else {
+    context.logger.error('No JWT secret!');
   }
 
   function localLoginLogic(req, email, password, done) {
@@ -479,6 +488,40 @@ function initAuthenticationController(context) {
         return done(err, result.value);
       });
 
+    });
+  }
+
+  function jwtLoginLogic(req, token, done) {
+    const findQuery = {};
+
+    context.logger.debug('JWT auth info:', token);
+
+    try {
+      findQuery._id = castToObjectId(token.sub);
+    } catch (err) {
+      console.log('token', token, done);
+      done(YError.wrap(err, 'E_BAD_USER_ID', token.sub));
+      return;
+    }
+
+    context.db.collection('users').findOne(findQuery, (err, user) => {
+      if(err) {
+        done(err);
+        return;
+      }
+      if(!user) {
+        done(new YHTTPError(404, 'E_UNEXISTING_USER', token.sub));
+        return;
+      }
+      context.bus.trigger({
+        exchange: 'A_JWT_LOGIN',
+        contents: {
+          user_id: user._id,
+          ip: req.ip,
+        },
+      });
+      done(err, user);
+      return;
     });
   }
 
