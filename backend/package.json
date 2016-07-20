@@ -1,7 +1,7 @@
 {
-  "name": "x-backend",
+  "name": "TripStory",
   "version": "1.0.0",
-  "description": "Our backend!",
+  "description": "TripStory API",
   "main": "index.js",
   "scripts": {
     "cli": "env NPM_RUN_CLI=1",
