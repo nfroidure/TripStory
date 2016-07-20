@@ -35,4 +35,4 @@ routes.forEach((route) => {
   });
 });
 
-process.stdout.write(JSON.stringify(api));
+process.stdout.write(JSON.stringify(api, null, 2));
