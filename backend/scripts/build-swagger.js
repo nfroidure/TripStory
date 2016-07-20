@@ -21,6 +21,11 @@ api.info = {
 };
 api.basePath = '/api/v0';
 api.paths = {};
+api.securityDefinitions = {
+  basic: {
+    type: 'basic',
+  },
+};
 
 routes.forEach((route) => {
   api.paths[route.path] = {};

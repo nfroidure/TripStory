@@ -7,7 +7,7 @@
   },
   "basePath": "/api/v0",
   "paths": {
-    "/api/v0/events": {
+    "/events": {
       "get": {
         "parameters": [],
         "responses": {
@@ -20,7 +20,7 @@
         }
       }
     },
-    "/api/v0/users/:user_id/events": {
+    "/users/:user_id/events": {
       "get": {
         "parameters": [],
         "responses": {
@@ -33,7 +33,7 @@
         }
       }
     },
-    "/api/v0/users/:user_id/events/:event_id": {
+    "/users/:user_id/events/:event_id": {
       "delete": {
         "parameters": [],
         "responses": {
@@ -45,6 +45,11 @@
           }
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "basic": {
+      "type": "basic"
     }
   }
 }

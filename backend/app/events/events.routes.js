@@ -3,9 +3,9 @@
 const initEventController = require('./events.controller');
 
 module.exports = function initEventsRoutes(context) {
-  var eventController = initEventController(context);
-  var apiPrefix = '/api/v0';
-  var routes = [
+  const eventController = initEventController(context);
+  const apiPrefix = '/api/v0';
+  const routes = [
     {
       method: 'GET',
       path: '/events',
@@ -54,41 +54,13 @@ module.exports = function initEventsRoutes(context) {
   ];
 
   routes
-    .map(function setPrefix(route) {
-      route.path = apiPrefix + route.path;
-
-      return route;
-    })
-    .forEach(function initRoute(route) {
+    .forEach((route) => {
       context.app[route.method.toLowerCase()](
-        route.path,
+        apiPrefix + route.path,
         route.controller
       );
     })
   ;
-
-  /*
-  context.app.get(
-    '/api/v0/events',
-    eventController.list
-  );
-  context.app.get(
-    '/api/v0/users/:user_id/events',
-    eventController.list
-  );
-  context.app.get(
-    '/api/v0/users/:user_id/events/:event_id',
-    eventController.get
-  );
-  context.app.put(
-    '/api/v0/users/:user_id/events/:event_id',
-    eventController.put
-  );
-  context.app.delete(
-    '/api/v0/users/:user_id/events/:event_id',
-    eventController.delete
-  );
-  */
 
   return routes;
 };
