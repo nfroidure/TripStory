@@ -26,7 +26,32 @@ function initAuthenticationRoutes(context) {
       req.headers && req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer')
     ) {
-      context.passport.authenticate('jwt', { session: false })(req, res, next);
+      context.passport.authenticate('jwt', {
+        session: false,
+      }, (err, user, info) => {
+        if(err) {
+          next(YHTTPError.cast(err));
+          return;
+        }
+        if(/error/.test(info)) {
+          if(/Invalid token \(jwt malformed\)/.test(info)) {
+            next(new YHTTPError(400, 'E_JWT_MALFORMED'));
+            return;
+          }
+          if(/The access token expired/.test(info)) {
+            next(new YHTTPError(400, 'E_JWT_EXPIRED'));
+            return;
+          }
+          return;
+        }
+        req.logIn(user, function(err) {
+          if(err) {
+            next(YHTTPError.cast(err));
+            return;
+          }
+          next();
+        });
+      })(req, res, next);
       return;
     }
     next();

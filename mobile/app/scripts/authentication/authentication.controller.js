@@ -26,7 +26,6 @@
     function activate() {
       authService.getProfile()
       .then(function(profile) {
-        console.log('going to trips');
         $state.go('app.trips');
       });
     }

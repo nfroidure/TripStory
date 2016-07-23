@@ -93,12 +93,13 @@ describe('JWT endpoints', () => {
           assert.deepEqual(res.body, {
             _id: 'abbacacaabbacacaabbacaca',
             token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.' +
-              'eyJpc3MiOiJUcmlwU3RvcnkiLCJhdWQiOiJXb3JsZCIsInN1YiI6ImFiYmFjYWN' +
-              'hYWJiYWNhY2FhYmJhY2FjYSIsImlhdCI6ODY0MDJ9.' +
-              'xmZDmkov-3f__qlZtHMlI8Ey8QxTuzmz2-Y2wLFxhps',
+              'eyJpc3MiOiJUcmlwU3RvcnkiLCJhdWQiOiJXb3JsZCIsInN1YiI6ImFiYmFjYW' +
+              'NhYWJiYWNhY2FhYmJhY2FjYSIsImlhdCI6MiwiZXhwIjo4NjQwMn0.' +
+              '1P4aDd-VDmMEcpBJhN-etzAyzhMvF7CjKH8hnxEUrAw',
             payload: {
               aud: 'World',
-              iat: 86402,
+              iat: 2,
+              exp: 86402,
               iss: 'TripStory',
               sub: 'abbacacaabbacacaabbacaca',
             },
@@ -122,6 +123,7 @@ describe('JWT endpoints', () => {
           iss: 'TripStory',
           aud: 'World',
           sub: 'abbacacaabbacacaabbacaca',
+          exp: Math.round(((new Date().getTime()) + 2000) / 1000),
         };
 
         jwt.encode(context.env.JWT_SECRET, payload, (err, _token) => {
@@ -163,7 +165,8 @@ describe('JWT endpoints', () => {
           iss: 'TripStory',
           aud: 'World',
           sub: 'abbacacaabbacacaabbacaca',
-          iat: Math.round(((new Date().getTime()) + 2000) / 1000),
+          iat: Math.round((new Date().getTime()) / 1000),
+          exp: Math.round(((new Date().getTime()) + 2000) / 1000),
         };
 
         jwt.encode(context.env.JWT_SECRET, payload, (err, _token) => {
@@ -179,11 +182,49 @@ describe('JWT endpoints', () => {
       it('should not allow to authenticate', done => {
         request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca')
           .set('Authorization', 'Bearer ' + token)
-          .expect(401)
+          .expect(400)
           .end((err, res) => {
             if(err) {
               return done(err);
             }
+            assert.deepEqual(res.body.code, 'E_JWT_MALFORMED');
+            done(err);
+          });
+      });
+
+    });
+
+    describe('with outdated jwt auth', () => {
+      let token;
+
+      beforeEach(done => {
+        const payload = {
+          iss: 'TripStory',
+          aud: 'World',
+          sub: 'abbacacaabbacacaabbacaca',
+          iat: Math.round((new Date().getTime()) / 1000),
+          exp: Math.round(((new Date().getTime()) - 2000) / 1000),
+        };
+
+        jwt.encode(context.env.JWT_SECRET, payload, (err, _token) => {
+          if(err) {
+            done(err);
+            return;
+          }
+          token = _token;
+          done();
+        });
+      });
+
+      it('should not allow to authenticate', done => {
+        request(context.app).get('/api/v0/users/abbacacaabbacacaabbacaca')
+          .set('Authorization', 'Bearer ' + token)
+          .expect(400)
+          .end((err, res) => {
+            if(err) {
+              return done(err);
+            }
+            assert.deepEqual(res.body.code, 'E_JWT_EXPIRED');
             done(err);
           });
       });
@@ -202,6 +243,7 @@ describe('JWT endpoints', () => {
           iss: 'TripStory',
           aud: 'World',
           sub: 'abbacacaabbacacaabbacaca',
+          exp: Math.round(((new Date().getTime()) + 2000) / 1000),
         };
 
         jwt.encode(context.env.JWT_SECRET, payload, (err, _token) => {

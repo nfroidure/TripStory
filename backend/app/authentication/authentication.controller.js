@@ -95,6 +95,7 @@ function initAuthenticationController(context) {
   } else {
     context.logger.error('No Xee ID!');
   }
+
   if(context.env.JWT_SECRET) {
     passport.use('jwt', new JwtBearerStrategy(
       context.env.JWT_SECRET, {
@@ -499,14 +500,13 @@ function initAuthenticationController(context) {
     try {
       findQuery._id = castToObjectId(token.sub);
     } catch (err) {
-      console.log('token', token, done);
-      done(YError.wrap(err, 'E_BAD_USER_ID', token.sub));
+      done(YHTTPError.wrap(err, 400, 'E_BAD_USER_ID', token.sub));
       return;
     }
 
     context.db.collection('users').findOne(findQuery, (err, user) => {
       if(err) {
-        done(err);
+        done(YHTTPError.wrap(err, 500));
         return;
       }
       if(!user) {

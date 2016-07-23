@@ -30,12 +30,14 @@ function authenticationUtilsNormalizeEmail(email) {
 }
 
 function authenticationUtilsCreateJWT(context, user) {
+  const issuedAt = context.time();
   const tokenPayload = {
     iss: 'TripStory',
     aud: 'World',
     sub: user._id.toString(),
-    iat: Math.round((
-      context.time() + (
+    iat: Math.round(issuedAt / 1000),
+    exp: Math.round((
+      issuedAt + (
         context.env.JWT_DURATION ?
         parseInt(context.env.JWT_DURATION, 10) :
         JWT_DEFAULT_DURATION
