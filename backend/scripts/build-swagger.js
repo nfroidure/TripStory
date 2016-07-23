@@ -29,16 +29,19 @@ api.securityDefinitions = {
 
 api.paths = _buildPathsFromMetadata(eventsMetadata);
 
+process.stdout.write(JSON.stringify(api, null, 2));
+
 function _buildPathsFromMetadata(metadata) {
   return Object.keys(metadata).reduce((paths, path) => {
     return Object.keys(metadata[path]).reduce((paths, method) => {
       const data = metadata[path][method];
       const definition = {};
+      const { path: swaggerPath, parameters } = _getPathsAndParams(path);
 
-      paths[path] = paths[path] || {};
-      paths[path][method.toLowerCase()] = definition;
+      paths[swaggerPath] = paths[swaggerPath] || {};
+      paths[swaggerPath][method.toLowerCase()] = definition;
 
-      definition.parameters = [];
+      definition.parameters = parameters;
       definition.responses = Object.keys(data.responseCodes)
       .reduce((responses, status) => {
         responses[status] = {};
@@ -51,4 +54,25 @@ function _buildPathsFromMetadata(metadata) {
   }, {});
 }
 
-process.stdout.write(JSON.stringify(api, null, 2));
+function _getPathsAndParams(path) {
+  const parameters = [];
+
+  path = path.replace(/(?:\/):([a-z_]+)(?=\/|$)/mg, (match, $1) => {
+    const isObjectId = '_id' === $1.substr(-3);
+    const parameter = {
+      name: $1,
+      in: 'path',
+      description: isObjectId ?
+        $1[0].toUpperCase() + $1.substr(1, $1.length - '_id'.length - 1) +
+          ' MongoDB ObjectId.' :
+        '',
+      required: false,
+      type: 'string',
+    };
+
+    parameter.pattern = '[a-z0-9]{24}';
+    parameters.push(parameter);
+    return '/{' + $1 + '}';
+  });
+  return { path, parameters };
+}

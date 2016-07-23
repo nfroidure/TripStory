@@ -19,9 +19,18 @@
         }
       }
     },
-    "/api/v0/users/:user_id/events": {
+    "/api/v0/users/{user_id}/events": {
       "get": {
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -32,9 +41,26 @@
         }
       }
     },
-    "/api/v0/users/:user_id/events/:event_id": {
+    "/api/v0/users/{user_id}/events/{event_id}": {
       "get": {
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "Event MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -45,7 +71,24 @@
         }
       },
       "put": {
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "Event MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Resource were created or updated."
@@ -59,7 +102,24 @@
         }
       },
       "delete": {
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "Event MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
         "responses": {
           "410": {
             "description": "RIP Resource."
