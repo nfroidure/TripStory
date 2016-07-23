@@ -44,7 +44,7 @@ const eventsMetadata = {
       requestQuery: [],
       responseBody: 'event',
       responseCodes: {
-        200: metadataUtils.statusCodes['201'],
+        201: metadataUtils.statusCodes['201'],
         400: metadataUtils.statusCodes['400'],
         500: metadataUtils.statusCodes['500'],
       },
@@ -55,6 +55,7 @@ const eventsMetadata = {
       requestQuery: [],
       responseBody: 'event',
       responseCodes: {
+        400: metadataUtils.statusCodes['400'],
         410: metadataUtils.statusCodes['410'],
         500: metadataUtils.statusCodes['500'],
       },
