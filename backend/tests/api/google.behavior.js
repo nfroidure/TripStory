@@ -19,7 +19,13 @@ describe('OAuth Google endpoints', () => {
   })).toString('base64');
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
+    context.env.SESSION_SECRET = 'none';
+    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.GOOGLE_ID = '123-456-789';
+    context.env.GOOGLE_SECRET = 'shhh-its-a-secret';
     context.tokens = {
       createToken: sinon.stub().returns({
         contents: { fake: 'token' },
@@ -27,12 +33,6 @@ describe('OAuth Google endpoints', () => {
       checkToken: sinon.stub().returns(true),
     };
     context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      GOOGLE_ID: '123-456-789',
-      GOOGLE_SECRET: 'shhh-its-a-secret',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
-    };
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

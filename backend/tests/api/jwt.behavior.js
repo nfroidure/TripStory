@@ -16,7 +16,12 @@ describe('JWT endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
+    context.env.SESSION_SECRET = 'none';
+    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.JWT_SECRET = 'TOPSECRETTTTT';
     context.tokens = {
       createToken: sinon.stub().returns({
         fake: 'token',
@@ -24,11 +29,6 @@ describe('JWT endpoints', () => {
       checkToken: sinon.stub().returns(true),
     };
     context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
-      JWT_SECRET: 'TOPSECRETTTTT',
-    };
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

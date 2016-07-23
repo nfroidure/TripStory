@@ -15,12 +15,12 @@ describe('Events endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.SESSION_SECRET = 'none';
+    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.time = sinon.stub().returns(1664);
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

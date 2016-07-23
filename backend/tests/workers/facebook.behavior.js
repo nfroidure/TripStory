@@ -14,9 +14,10 @@ describe('Facebook jobs', () => {
   let context;
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
     context.time = sinon.stub().returns(1664);
-    context.env = {};
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),

@@ -14,11 +14,11 @@ describe('System endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.SESSION_SECRET = 'none';
+    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

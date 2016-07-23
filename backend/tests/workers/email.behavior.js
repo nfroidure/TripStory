@@ -12,12 +12,12 @@ describe('Email jobs', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.time = sinon.stub().returns(1664);
-    context.env = {
-      EMAIL: 'mailer-daemon@cloud',
-      PORT: '3000',
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.EMAIL = 'mailer-daemon@cloud';
+    context.env.PORT = '3000';
+    context.time = sinon.stub().returns(1664);
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),
