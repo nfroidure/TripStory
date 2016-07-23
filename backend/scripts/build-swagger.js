@@ -1,15 +1,7 @@
 'use strict';
 
 const project = require('../package.json');
-const context = {
-  app: {
-    get: () => {},
-    post: () => {},
-    put: () => {},
-    delete: () => {},
-  },
-};
-const routes = require('../app/events/events.routes.js')(context);
+const eventsMetadata = require('../app/events/events.metadata.js');
 
 let api = {};
 
@@ -19,25 +11,44 @@ api.info = {
   description: project.description,
   version: project.version,
 };
-api.basePath = '/api/v0';
 api.paths = {};
 api.securityDefinitions = {
   basic: {
     type: 'basic',
   },
+  // Maybe a valid approach to declaring JWT Auth
+  // https://github.com/swagger-api/swagger-ui/pull/2234
+  // But, looks like there is no consensus tight now:
+  // https://github.com/swagger-api/swagger-ui/pull/2234
+  bearer: {
+    type: 'apiKey',
+    name: 'Authorization',
+    in: 'header',
+  },
 };
 
-routes.forEach((route) => {
-  api.paths[route.path] = {};
-  api.paths[route.path][route.method.toLowerCase()] = {};
-  api.paths[route.path][route.method.toLowerCase()].parameters = [];
-  api.paths[route.path][route.method.toLowerCase()].responses = {};
+api.paths = _buildPathsFromMetadata(eventsMetadata);
 
-  route.responseCodes.forEach((response) => {
-    api.paths[route.path][route.method.toLowerCase()].responses[response] = {
-      description: '',
-    };
-  });
-});
+function _buildPathsFromMetadata(metadata) {
+  return Object.keys(metadata).reduce((paths, path) => {
+    return Object.keys(metadata[path]).reduce((paths, method) => {
+      const data = metadata[path][method];
+      const definition = {};
+
+      paths[path] = paths[path] || {};
+      paths[path][method.toLowerCase()] = definition;
+
+      definition.parameters = [];
+      definition.responses = Object.keys(data.responseCodes)
+      .reduce((responses, status) => {
+        responses[status] = {};
+        responses[status].description = data.responseCodes[status].description;
+        return responses;
+      }, {});
+
+      return paths;
+    }, paths);
+  }, {});
+}
 
 process.stdout.write(JSON.stringify(api, null, 2));

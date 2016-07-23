@@ -5,43 +5,67 @@
     "description": "TripStory API",
     "version": "1.0.0"
   },
-  "basePath": "/api/v0",
   "paths": {
-    "/events": {
+    "/api/v0/events": {
       "get": {
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Everything went well."
           },
           "500": {
-            "description": ""
+            "description": "We fucked up."
           }
         }
       }
     },
-    "/users/:user_id/events": {
+    "/api/v0/users/:user_id/events": {
       "get": {
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Everything went well."
           },
           "500": {
-            "description": ""
+            "description": "We fucked up."
           }
         }
       }
     },
-    "/users/:user_id/events/:event_id": {
+    "/api/v0/users/:user_id/events/:event_id": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      },
+      "put": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Resource were created or updated."
+          },
+          "400": {
+            "description": "You fucked up."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      },
       "delete": {
         "parameters": [],
         "responses": {
-          "200": {
-            "description": ""
+          "410": {
+            "description": "RIP Resource."
           },
           "500": {
-            "description": ""
+            "description": "We fucked up."
           }
         }
       }
@@ -50,6 +74,11 @@
   "securityDefinitions": {
     "basic": {
       "type": "basic"
+    },
+    "bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }
