@@ -286,7 +286,7 @@ describe('Users endpoints', () => {
     it('should allow to get others profile', done => {
       request(context.app).get('/api/v0/users/b17eb17eb17eb17eb17eb17e')
         .auth('popol@moon.u', 'test')
-        .expect(404)
+        .expect(410)
         .end((err, res) => {
           if(err) {
             return done(err);

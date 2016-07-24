@@ -33,7 +33,7 @@ function initUsersController(context) {
     })
     .then((entry) => {
       if(!entry) {
-        throw new YHTTPError(404, 'E_NOT_FOUND', req.params.user_id);
+        throw new YHTTPError(410, 'E_NOT_FOUND', req.params.user_id);
       }
       res.status(200).send(usersTransforms.fromCollection(entry));
     }).catch(next);
@@ -190,7 +190,7 @@ function initUsersController(context) {
     })
     .then((entry) => {
       if(!entry) {
-        return res.sendStatus(404);
+        return res.sendStatus(410);
       }
       return context.db.collection('users').find({
         _id: {

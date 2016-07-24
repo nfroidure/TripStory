@@ -1,11 +1,12 @@
 'use strict';
 
+const routesUtils = require('../utils/routes');
+const systemMetadata = require('./system.metadata');
 const initSystemController = require('./system.controller');
 
 module.exports = function initSystemsRoutes(context) {
   const systemController = initSystemController(context);
 
-  context.app.get('/ping', systemController.ping);
-  context.app.post('/bus', systemController.triggerEvent);
+  routesUtils.setupRoutesFromMetadata(context, systemController, systemMetadata);
   context.app.use(systemController.catchErrors);
 };

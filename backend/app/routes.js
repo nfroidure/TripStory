@@ -66,6 +66,6 @@ function initRoutes(context) {
   initTripsRoutes(context);
   initEventsRoutes(context);
   initCarsRoutes(context);
-  initSystemRoutes(context);
+  initSystemRoutes(context); // Must be the last (contains the catch all middleware)
 
 }

@@ -264,7 +264,7 @@ function castResultsToEvent(context, entries) {
   let payload;
 
   if(!entries.length) {
-    throw new YHTTPError(404, 'E_NOT_FOUND');
+    throw new YHTTPError(410, 'E_NOT_FOUND');
   }
   payload = tripsTransforms.fromCollection(entries[0]);
   payload.events = entries[0].events.map(eventsTransforms.fromCollection);

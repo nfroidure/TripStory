@@ -1,7 +1,12 @@
 'use strict';
 
+const extend = require('extend');
 const project = require('../package.json');
+const carsMetadata = require('../app/cars/cars.metadata.js');
 const eventsMetadata = require('../app/events/events.metadata.js');
+const systemMetadata = require('../app/system/system.metadata.js');
+const tripsMetadata = require('../app/trips/trips.metadata.js');
+const usersMetadata = require('../app/users/users.metadata.js');
 
 let api = {};
 
@@ -28,6 +33,11 @@ api.securityDefinitions = {
 };
 
 api.paths = _buildPathsFromMetadata(eventsMetadata);
+api.paths = extend(api.paths, _buildPathsFromMetadata(carsMetadata));
+api.paths = extend(api.paths, _buildPathsFromMetadata(eventsMetadata));
+api.paths = extend(api.paths, _buildPathsFromMetadata(systemMetadata));
+api.paths = extend(api.paths, _buildPathsFromMetadata(tripsMetadata));
+api.paths = extend(api.paths, _buildPathsFromMetadata(usersMetadata));
 
 process.stdout.write(JSON.stringify(api, null, 2));
 

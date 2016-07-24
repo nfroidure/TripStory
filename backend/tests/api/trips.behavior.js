@@ -149,7 +149,7 @@ describe('Trips endpoints', () => {
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
-        .expect(404)
+        .expect(410)
         .end((err, res) => {
           if(err) {
             return done(err);
