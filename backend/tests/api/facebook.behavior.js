@@ -22,7 +22,7 @@ describe('OAuth Facebook endpoints', () => {
       env: { NODE_ENV: 'development' },
     };
     context.env.SESSION_SECRET = 'none';
-    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.MOBILE_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.env.FACEBOOK_ID = '123-456-789';
     context.env.FACEBOOK_SECRET = 'shhh-its-a-secret';
     context.tokens = {

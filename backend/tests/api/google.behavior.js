@@ -23,7 +23,7 @@ describe('OAuth Google endpoints', () => {
       env: { NODE_ENV: 'development' },
     };
     context.env.SESSION_SECRET = 'none';
-    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.env.GOOGLE_ID = '123-456-789';
     context.env.GOOGLE_SECRET = 'shhh-its-a-secret';
     context.tokens = {

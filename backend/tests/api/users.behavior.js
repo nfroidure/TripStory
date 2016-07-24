@@ -20,7 +20,7 @@ describe('Users endpoints', () => {
       env: { NODE_ENV: 'development' },
     };
     context.env.SESSION_SECRET = 'none';
-    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.time = sinon.stub().returns(1664);
     context.logger = {
       error: sinon.spy(),

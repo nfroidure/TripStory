@@ -20,7 +20,7 @@ describe('JWT endpoints', () => {
       env: { NODE_ENV: 'development' },
     };
     context.env.SESSION_SECRET = 'none';
-    context.env.mobile_path = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.env.JWT_SECRET = 'TOPSECRETTTTT';
     context.tokens = {
       createToken: sinon.stub().returns({
