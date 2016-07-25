@@ -8,6 +8,7 @@ const Promise = require('bluebird');
 const nock = require('nock');
 const Twitter = require('twitter');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 const fs = require('fs');
 const path = require('path');
 
@@ -21,6 +22,7 @@ describe('Twitter jobs', () => {
       env: { NODE_ENV: 'development' },
     };
     context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),

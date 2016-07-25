@@ -7,6 +7,7 @@ const assert = require('assert');
 const Promise = require('bluebird');
 const nock = require('nock');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const facebookJobs = require('../../workers/facebook/facebook.jobs.js');
 
@@ -18,6 +19,7 @@ describe('Facebook jobs', () => {
       env: { NODE_ENV: 'development' },
     };
     context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),

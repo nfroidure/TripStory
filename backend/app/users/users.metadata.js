@@ -5,7 +5,7 @@ const metadataUtils = require('../utils/metadata');
 const usersMetadata = {
   [metadataUtils.apiPrefix + '/users']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'userLists',
@@ -17,7 +17,7 @@ const usersMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id']: {
     GET: {
-      controller: 'get',
+      controllers: ['get'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'user',
@@ -28,7 +28,7 @@ const usersMetadata = {
       },
     },
     PUT: {
-      controller: 'put',
+      controllers: ['put'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'user',
@@ -39,7 +39,7 @@ const usersMetadata = {
       },
     },
     DELETE: {
-      controller: 'delete',
+      controllers: ['delete'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'user',
@@ -52,7 +52,7 @@ const usersMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/avatar']: {
     PUT: {
-      controller: 'putAvatar',
+      controllers: ['putAvatar'],
       requestBody: '',
       requestQuery: [],
       responseBody: '',
@@ -65,7 +65,7 @@ const usersMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/friends']: {
     GET: {
-      controller: 'listFriends',
+      controllers: ['listFriends'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'userLists',
@@ -76,7 +76,7 @@ const usersMetadata = {
       },
     },
     POST: {
-      controller: 'inviteFriend',
+      controllers: ['inviteFriend'],
       requestBody: '',
       requestQuery: [],
       responseBody: '',

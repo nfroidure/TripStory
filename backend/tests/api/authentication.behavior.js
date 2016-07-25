@@ -8,6 +8,7 @@ const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -27,6 +28,7 @@ describe('Authentication endpoints', () => {
       checkToken: sinon.stub().returns(true),
     };
     context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

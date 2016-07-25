@@ -5,7 +5,7 @@ const metadataUtils = require('../utils/metadata');
 const carsMetadata = {
   [metadataUtils.apiPrefix + '/cars']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'carLists',
@@ -17,7 +17,7 @@ const carsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/cars']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'carLists',
@@ -29,7 +29,7 @@ const carsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/cars/:car_id']: {
     GET: {
-      controller: 'get',
+      controllers: ['get'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'car',
@@ -39,7 +39,7 @@ const carsMetadata = {
       },
     },
     DELETE: {
-      controller: 'delete',
+      controllers: ['delete'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'car',

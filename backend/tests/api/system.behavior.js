@@ -7,6 +7,7 @@ const MongoClient = require('mongodb').MongoClient;
 const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -24,6 +25,7 @@ describe('System endpoints', () => {
       debug: sinon.spy(),
       info: sinon.spy(),
     };
+    context.passport = passport;
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
       .then(db => {
         context.db = db;

@@ -5,6 +5,7 @@ const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const emailJobs = require('../../workers/email/email.jobs.js');
 
@@ -18,6 +19,7 @@ describe('Email jobs', () => {
     context.env.EMAIL = 'mailer-daemon@cloud';
     context.env.PORT = '3000';
     context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),

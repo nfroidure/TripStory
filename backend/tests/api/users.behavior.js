@@ -9,6 +9,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 const Promise = require('bluebird');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -22,6 +23,7 @@ describe('Users endpoints', () => {
     context.env.SESSION_SECRET = 'none';
     context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

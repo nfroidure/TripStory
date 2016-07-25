@@ -5,7 +5,7 @@ const metadataUtils = require('../utils/metadata');
 const tripsMetadata = {
   [metadataUtils.apiPrefix + '/trips']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'tripLists',
@@ -17,7 +17,7 @@ const tripsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/trips']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'tripLists',
@@ -29,7 +29,7 @@ const tripsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/trips/:trip_id']: {
     GET: {
-      controller: 'get',
+      controllers: ['get'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'trip',
@@ -40,7 +40,7 @@ const tripsMetadata = {
       },
     },
     PUT: {
-      controller: 'put',
+      controllers: ['put'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'trip',
@@ -51,7 +51,7 @@ const tripsMetadata = {
       },
     },
     DELETE: {
-      controller: 'delete',
+      controllers: ['delete'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'trip',

@@ -5,7 +5,7 @@ const metadataUtils = require('../utils/metadata');
 const systemsMetadata = {
   '/ping': {
     GET: {
-      controller: 'ping',
+      controllers: ['ping'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'pong',
@@ -17,7 +17,7 @@ const systemsMetadata = {
   },
   '/bus': {
     POST: {
-      controller: 'triggerEvent',
+      controllers: ['triggerEvent'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'event',

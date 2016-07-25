@@ -10,7 +10,7 @@ function setupRoutesFromMetadata(context, controller, metadata) {
   Object.keys(metadata).forEach((path) => {
     Object.keys(metadata[path]).forEach((method) => {
       const data = metadata[path][method];
-      const args = [
+      let args = [
         path,
       ];
 
@@ -18,7 +18,12 @@ function setupRoutesFromMetadata(context, controller, metadata) {
         args.push(_checkResponse.bind(null, data));
       }
 
-      args.push(controller[data.controller]);
+      args = args.concat(
+        data.controllers
+        .map((controllerName) => {
+          return controller[controllerName];
+        })
+      );
 
       context.app[method.toLowerCase()](...args);
     });

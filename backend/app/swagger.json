@@ -6,6 +6,296 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/v0/profile": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/me": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/tokens": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/login": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "400": {
+            "description": "You fucked up."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/signup": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Resource were created or updated."
+          },
+          "400": {
+            "description": "You fucked up."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/logout": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Everything went well but no content."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/facebook/callback": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/twitter/callback": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/xee": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/auth/xee/callback": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "301": {
+            "description": "Resource is elsewhere."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/cars": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/users/{user_id}/cars": {
+      "get": {
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
+    "/api/v0/users/{user_id}/cars/{car_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          },
+          {
+            "name": "car_id",
+            "in": "path",
+            "description": "Car MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Everything went well."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          },
+          {
+            "name": "car_id",
+            "in": "path",
+            "description": "Car MongoDB ObjectId.",
+            "required": false,
+            "type": "string",
+            "pattern": "[a-z0-9]{24}"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "You fucked up."
+          },
+          "410": {
+            "description": "RIP Resource."
+          },
+          "500": {
+            "description": "We fucked up."
+          }
+        }
+      }
+    },
     "/api/v0/events": {
       "get": {
         "parameters": [],
@@ -115,102 +405,6 @@
             "name": "event_id",
             "in": "path",
             "description": "Event MongoDB ObjectId.",
-            "required": false,
-            "type": "string",
-            "pattern": "[a-z0-9]{24}"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "You fucked up."
-          },
-          "410": {
-            "description": "RIP Resource."
-          },
-          "500": {
-            "description": "We fucked up."
-          }
-        }
-      }
-    },
-    "/api/v0/cars": {
-      "get": {
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Everything went well."
-          },
-          "500": {
-            "description": "We fucked up."
-          }
-        }
-      }
-    },
-    "/api/v0/users/{user_id}/cars": {
-      "get": {
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "description": "User MongoDB ObjectId.",
-            "required": false,
-            "type": "string",
-            "pattern": "[a-z0-9]{24}"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Everything went well."
-          },
-          "500": {
-            "description": "We fucked up."
-          }
-        }
-      }
-    },
-    "/api/v0/users/{user_id}/cars/{car_id}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "description": "User MongoDB ObjectId.",
-            "required": false,
-            "type": "string",
-            "pattern": "[a-z0-9]{24}"
-          },
-          {
-            "name": "car_id",
-            "in": "path",
-            "description": "Car MongoDB ObjectId.",
-            "required": false,
-            "type": "string",
-            "pattern": "[a-z0-9]{24}"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Everything went well."
-          },
-          "500": {
-            "description": "We fucked up."
-          }
-        }
-      },
-      "delete": {
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "description": "User MongoDB ObjectId.",
-            "required": false,
-            "type": "string",
-            "pattern": "[a-z0-9]{24}"
-          },
-          {
-            "name": "car_id",
-            "in": "path",
-            "description": "Car MongoDB ObjectId.",
             "required": false,
             "type": "string",
             "pattern": "[a-z0-9]{24}"

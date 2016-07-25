@@ -5,7 +5,7 @@ const metadataUtils = require('../utils/metadata');
 const eventsMetadata = {
   [metadataUtils.apiPrefix + '/events']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'eventLists',
@@ -17,7 +17,7 @@ const eventsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/events']: {
     GET: {
-      controller: 'list',
+      controllers: ['list'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'eventLists',
@@ -29,7 +29,7 @@ const eventsMetadata = {
   },
   [metadataUtils.apiPrefix + '/users/:user_id/events/:event_id']: {
     GET: {
-      controller: 'get',
+      controllers: ['get'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'event',
@@ -39,7 +39,7 @@ const eventsMetadata = {
       },
     },
     PUT: {
-      controller: 'put',
+      controllers: ['put'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'event',
@@ -50,7 +50,7 @@ const eventsMetadata = {
       },
     },
     DELETE: {
-      controller: 'delete',
+      controllers: ['delete'],
       requestBody: '',
       requestQuery: [],
       responseBody: 'event',

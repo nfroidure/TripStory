@@ -2,11 +2,13 @@
 
 const extend = require('extend');
 const project = require('../package.json');
-const carsMetadata = require('../app/cars/cars.metadata.js');
-const eventsMetadata = require('../app/events/events.metadata.js');
-const systemMetadata = require('../app/system/system.metadata.js');
-const tripsMetadata = require('../app/trips/trips.metadata.js');
-const usersMetadata = require('../app/users/users.metadata.js');
+const authenticationMetadata = require('../app/authentication/authentication.metadata');
+const oauthMetadata = require('../app/authentication/oauth.metadata');
+const carsMetadata = require('../app/cars/cars.metadata');
+const eventsMetadata = require('../app/events/events.metadata');
+const systemMetadata = require('../app/system/system.metadata');
+const tripsMetadata = require('../app/trips/trips.metadata');
+const usersMetadata = require('../app/users/users.metadata');
 
 let api = {};
 
@@ -32,7 +34,8 @@ api.securityDefinitions = {
   },
 };
 
-api.paths = _buildPathsFromMetadata(eventsMetadata);
+api.paths = _buildPathsFromMetadata(authenticationMetadata);
+api.paths = extend(api.paths, _buildPathsFromMetadata(oauthMetadata));
 api.paths = extend(api.paths, _buildPathsFromMetadata(carsMetadata));
 api.paths = extend(api.paths, _buildPathsFromMetadata(eventsMetadata));
 api.paths = extend(api.paths, _buildPathsFromMetadata(systemMetadata));

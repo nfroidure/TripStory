@@ -9,6 +9,7 @@ const path = require('path');
 const initCors = require('./system/cors.middleware');
 const initAgentVersionChecker = require('./system/version.middleware');
 const initAuthenticationRoutes = require('./authentication/authentication.routes');
+const initOAuthRoutes = require('./authentication/oauth.routes');
 const initTripsRoutes = require('./trips/trips.routes');
 const initEventsRoutes = require('./events/events.routes');
 const initUsersRoutes = require('./users/users.routes');
@@ -62,6 +63,7 @@ function initRoutes(context) {
 
   // API
   initAuthenticationRoutes(context);
+  initOAuthRoutes(context);
   initUsersRoutes(context);
   initTripsRoutes(context);
   initEventsRoutes(context);
