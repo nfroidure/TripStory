@@ -8,7 +8,11 @@
   "paths": {
     "/api/v0/profile": {
       "get": {
+        "summary": "Retrieve authenticated user",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -24,7 +28,11 @@
     },
     "/api/v0/me": {
       "get": {
+        "summary": "Retrieve authenticated user",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -40,7 +48,11 @@
     },
     "/api/v0/tokens": {
       "post": {
+        "summary": "Create a JSON Web Token",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -53,7 +65,11 @@
     },
     "/api/v0/login": {
       "post": {
+        "summary": "Login with sessions",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -69,7 +85,11 @@
     },
     "/api/v0/signup": {
       "post": {
+        "summary": "Signup",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "201": {
             "description": "Resource were created or updated."
@@ -85,7 +105,11 @@
     },
     "/api/v0/logout": {
       "post": {
+        "summary": "Log out from sessions",
         "parameters": [],
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "204": {
             "description": "Everything went well but no content."
@@ -98,7 +122,21 @@
     },
     "/auth/facebook": {
       "get": {
-        "parameters": [],
+        "summary": "Login via Facebook OAuth",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "URL to redirect to after login.",
+            "required": false,
+            "type": "string",
+            "format": "url"
+          }
+        ],
+        "tags": [
+          "Auth",
+          "Facebook"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -111,7 +149,12 @@
     },
     "/auth/facebook/callback": {
       "get": {
+        "summary": "Facebook OAuth callback",
         "parameters": [],
+        "tags": [
+          "Auth",
+          "Facebook"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -124,7 +167,21 @@
     },
     "/auth/google": {
       "get": {
-        "parameters": [],
+        "summary": "Login via Google OAuth",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "URL to redirect to after login.",
+            "required": false,
+            "type": "string",
+            "format": "url"
+          }
+        ],
+        "tags": [
+          "Auth",
+          "Google"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -137,7 +194,12 @@
     },
     "/auth/google/callback": {
       "get": {
+        "summary": "Google OAuth callback",
         "parameters": [],
+        "tags": [
+          "Auth",
+          "Google"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -150,7 +212,21 @@
     },
     "/auth/twitter": {
       "get": {
-        "parameters": [],
+        "summary": "Login via Twitter OAuth",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "URL to redirect to after login.",
+            "required": false,
+            "type": "string",
+            "format": "url"
+          }
+        ],
+        "tags": [
+          "Auth",
+          "Twitter"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -163,7 +239,12 @@
     },
     "/auth/twitter/callback": {
       "get": {
+        "summary": "Twitter OAuth callback",
         "parameters": [],
+        "tags": [
+          "Auth",
+          "Twitter"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -176,7 +257,21 @@
     },
     "/auth/xee": {
       "get": {
-        "parameters": [],
+        "summary": "Login via Xee OAuth",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "URL to redirect to after login.",
+            "required": false,
+            "type": "string",
+            "format": "url"
+          }
+        ],
+        "tags": [
+          "Auth",
+          "Xee"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -189,7 +284,12 @@
     },
     "/auth/xee/callback": {
       "get": {
+        "summary": "Xee OAuth callback",
         "parameters": [],
+        "tags": [
+          "Auth",
+          "Xee"
+        ],
         "responses": {
           "301": {
             "description": "Resource is elsewhere."
@@ -202,7 +302,11 @@
     },
     "/api/v0/cars": {
       "get": {
+        "summary": "List all cars",
         "parameters": [],
+        "tags": [
+          "Cars"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -215,6 +319,7 @@
     },
     "/api/v0/users/{user_id}/cars": {
       "get": {
+        "summary": "List a user's cars",
         "parameters": [
           {
             "name": "user_id",
@@ -224,6 +329,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Cars"
         ],
         "responses": {
           "200": {
@@ -237,6 +345,7 @@
     },
     "/api/v0/users/{user_id}/cars/{car_id}": {
       "get": {
+        "summary": "Retrieve a user's car",
         "parameters": [
           {
             "name": "user_id",
@@ -255,6 +364,9 @@
             "pattern": "[a-z0-9]{24}"
           }
         ],
+        "tags": [
+          "Cars"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -265,6 +377,7 @@
         }
       },
       "delete": {
+        "summary": "Delete a user's car",
         "parameters": [
           {
             "name": "user_id",
@@ -282,6 +395,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Cars"
         ],
         "responses": {
           "400": {
@@ -298,7 +414,11 @@
     },
     "/api/v0/events": {
       "get": {
+        "summary": "List all events",
         "parameters": [],
+        "tags": [
+          "Events"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -311,6 +431,7 @@
     },
     "/api/v0/users/{user_id}/events": {
       "get": {
+        "summary": "List a user's events",
         "parameters": [
           {
             "name": "user_id",
@@ -320,6 +441,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Events"
         ],
         "responses": {
           "200": {
@@ -333,6 +457,7 @@
     },
     "/api/v0/users/{user_id}/events/{event_id}": {
       "get": {
+        "summary": "Retrieve a user's event",
         "parameters": [
           {
             "name": "user_id",
@@ -351,6 +476,9 @@
             "pattern": "[a-z0-9]{24}"
           }
         ],
+        "tags": [
+          "Events"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -361,6 +489,7 @@
         }
       },
       "put": {
+        "summary": "Create/edit a user's event",
         "parameters": [
           {
             "name": "user_id",
@@ -378,6 +507,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Events"
         ],
         "responses": {
           "201": {
@@ -392,6 +524,7 @@
         }
       },
       "delete": {
+        "summary": "DelEte a user's event",
         "parameters": [
           {
             "name": "user_id",
@@ -409,6 +542,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Events"
         ],
         "responses": {
           "400": {
@@ -425,7 +561,11 @@
     },
     "/ping": {
       "get": {
+        "summary": "Ping",
         "parameters": [],
+        "tags": [
+          "System"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -438,7 +578,12 @@
     },
     "/bus": {
       "post": {
+        "summary": "Trigger an event in the bus",
         "parameters": [],
+        "tags": [
+          "System",
+          "Events"
+        ],
         "responses": {
           "201": {
             "description": "Resource were created or updated."
@@ -454,7 +599,11 @@
     },
     "/api/v0/trips": {
       "get": {
+        "summary": "List all trips",
         "parameters": [],
+        "tags": [
+          "Trips"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -467,6 +616,7 @@
     },
     "/api/v0/users/{user_id}/trips": {
       "get": {
+        "summary": "List a user's trips",
         "parameters": [
           {
             "name": "user_id",
@@ -476,6 +626,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Trips"
         ],
         "responses": {
           "200": {
@@ -489,6 +642,7 @@
     },
     "/api/v0/users/{user_id}/trips/{trip_id}": {
       "get": {
+        "summary": "Retrieve a user's trip",
         "parameters": [
           {
             "name": "user_id",
@@ -506,6 +660,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Trips"
         ],
         "responses": {
           "200": {
@@ -520,6 +677,7 @@
         }
       },
       "put": {
+        "summary": "Create/edit a user's trip",
         "parameters": [
           {
             "name": "user_id",
@@ -538,6 +696,9 @@
             "pattern": "[a-z0-9]{24}"
           }
         ],
+        "tags": [
+          "Trips"
+        ],
         "responses": {
           "201": {
             "description": "Resource were created or updated."
@@ -551,6 +712,7 @@
         }
       },
       "delete": {
+        "summary": "Delete a user's trip",
         "parameters": [
           {
             "name": "user_id",
@@ -568,6 +730,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "Trips"
         ],
         "responses": {
           "400": {
@@ -584,7 +749,11 @@
     },
     "/api/v0/users": {
       "get": {
+        "summary": "List all users",
         "parameters": [],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Everything went well."
@@ -597,6 +766,7 @@
     },
     "/api/v0/users/{user_id}": {
       "get": {
+        "summary": "Retrieve a user",
         "parameters": [
           {
             "name": "user_id",
@@ -606,6 +776,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "200": {
@@ -620,6 +793,7 @@
         }
       },
       "put": {
+        "summary": "Create/edit a user",
         "parameters": [
           {
             "name": "user_id",
@@ -629,6 +803,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "201": {
@@ -643,6 +820,7 @@
         }
       },
       "delete": {
+        "summary": "Remove a user",
         "parameters": [
           {
             "name": "user_id",
@@ -652,6 +830,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "400": {
@@ -668,6 +849,7 @@
     },
     "/api/v0/users/{user_id}/avatar": {
       "put": {
+        "summary": "Change a user's avatar",
         "parameters": [
           {
             "name": "user_id",
@@ -677,6 +859,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "201": {
@@ -693,6 +878,7 @@
     },
     "/api/v0/users/{user_id}/friends": {
       "get": {
+        "summary": "List a user's friends",
         "parameters": [
           {
             "name": "user_id",
@@ -702,6 +888,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "200": {
@@ -716,6 +905,7 @@
         }
       },
       "post": {
+        "summary": "Invite a user's friend",
         "parameters": [
           {
             "name": "user_id",
@@ -725,6 +915,9 @@
             "type": "string",
             "pattern": "[a-z0-9]{24}"
           }
+        ],
+        "tags": [
+          "User"
         ],
         "responses": {
           "201": {

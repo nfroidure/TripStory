@@ -6,8 +6,10 @@ const systemsMetadata = {
   '/ping': {
     GET: {
       controllers: ['ping'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Ping',
+      description: '',
+      parameters: [],
+      tags: ['System'],
       responseBody: 'pong',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -18,8 +20,10 @@ const systemsMetadata = {
   '/bus': {
     POST: {
       controllers: ['triggerEvent'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Trigger an event in the bus',
+      description: '',
+      parameters: [],
+      tags: ['System', 'Events'],
       responseBody: 'event',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],

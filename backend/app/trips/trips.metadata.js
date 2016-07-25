@@ -6,8 +6,10 @@ const tripsMetadata = {
   [metadataUtils.apiPrefix + '/trips']: {
     GET: {
       controllers: ['list'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List all trips',
+      description: '',
+      parameters: [],
+      tags: ['Trips'],
       responseBody: 'tripLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -18,8 +20,10 @@ const tripsMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/trips']: {
     GET: {
       controllers: ['list'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List a user\'s trips',
+      description: '',
+      parameters: [],
+      tags: ['Trips'],
       responseBody: 'tripLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -30,8 +34,10 @@ const tripsMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/trips/:trip_id']: {
     GET: {
       controllers: ['get'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Retrieve a user\'s trip',
+      description: '',
+      parameters: [],
+      tags: ['Trips'],
       responseBody: 'trip',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -41,8 +47,10 @@ const tripsMetadata = {
     },
     PUT: {
       controllers: ['put'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Create/edit a user\'s trip',
+      description: '',
+      parameters: [],
+      tags: ['Trips'],
       responseBody: 'trip',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -52,8 +60,10 @@ const tripsMetadata = {
     },
     DELETE: {
       controllers: ['delete'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Delete a user\'s trip',
+      description: '',
+      parameters: [],
+      tags: ['Trips'],
       responseBody: 'trip',
       responseCodes: {
         400: metadataUtils.statusCodes['400'],

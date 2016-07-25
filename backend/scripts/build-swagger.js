@@ -54,7 +54,9 @@ function _buildPathsFromMetadata(metadata) {
       paths[swaggerPath] = paths[swaggerPath] || {};
       paths[swaggerPath][method.toLowerCase()] = definition;
 
-      definition.parameters = parameters;
+      definition.summary = data.summary;
+      definition.parameters = parameters.concat(data.parameters);
+      definition.tags = data.tags;
       definition.responses = Object.keys(data.responseCodes)
       .reduce((responses, status) => {
         responses[status] = {};

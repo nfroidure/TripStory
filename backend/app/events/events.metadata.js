@@ -6,8 +6,10 @@ const eventsMetadata = {
   [metadataUtils.apiPrefix + '/events']: {
     GET: {
       controllers: ['list'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List all events',
+      description: '',
+      parameters: [],
+      tags: ['Events'],
       responseBody: 'eventLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -18,8 +20,10 @@ const eventsMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/events']: {
     GET: {
       controllers: ['list'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List a user\'s events',
+      description: '',
+      parameters: [],
+      tags: ['Events'],
       responseBody: 'eventLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -30,8 +34,10 @@ const eventsMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/events/:event_id']: {
     GET: {
       controllers: ['get'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Retrieve a user\'s event',
+      description: '',
+      parameters: [],
+      tags: ['Events'],
       responseBody: 'event',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -40,8 +46,10 @@ const eventsMetadata = {
     },
     PUT: {
       controllers: ['put'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Create/edit a user\'s event',
+      description: '',
+      parameters: [],
+      tags: ['Events'],
       responseBody: 'event',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -51,8 +59,10 @@ const eventsMetadata = {
     },
     DELETE: {
       controllers: ['delete'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'DelEte a user\'s event',
+      description: '',
+      parameters: [],
+      tags: ['Events'],
       responseBody: 'event',
       responseCodes: {
         400: metadataUtils.statusCodes['400'],

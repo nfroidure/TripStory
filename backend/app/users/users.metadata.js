@@ -6,8 +6,10 @@ const usersMetadata = {
   [metadataUtils.apiPrefix + '/users']: {
     GET: {
       controllers: ['list'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List all users',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: 'userLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -18,8 +20,10 @@ const usersMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id']: {
     GET: {
       controllers: ['get'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Retrieve a user',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: 'user',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -29,8 +33,10 @@ const usersMetadata = {
     },
     PUT: {
       controllers: ['put'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Create/edit a user',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: 'user',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -40,8 +46,10 @@ const usersMetadata = {
     },
     DELETE: {
       controllers: ['delete'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Remove a user',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: 'user',
       responseCodes: {
         400: metadataUtils.statusCodes['400'],
@@ -53,8 +61,10 @@ const usersMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/avatar']: {
     PUT: {
       controllers: ['putAvatar'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Change a user\'s avatar',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: '',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -66,8 +76,10 @@ const usersMetadata = {
   [metadataUtils.apiPrefix + '/users/:user_id/friends']: {
     GET: {
       controllers: ['listFriends'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'List a user\'s friends',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: 'userLists',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -77,8 +89,10 @@ const usersMetadata = {
     },
     POST: {
       controllers: ['inviteFriend'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Invite a user\'s friend',
+      description: '',
+      parameters: [],
+      tags: ['User'],
       responseBody: '',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],

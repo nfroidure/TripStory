@@ -6,9 +6,11 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/profile']: {
     GET: {
       controllers: ['redirectToProfile'],
-      requestBody: '',
-      requestQuery: [],
-      responseBody: '',
+      summary: 'Retrieve authenticated user',
+      description: '',
+      parameters: [],
+      responseBody: 'user',
+      tags: ['Auth'],
       responseCodes: {
         301: metadataUtils.statusCodes['301'],
         401: metadataUtils.statusCodes['401'],
@@ -19,9 +21,11 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/me']: {
     GET: {
       controllers: ['basicAuth', 'redirectToProfile'],
-      requestBody: '',
-      requestQuery: [],
-      responseBody: '',
+      summary: 'Retrieve authenticated user',
+      description: 'Trigger a basic authentication header if not authenticated.',
+      parameters: [],
+      responseBody: 'user',
+      tags: ['Auth'],
       responseCodes: {
         301: metadataUtils.statusCodes['301'],
         401: metadataUtils.statusCodes['401'],
@@ -32,9 +36,10 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/tokens']: {
     POST: {
       controllers: ['postToken'],
-      requestBody: '',
-      requestQuery: [],
-      responseBody: '',
+      summary: 'Create a JSON Web Token',
+      description: '',
+      parameters: [],
+      tags: ['Auth'],
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
         500: metadataUtils.statusCodes['500'],
@@ -44,8 +49,10 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/login']: {
     POST: {
       controllers: ['login'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Login with sessions',
+      description: '',
+      parameters: [],
+      tags: ['Auth'],
       responseBody: 'user',
       responseCodes: {
         200: metadataUtils.statusCodes['200'],
@@ -57,8 +64,10 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/signup']: {
     POST: {
       controllers: ['signup'],
-      requestBody: '',
-      requestQuery: [],
+      summary: 'Signup',
+      description: '',
+      parameters: [],
+      tags: ['Auth'],
       responseBody: 'user',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -70,9 +79,10 @@ const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/logout']: {
     POST: {
       controllers: ['logout'],
-      requestBody: '',
-      requestQuery: [],
-      responseBody: '',
+      summary: 'Log out from sessions',
+      description: '',
+      parameters: [],
+      tags: ['Auth'],
       responseCodes: {
         204: metadataUtils.statusCodes['204'],
         500: metadataUtils.statusCodes['500'],
