@@ -1,6 +1,7 @@
 'use strict';
 
 const metadataUtils = require('../utils/metadata');
+const usersSchema = require('./users.schema');
 
 const usersMetadata = {
   [metadataUtils.apiPrefix + '/users']: {
@@ -10,10 +11,17 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: 'userLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -24,11 +32,21 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: 'user',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        410: {
+          codes: ['E_NOT_FOUND'],
+          description: 'No user with the given id.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     PUT: {
@@ -37,11 +55,21 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: 'user',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        400: metadataUtils.statusCodes['400'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        201: {
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_NOT_FOUND'],
+          description: 'No user with the given id.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     DELETE: {
@@ -50,11 +78,22 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: 'user',
-      responseCodes: {
-        400: metadataUtils.statusCodes['400'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        410: {
+          description: 'The trip does not exist.',
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_NOT_FOUND'],
+          description: 'No user with the given id.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -65,11 +104,21 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: '',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        201: {
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        410: {
+          codes: ['E_NOT_FOUND'],
+          description: 'No user with the given id.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -80,11 +129,17 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: 'userLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     POST: {
@@ -93,11 +148,20 @@ const usersMetadata = {
       description: '',
       parameters: [],
       tags: ['User'],
-      responseBody: '',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'empty',
+        },
+        201: {
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

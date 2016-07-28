@@ -73,7 +73,6 @@ function initUsersController(context) {
   function userControllerPutAvatar(req, res, next) {
     new Promise((resolve, reject) => {
       req.pipe(context.cloudinary.uploader.upload_stream((result) => {
-        console.log('result', result);
         resolve(context.cloudinary.url(
           `${result.public_id}.${result.format}`, {
             width: 300, height: 300,

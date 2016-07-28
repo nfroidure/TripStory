@@ -57,12 +57,23 @@ function _buildPathsFromMetadata(metadata) {
       definition.summary = data.summary;
       definition.parameters = parameters.concat(data.parameters);
       definition.tags = data.tags;
-      definition.responses = Object.keys(data.responseCodes)
-      .reduce((responses, status) => {
-        responses[status] = {};
-        responses[status].description = data.responseCodes[status].description;
-        return responses;
-      }, {});
+      if(data.responseCodes) {
+        definition.responses = Object.keys(data.responseCodes)
+        .reduce((responses, status) => {
+          responses[status] = {};
+          responses[status].description = data.responseCodes[status].description;
+          return responses;
+        }, {});
+      } else {
+        definition.responses = _setSuccessResponses(
+          data.successResponses,
+          {}
+        );
+        definition.responses = _setErrorResponses(
+          data.errorResponses,
+          definition.responses
+        );
+      }
 
       return paths;
     }, paths);
@@ -90,4 +101,67 @@ function _getPathsAndParams(path) {
     return '/{' + $1 + '}';
   });
   return { path, parameters };
+}
+
+function _setSuccessResponses(successResponses, responses) {
+  return Object.keys(successResponses).reduce((responses, status) => {
+    responses[status] = {
+      description: successResponses[status].description || '',
+    };
+    if('collection' === successResponses[status].type) {
+      responses[status].schema = {
+        type: 'object',
+        additionalProperties: true,
+        required: ['entries'],
+        properties: {
+          entries: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: true,
+              required: ['contents'],
+              properties: {
+                contents: successResponses[status].schema,
+              },
+            },
+          },
+        },
+      };
+    } else if('entry' === successResponses[status].type) {
+      responses[status].schema = {
+        type: 'object',
+        additionalProperties: true,
+        required: ['contents'],
+        properties: {
+          contents: successResponses[status].schema,
+        },
+      };
+    } else if('raw' === successResponses[status].type) {
+      responses[status].schema = successResponses[status].schema;
+    }
+    return responses;
+  }, responses);
+}
+
+function _setErrorResponses(errorResponses, responses) {
+  return Object.keys(errorResponses).reduce((responses, status) => {
+    responses[status] = {
+      description: errorResponses[status].description || '',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['code'],
+        properties: {
+          code: {
+            type: 'string',
+            enum: errorResponses[status].codes,
+          },
+          stack: {
+            type: 'string',
+          },
+        },
+      },
+    };
+    return responses;
+  }, responses);
 }

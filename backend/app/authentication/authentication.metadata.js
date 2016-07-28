@@ -1,6 +1,7 @@
 'use strict';
 
 const metadataUtils = require('../utils/metadata');
+const usersSchema = require('../users/users.schema');
 
 const authenticationMetadata = {
   [metadataUtils.apiPrefix + '/profile']: {
@@ -11,10 +12,21 @@ const authenticationMetadata = {
       parameters: [],
       responseBody: 'user',
       tags: ['Auth'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        401: metadataUtils.statusCodes['401'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the authenticated user profile.',
+        },
+      },
+      errorResponses: {
+        401: {
+          codes: ['E_UNAUTHORIZED'],
+          description: 'Cannot access this resource.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -26,10 +38,21 @@ const authenticationMetadata = {
       parameters: [],
       responseBody: 'user',
       tags: ['Auth'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        401: metadataUtils.statusCodes['401'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the authenticated user profile.',
+        },
+      },
+      errorResponses: {
+        401: {
+          codes: ['E_UNAUTHORIZED'],
+          description: 'Cannot access this resource.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -40,9 +63,18 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth'],
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'raw',
+          description: 'Tokens successfully created.',
+          schema: {},
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -53,11 +85,22 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth'],
-      responseBody: 'user',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        400: metadataUtils.statusCodes['400'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          description: 'Successfully logged in.',
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_BAD_CREDENTIALS'],
+          description: 'Bad credentials.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -68,11 +111,22 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth'],
-      responseBody: 'user',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        400: metadataUtils.statusCodes['400'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        201: {
+          description: 'Successfully signed up.',
+          type: 'entry',
+          schema: usersSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_BAD_CREDENTIALS'],
+          description: 'Bad credentials.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -83,9 +137,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth'],
-      responseCodes: {
-        204: metadataUtils.statusCodes['204'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        204: {
+          description: 'Successfully logged out.',
+          type: 'none',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

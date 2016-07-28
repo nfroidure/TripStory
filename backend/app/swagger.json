@@ -15,13 +15,49 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the authenticated user profile."
           },
           "401": {
-            "description": "Authentication is required"
+            "description": "Cannot access this resource.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNAUTHORIZED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -35,13 +71,49 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the authenticated user profile."
           },
           "401": {
-            "description": "Authentication is required"
+            "description": "Cannot access this resource.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNAUTHORIZED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -55,10 +127,29 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "Tokens successfully created.",
+            "schema": {}
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -72,13 +163,81 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "Successfully logged in.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "You fucked up."
+            "description": "Bad credentials.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_BAD_CREDENTIALS"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -92,13 +251,81 @@
         ],
         "responses": {
           "201": {
-            "description": "Resource were created or updated."
+            "description": "Successfully signed up.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "You fucked up."
+            "description": "Bad credentials.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_BAD_CREDENTIALS"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -112,10 +339,28 @@
         ],
         "responses": {
           "204": {
-            "description": "Everything went well but no content."
+            "description": "Successfully logged out."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -139,10 +384,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the external authentication provider."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -157,10 +420,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Successfully authenticated."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -184,10 +465,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the external authentication provider."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -202,10 +501,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Successfully authenticated."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -229,10 +546,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the external authentication provider."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -247,10 +582,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Successfully authenticated."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -274,10 +627,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Redirect to the external authentication provider."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -292,10 +663,28 @@
         ],
         "responses": {
           "301": {
-            "description": "Resource is elsewhere."
+            "description": "Successfully authenticated."
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -309,10 +698,84 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "Car",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "name",
+                          "user_id",
+                          "type"
+                        ],
+                        "properties": {
+                          "name": {
+                            "description": "Car name",
+                            "type": "string"
+                          },
+                          "user_id": {
+                            "description": "User owning the car",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "brand": {
+                            "description": "Car brand",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "Car information issuer type",
+                            "type": "string",
+                            "enum": [
+                              "xee"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -335,10 +798,84 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "Car",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "name",
+                          "user_id",
+                          "type"
+                        ],
+                        "properties": {
+                          "name": {
+                            "description": "Car name",
+                            "type": "string"
+                          },
+                          "user_id": {
+                            "description": "User owning the car",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "brand": {
+                            "description": "Car brand",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "Car information issuer type",
+                            "type": "string",
+                            "enum": [
+                              "xee"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -369,10 +906,93 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "Car",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "user_id",
+                    "type"
+                  ],
+                  "properties": {
+                    "name": {
+                      "description": "Car name",
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "description": "User owning the car",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "brand": {
+                      "description": "Car brand",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Car information issuer type",
+                      "type": "string",
+                      "enum": [
+                        "xee"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The car does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -400,14 +1020,73 @@
           "Cars"
         ],
         "responses": {
-          "400": {
-            "description": "You fucked up."
-          },
           "410": {
-            "description": "RIP Resource."
+            "description": "The car does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "Car",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "user_id",
+                    "type"
+                  ],
+                  "properties": {
+                    "name": {
+                      "description": "Car name",
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "description": "User owning the car",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "brand": {
+                      "description": "Car brand",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Car information issuer type",
+                      "type": "string",
+                      "enum": [
+                        "xee"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -421,10 +1100,84 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "eventsMetadata",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "trip_id"
+                        ],
+                        "properties": {
+                          "trip_id": {
+                            "description": "",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "xee-geo"
+                            ]
+                          },
+                          "geo": {
+                            "description": "",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "address": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -447,10 +1200,84 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "eventsMetadata",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "trip_id"
+                        ],
+                        "properties": {
+                          "trip_id": {
+                            "description": "",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "xee-geo"
+                            ]
+                          },
+                          "geo": {
+                            "description": "",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "address": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -481,10 +1308,93 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "eventsMetadata",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "trip_id"
+                  ],
+                  "properties": {
+                    "trip_id": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "xee-geo"
+                      ]
+                    },
+                    "geo": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "address": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The event does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -524,7 +1434,7 @@
         }
       },
       "delete": {
-        "summary": "DelEte a user's event",
+        "summary": "Delete a user's event",
         "parameters": [
           {
             "name": "user_id",
@@ -548,13 +1458,93 @@
         ],
         "responses": {
           "400": {
-            "description": "You fucked up."
+            "description": "Cannot delete this type of event.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNDELETABLE_EVENT"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "410": {
-            "description": "RIP Resource."
+            "description": "The event does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "eventsMetadata",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "trip_id"
+                  ],
+                  "properties": {
+                    "trip_id": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "xee-geo"
+                      ]
+                    },
+                    "geo": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "address": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -568,10 +1558,40 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "required": "pong",
+              "properties": {
+                "pong": {
+                  "type": "string",
+                  "enum": [
+                    "pong"
+                  ]
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -586,13 +1606,93 @@
         ],
         "responses": {
           "201": {
-            "description": "Resource were created or updated."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "eventsMetadata",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "trip_id"
+                  ],
+                  "properties": {
+                    "trip_id": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "xee-geo"
+                      ]
+                    },
+                    "geo": {
+                      "description": "",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "address": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "You fucked up."
+            "description": "Bad event provided.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_BAD_CONTENT"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -606,10 +1706,90 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "Trip",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "title",
+                          "friends_ids"
+                        ],
+                        "properties": {
+                          "title": {
+                            "description": "Trip title",
+                            "type": "string"
+                          },
+                          "description": {
+                            "description": "Some more informations about the trip",
+                            "type": "string"
+                          },
+                          "car_id": {
+                            "description": "The car involved in the trip",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "friends_ids": {
+                            "description": "The friends doing the trip",
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": [
+                              {
+                                "description": "",
+                                "type": "string",
+                                "pattern": "^([0-9a-f]{24})$",
+                                "minLength": 24,
+                                "maxLength": 24
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -632,10 +1812,90 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "Trip",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "title",
+                          "friends_ids"
+                        ],
+                        "properties": {
+                          "title": {
+                            "description": "Trip title",
+                            "type": "string"
+                          },
+                          "description": {
+                            "description": "Some more informations about the trip",
+                            "type": "string"
+                          },
+                          "car_id": {
+                            "description": "The car involved in the trip",
+                            "type": "string",
+                            "pattern": "^([0-9a-f]{24})$",
+                            "minLength": 24,
+                            "maxLength": 24
+                          },
+                          "friends_ids": {
+                            "description": "The friends doing the trip",
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": [
+                              {
+                                "description": "",
+                                "type": "string",
+                                "pattern": "^([0-9a-f]{24})$",
+                                "minLength": 24,
+                                "maxLength": 24
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -666,13 +1926,99 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "Trip",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "title",
+                    "friends_ids"
+                  ],
+                  "properties": {
+                    "title": {
+                      "description": "Trip title",
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "Some more informations about the trip",
+                      "type": "string"
+                    },
+                    "car_id": {
+                      "description": "The car involved in the trip",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "friends_ids": {
+                      "description": "The friends doing the trip",
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": [
+                        {
+                          "description": "",
+                          "type": "string",
+                          "pattern": "^([0-9a-f]{24})$",
+                          "minLength": 24,
+                          "maxLength": 24
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "410": {
-            "description": "RIP Resource."
+            "description": "The trip does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -701,13 +2047,99 @@
         ],
         "responses": {
           "201": {
-            "description": "Resource were created or updated."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "Trip",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "title",
+                    "friends_ids"
+                  ],
+                  "properties": {
+                    "title": {
+                      "description": "Trip title",
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "Some more informations about the trip",
+                      "type": "string"
+                    },
+                    "car_id": {
+                      "description": "The car involved in the trip",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "friends_ids": {
+                      "description": "The friends doing the trip",
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": [
+                        {
+                          "description": "",
+                          "type": "string",
+                          "pattern": "^([0-9a-f]{24})$",
+                          "minLength": 24,
+                          "maxLength": 24
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "You fucked up."
+            "description": "Given trip is invalid.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_BAD_PAYLOAD"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -735,14 +2167,79 @@
           "Trips"
         ],
         "responses": {
-          "400": {
-            "description": "You fucked up."
-          },
           "410": {
-            "description": "RIP Resource."
+            "description": "The trip does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "Trip",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "title",
+                    "friends_ids"
+                  ],
+                  "properties": {
+                    "title": {
+                      "description": "Trip title",
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "Some more informations about the trip",
+                      "type": "string"
+                    },
+                    "car_id": {
+                      "description": "The car involved in the trip",
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{24})$",
+                      "minLength": 24,
+                      "maxLength": 24
+                    },
+                    "friends_ids": {
+                      "description": "The friends doing the trip",
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": [
+                        {
+                          "description": "",
+                          "type": "string",
+                          "pattern": "^([0-9a-f]{24})$",
+                          "minLength": 24,
+                          "maxLength": 24
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -756,10 +2253,72 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "User",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "name",
+                          "email"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "birth_date": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -782,13 +2341,81 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "410": {
-            "description": "RIP Resource."
+            "description": "No user with the given id.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -809,13 +2436,81 @@
         ],
         "responses": {
           "201": {
-            "description": "Resource were created or updated."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "You fucked up."
+            "description": "No user with the given id.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -836,13 +2531,81 @@
         ],
         "responses": {
           "400": {
-            "description": "You fucked up."
+            "description": "No user with the given id.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "410": {
-            "description": "RIP Resource."
+            "description": "The trip does not exist.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -865,13 +2628,81 @@
         ],
         "responses": {
           "201": {
-            "description": "Resource were created or updated."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "410": {
-            "description": "RIP Resource."
+            "description": "No user with the given id.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_NOT_FOUND"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -894,13 +2725,72 @@
         ],
         "responses": {
           "200": {
-            "description": "Everything went well."
-          },
-          "410": {
-            "description": "RIP Resource."
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "entries"
+              ],
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "contents"
+                    ],
+                    "properties": {
+                      "contents": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "title": "User",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "name",
+                          "email"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "birth_date": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -920,14 +2810,64 @@
           "User"
         ],
         "responses": {
-          "201": {
-            "description": "Resource were created or updated."
+          "200": {
+            "description": ""
           },
-          "410": {
-            "description": "RIP Resource."
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title": "User",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "email"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "We fucked up."
+            "description": "When shit hit the fan.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "E_UNEXPECTED"
+                  ]
+                },
+                "stack": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }

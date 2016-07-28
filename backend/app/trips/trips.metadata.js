@@ -1,6 +1,7 @@
 'use strict';
 
 const metadataUtils = require('../utils/metadata');
+const tripsSchema = require('./trips.schema');
 
 const tripsMetadata = {
   [metadataUtils.apiPrefix + '/trips']: {
@@ -10,10 +11,17 @@ const tripsMetadata = {
       description: '',
       parameters: [],
       tags: ['Trips'],
-      responseBody: 'tripLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: tripsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -25,9 +33,17 @@ const tripsMetadata = {
       parameters: [],
       tags: ['Trips'],
       responseBody: 'tripLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: tripsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -38,11 +54,21 @@ const tripsMetadata = {
       description: '',
       parameters: [],
       tags: ['Trips'],
-      responseBody: 'trip',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'entry',
+          schema: tripsSchema,
+        },
+      },
+      errorResponses: {
+        410: {
+          codes: ['E_NOT_FOUND'],
+          description: 'The trip does not exist.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     PUT: {
@@ -51,11 +77,21 @@ const tripsMetadata = {
       description: '',
       parameters: [],
       tags: ['Trips'],
-      responseBody: 'trip',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        400: metadataUtils.statusCodes['400'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        201: {
+          type: 'entry',
+          schema: tripsSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_BAD_PAYLOAD'],
+          description: 'Given trip is invalid.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     DELETE: {
@@ -64,11 +100,18 @@ const tripsMetadata = {
       description: '',
       parameters: [],
       tags: ['Trips'],
-      responseBody: 'trip',
-      responseCodes: {
-        400: metadataUtils.statusCodes['400'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        410: {
+          description: 'The trip does not exist.',
+          type: 'entry',
+          schema: tripsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

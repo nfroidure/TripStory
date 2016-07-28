@@ -18,9 +18,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [URL_PARAMETER],
       tags: ['Auth', 'Facebook'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the external authentication provider.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -31,9 +39,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth', 'Facebook'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Successfully authenticated.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -44,9 +60,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [URL_PARAMETER],
       tags: ['Auth', 'Google'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the external authentication provider.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -57,9 +81,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth', 'Google'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Successfully authenticated.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -70,9 +102,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [URL_PARAMETER],
       tags: ['Auth', 'Twitter'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the external authentication provider.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -83,9 +123,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth', 'Twitter'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Successfully authenticated.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -96,9 +144,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [URL_PARAMETER],
       tags: ['Auth', 'Xee'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Redirect to the external authentication provider.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -109,9 +165,17 @@ const authenticationMetadata = {
       description: '',
       parameters: [],
       tags: ['Auth', 'Xee'],
-      responseCodes: {
-        301: metadataUtils.statusCodes['301'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        301: {
+          type: 'raw',
+          description: 'Successfully authenticated.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

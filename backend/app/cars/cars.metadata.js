@@ -1,6 +1,7 @@
 'use strict';
 
 const metadataUtils = require('../utils/metadata');
+const carsSchema = require('./cars.schema');
 
 const carsMetadata = {
   [metadataUtils.apiPrefix + '/cars']: {
@@ -10,10 +11,17 @@ const carsMetadata = {
       description: '',
       parameters: [],
       tags: ['Cars'],
-      responseBody: 'carLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: carsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -24,10 +32,17 @@ const carsMetadata = {
       description: '',
       parameters: [],
       tags: ['Cars'],
-      responseBody: 'carLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: carsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -39,9 +54,21 @@ const carsMetadata = {
       parameters: [],
       tags: ['Cars'],
       responseBody: 'car',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'entry',
+          schema: carsSchema,
+        },
+      },
+      errorResponses: {
+        410: {
+          codes: ['E_NOT_FOUND'],
+          description: 'The car does not exist.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     DELETE: {
@@ -50,11 +77,18 @@ const carsMetadata = {
       description: '',
       parameters: [],
       tags: ['Cars'],
-      responseBody: 'car',
-      responseCodes: {
-        400: metadataUtils.statusCodes['400'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        410: {
+          type: 'entry',
+          schema: carsSchema,
+          description: 'The car does not exist.',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

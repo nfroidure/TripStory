@@ -1,6 +1,6 @@
 'use strict';
 
-const metadataUtils = require('../utils/metadata');
+const eventsSchema = require('../events/events.schema');
 
 const systemsMetadata = {
   '/ping': {
@@ -10,10 +10,26 @@ const systemsMetadata = {
       description: '',
       parameters: [],
       tags: ['System'],
-      responseBody: 'pong',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'raw',
+          schema: {
+            type: 'object',
+            required: 'pong',
+            properties: {
+              pong: {
+                type: 'string',
+                enum: ['pong'],
+              },
+            },
+          },
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -24,11 +40,21 @@ const systemsMetadata = {
       description: '',
       parameters: [],
       tags: ['System', 'Events'],
-      responseBody: 'event',
-      responseCodes: {
-        201: metadataUtils.statusCodes['201'],
-        400: metadataUtils.statusCodes['400'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        201: {
+          type: 'entry',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_BAD_CONTENT'],
+          description: 'Bad event provided.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },

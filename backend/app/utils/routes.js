@@ -33,8 +33,14 @@ function setupRoutesFromMetadata(context, controller, metadata) {
 function _checkResponse(data, req, res, next) {
   res.status = ((fn) => {
     return (status) => {
-      if(!data.responseCodes[status]) {
-        throw new YHTTPError(500, 'E_STATUS_NOT_DECLARED', status);
+      if(data.responseCodes) {
+        if(!data.responseCodes[status]) {
+          throw new YHTTPError(500, 'E_STATUS_NOT_DECLARED', status);
+        }
+      } else {
+        if(!(data.successResponses[status] || data.errorResponses[status])) {
+          throw new YHTTPError(500, 'E_STATUS_NOT_DECLARED', status);
+        }
       }
       return fn.call(res, status);
     };

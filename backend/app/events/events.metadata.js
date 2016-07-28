@@ -1,6 +1,7 @@
 'use strict';
 
 const metadataUtils = require('../utils/metadata');
+const eventsSchema = require('./events.schema');
 
 const eventsMetadata = {
   [metadataUtils.apiPrefix + '/events']: {
@@ -10,10 +11,17 @@ const eventsMetadata = {
       description: '',
       parameters: [],
       tags: ['Events'],
-      responseBody: 'eventLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -24,10 +32,17 @@ const eventsMetadata = {
       description: '',
       parameters: [],
       tags: ['Events'],
-      responseBody: 'eventLists',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'collection',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
@@ -38,10 +53,21 @@ const eventsMetadata = {
       description: '',
       parameters: [],
       tags: ['Events'],
-      responseBody: 'event',
-      responseCodes: {
-        200: metadataUtils.statusCodes['200'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        200: {
+          type: 'entry',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        410: {
+          codes: ['E_NOT_FOUND'],
+          description: 'The event does not exist.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
     PUT: {
@@ -50,6 +76,22 @@ const eventsMetadata = {
       description: '',
       parameters: [],
       tags: ['Events'],
+      successResponses: {
+        201: {
+          type: 'entry',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_BAD_PAYLOAD'],
+          description: 'The given event is malformed.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
+      },
       responseBody: 'event',
       responseCodes: {
         201: metadataUtils.statusCodes['201'],
@@ -59,15 +101,26 @@ const eventsMetadata = {
     },
     DELETE: {
       controllers: ['delete'],
-      summary: 'DelEte a user\'s event',
+      summary: 'Delete a user\'s event',
       description: '',
       parameters: [],
       tags: ['Events'],
-      responseBody: 'event',
-      responseCodes: {
-        400: metadataUtils.statusCodes['400'],
-        410: metadataUtils.statusCodes['410'],
-        500: metadataUtils.statusCodes['500'],
+      successResponses: {
+        410: {
+          description: 'The event does not exist.',
+          type: 'entry',
+          schema: eventsSchema,
+        },
+      },
+      errorResponses: {
+        400: {
+          codes: ['E_UNDELETABLE_EVENT'],
+          description: 'Cannot delete this type of event.',
+        },
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
       },
     },
   },
