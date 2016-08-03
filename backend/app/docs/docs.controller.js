@@ -1,48 +1,77 @@
 'use strict';
 
 const extend = require('extend');
-const project = require('../package.json');
-const authenticationMetadata = require('../app/authentication/authentication.metadata');
-const oauthMetadata = require('../app/authentication/oauth.metadata');
-const carsMetadata = require('../app/cars/cars.metadata');
-const eventsMetadata = require('../app/events/events.metadata');
-const systemMetadata = require('../app/system/system.metadata');
-const tripsMetadata = require('../app/trips/trips.metadata');
-const usersMetadata = require('../app/users/users.metadata');
+const project = require('../../package.json');
+const authenticationMetadata = require('../authentication/authentication.metadata');
+const oauthMetadata = require('../authentication/oauth.metadata');
+const carsMetadata = require('../cars/cars.metadata');
+const eventsMetadata = require('../events/events.metadata');
+const systemMetadata = require('../system/system.metadata');
+const tripsMetadata = require('../trips/trips.metadata');
+const usersMetadata = require('../users/users.metadata');
+const docsMetadata = require('../docs/docs.metadata');
+const metadataUtils = require('../utils/metadata');
 
-let api = {};
+module.exports = initDocsController;
 
-api.swagger = '2.0';
-api.info = {
-  title: project.name,
-  description: project.description,
-  version: project.version,
-};
-api.paths = {};
-api.securityDefinitions = {
-  basic: {
-    type: 'basic',
-  },
-  // Maybe a valid approach to declaring JWT Auth
-  // https://github.com/swagger-api/swagger-ui/pull/2234
-  // But, looks like there is no consensus tight now:
-  // https://github.com/swagger-api/swagger-ui/pull/2234
-  bearer: {
-    type: 'apiKey',
-    name: 'Authorization',
-    in: 'header',
-  },
-};
+function initDocsController(context) {
+  const docsController = {
+    redirect: docsControllerRedirect,
+    get: docsControllerGet,
+  };
 
-api.paths = _buildPathsFromMetadata(authenticationMetadata);
-api.paths = extend(api.paths, _buildPathsFromMetadata(oauthMetadata));
-api.paths = extend(api.paths, _buildPathsFromMetadata(carsMetadata));
-api.paths = extend(api.paths, _buildPathsFromMetadata(eventsMetadata));
-api.paths = extend(api.paths, _buildPathsFromMetadata(systemMetadata));
-api.paths = extend(api.paths, _buildPathsFromMetadata(tripsMetadata));
-api.paths = extend(api.paths, _buildPathsFromMetadata(usersMetadata));
+  return docsController;
 
-process.stdout.write(JSON.stringify(api, null, 2));
+  function docsControllerRedirect(req, res) {
+    res.redirect(
+      301,
+      context.base + '/swagger/' +
+      '?url=' + context.base + metadataUtils.apiPrefix + (
+        req.user ? 'users/' + req.user._id.toString() + '/' : ''
+      ) + 'docs'
+    );
+  }
+
+  function docsControllerGet(req, res, next) {
+    Promise.resolve().then(() => {
+      const api = {};
+
+      api.swagger = '2.0';
+      api.info = {
+        title: project.name,
+        description: project.description,
+        version: project.version,
+      };
+      api.paths = {};
+      api.securityDefinitions = {
+        basic: {
+          type: 'basic',
+        },
+        // Maybe a valid approach to declaring JWT Auth
+        // https://github.com/swagger-api/swagger-ui/pull/2234
+        // But, looks like there is no consensus tight now:
+        // https://github.com/swagger-api/swagger-ui/pull/2234
+        bearer: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+        },
+      };
+
+      api.paths = _buildPathsFromMetadata(authenticationMetadata);
+      api.paths = extend(api.paths, _buildPathsFromMetadata(oauthMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(carsMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(eventsMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(systemMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(tripsMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(usersMetadata));
+      api.paths = extend(api.paths, _buildPathsFromMetadata(docsMetadata));
+
+      res.status(200).json(api);
+    }).catch(next);
+  }
+
+}
 
 function _buildPathsFromMetadata(metadata) {
   return Object.keys(metadata).reduce((paths, path) => {

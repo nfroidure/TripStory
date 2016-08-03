@@ -1,8 +1,8 @@
 'use strict';
 
 const metadataUtils = {
-  apiPrefix: '/api/v0',
-  oauthPrefix: '/auth',
+  apiPrefix: '/api/v0/',
+  oauthPrefix: '/auth/',
   statusCodes: {
     200: {
       code: 200,

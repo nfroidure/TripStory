@@ -4,7 +4,7 @@ const metadataUtils = require('../utils/metadata');
 const usersSchema = require('./users.schema');
 
 const usersMetadata = {
-  [metadataUtils.apiPrefix + '/users']: {
+  [metadataUtils.apiPrefix + 'users']: {
     GET: {
       controllers: ['list'],
       summary: 'List all users',
@@ -25,7 +25,7 @@ const usersMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id']: {
+  [metadataUtils.apiPrefix + 'users/:user_id']: {
     GET: {
       controllers: ['get'],
       summary: 'Retrieve a user',
@@ -95,7 +95,7 @@ const usersMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/avatar']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/avatar']: {
     PUT: {
       controllers: ['putAvatar'],
       summary: 'Change a user\'s avatar',
@@ -120,7 +120,7 @@ const usersMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/friends']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/friends']: {
     GET: {
       controllers: ['listFriends'],
       summary: 'List a user\'s friends',

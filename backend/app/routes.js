@@ -14,6 +14,7 @@ const initTripsRoutes = require('./trips/trips.routes');
 const initEventsRoutes = require('./events/events.routes');
 const initUsersRoutes = require('./users/users.routes');
 const initCarsRoutes = require('./cars/cars.routes');
+const initDocRoutes = require('./docs/docs.routes');
 const initSystemRoutes = require('./system/system.routes');
 
 module.exports = initRoutes;
@@ -29,10 +30,6 @@ function initRoutes(context) {
     context.app.use(initAgentVersionChecker(context));
   }
   context.app.use('/swagger', express.static(__dirname + '/../node_modules/swagger-ui/dist'));
-  context.app.get('/api', function(req, res) {
-    res.redirect(301, context.base + '/swagger/?url=' + context.base + '/swagger.json');
-  });
-  context.app.use('/swagger.json', express.static(__dirname + '/swagger.json'));
   if(context.env.STATIC_PATH) {
     context.app.use(express.static(path.join(
       process.cwd(),
@@ -68,6 +65,7 @@ function initRoutes(context) {
   initTripsRoutes(context);
   initEventsRoutes(context);
   initCarsRoutes(context);
+  initDocRoutes(context);
   initSystemRoutes(context); // Must be the last (contains the catch all middleware)
 
 }

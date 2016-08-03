@@ -73,7 +73,7 @@ function authenticationUtilsCreateDefaultRights() {
     methods: reaccess.READ_MASK,
   }, {
     // Swagger
-    path: '/(api|swagger)$',
+    path: '/(api/v0/|)docs$',
     methods: reaccess.READ_MASK,
   }, {
     // Ping

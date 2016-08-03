@@ -4,7 +4,7 @@ const metadataUtils = require('../utils/metadata');
 const usersSchema = require('../users/users.schema');
 
 const authenticationMetadata = {
-  [metadataUtils.apiPrefix + '/profile']: {
+  [metadataUtils.apiPrefix + 'profile']: {
     GET: {
       controllers: ['redirectToProfile'],
       summary: 'Retrieve authenticated user',
@@ -30,7 +30,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/me']: {
+  [metadataUtils.apiPrefix + 'me']: {
     GET: {
       controllers: ['basicAuth', 'redirectToProfile'],
       summary: 'Retrieve authenticated user',
@@ -56,7 +56,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/tokens']: {
+  [metadataUtils.apiPrefix + 'tokens']: {
     POST: {
       controllers: ['postToken'],
       summary: 'Create a JSON Web Token',
@@ -78,7 +78,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/login']: {
+  [metadataUtils.apiPrefix + 'login']: {
     POST: {
       controllers: ['login'],
       summary: 'Login with sessions',
@@ -104,7 +104,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/signup']: {
+  [metadataUtils.apiPrefix + 'signup']: {
     POST: {
       controllers: ['signup'],
       summary: 'Signup',
@@ -130,7 +130,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/logout']: {
+  [metadataUtils.apiPrefix + 'logout']: {
     POST: {
       controllers: ['logout'],
       summary: 'Log out from sessions',

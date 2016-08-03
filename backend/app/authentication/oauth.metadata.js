@@ -11,7 +11,7 @@ const URL_PARAMETER = {
 };
 
 const authenticationMetadata = {
-  [metadataUtils.oauthPrefix + '/facebook']: {
+  [metadataUtils.oauthPrefix + 'facebook']: {
     GET: {
       controllers: ['facebook'],
       summary: 'Login via Facebook OAuth',
@@ -32,7 +32,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/facebook/callback']: {
+  [metadataUtils.oauthPrefix + 'facebook/callback']: {
     GET: {
       controllers: ['facebookCallback', 'redirectToApp'],
       summary: 'Facebook OAuth callback',
@@ -53,7 +53,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/google']: {
+  [metadataUtils.oauthPrefix + 'google']: {
     GET: {
       controllers: ['google'],
       summary: 'Login via Google OAuth',
@@ -74,7 +74,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/google/callback']: {
+  [metadataUtils.oauthPrefix + 'google/callback']: {
     GET: {
       controllers: ['googleCallback', 'redirectToApp'],
       summary: 'Google OAuth callback',
@@ -95,7 +95,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/twitter']: {
+  [metadataUtils.oauthPrefix + 'twitter']: {
     GET: {
       controllers: ['twitter'],
       summary: 'Login via Twitter OAuth',
@@ -116,7 +116,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/twitter/callback']: {
+  [metadataUtils.oauthPrefix + 'twitter/callback']: {
     GET: {
       controllers: ['twitterCallback', 'redirectToApp'],
       summary: 'Twitter OAuth callback',
@@ -137,7 +137,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/xee']: {
+  [metadataUtils.oauthPrefix + 'xee']: {
     GET: {
       controllers: ['xee'],
       summary: 'Login via Xee OAuth',
@@ -158,7 +158,7 @@ const authenticationMetadata = {
       },
     },
   },
-  [metadataUtils.oauthPrefix + '/xee/callback']: {
+  [metadataUtils.oauthPrefix + 'xee/callback']: {
     GET: {
       controllers: ['xeeCallback', 'redirectToApp'],
       summary: 'Xee OAuth callback',

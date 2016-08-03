@@ -4,7 +4,7 @@ const metadataUtils = require('../utils/metadata');
 const carsSchema = require('./cars.schema');
 
 const carsMetadata = {
-  [metadataUtils.apiPrefix + '/cars']: {
+  [metadataUtils.apiPrefix + 'cars']: {
     GET: {
       controllers: ['list'],
       summary: 'List all cars',
@@ -25,7 +25,7 @@ const carsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/cars']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/cars']: {
     GET: {
       controllers: ['list'],
       summary: 'List a user\'s cars',
@@ -46,7 +46,7 @@ const carsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/cars/:car_id']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/cars/:car_id']: {
     GET: {
       controllers: ['get'],
       summary: 'Retrieve a user\'s car',

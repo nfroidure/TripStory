@@ -4,7 +4,7 @@ const metadataUtils = require('../utils/metadata');
 const eventsSchema = require('./events.schema');
 
 const eventsMetadata = {
-  [metadataUtils.apiPrefix + '/events']: {
+  [metadataUtils.apiPrefix + 'events']: {
     GET: {
       controllers: ['list'],
       summary: 'List all events',
@@ -25,7 +25,7 @@ const eventsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/events']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/events']: {
     GET: {
       controllers: ['list'],
       summary: 'List a user\'s events',
@@ -46,7 +46,7 @@ const eventsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/events/:event_id']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/events/:event_id']: {
     GET: {
       controllers: ['get'],
       summary: 'Retrieve a user\'s event',

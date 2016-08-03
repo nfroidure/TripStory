@@ -4,7 +4,7 @@ const metadataUtils = require('../utils/metadata');
 const tripsSchema = require('./trips.schema');
 
 const tripsMetadata = {
-  [metadataUtils.apiPrefix + '/trips']: {
+  [metadataUtils.apiPrefix + 'trips']: {
     GET: {
       controllers: ['list'],
       summary: 'List all trips',
@@ -25,7 +25,7 @@ const tripsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/trips']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/trips']: {
     GET: {
       controllers: ['list'],
       summary: 'List a user\'s trips',
@@ -47,7 +47,7 @@ const tripsMetadata = {
       },
     },
   },
-  [metadataUtils.apiPrefix + '/users/:user_id/trips/:trip_id']: {
+  [metadataUtils.apiPrefix + 'users/:user_id/trips/:trip_id']: {
     GET: {
       controllers: ['get'],
       summary: 'Retrieve a user\'s trip',
