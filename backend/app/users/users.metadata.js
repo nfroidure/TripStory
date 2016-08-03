@@ -80,9 +80,7 @@ const usersMetadata = {
       tags: ['User'],
       successResponses: {
         410: {
-          description: 'The trip does not exist.',
-          type: 'entry',
-          schema: usersSchema,
+          description: 'The user does not exist.',
         },
       },
       errorResponses: {

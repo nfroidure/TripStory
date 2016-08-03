@@ -322,7 +322,6 @@ describe('Xee jobs', () => {
             friends_ids: [],
             title: 'Lol',
             description: 'Lol',
-            hash: 'lol',
             car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
           },
           created: {
@@ -373,7 +372,6 @@ describe('Xee jobs', () => {
                 friends_ids: [],
                 title: 'Lol',
                 description: 'Lol',
-                hash: 'lol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
@@ -433,7 +431,6 @@ describe('Xee jobs', () => {
                   friends_ids: [],
                   title: 'Lol',
                   description: 'Lol',
-                  hash: 'lol',
                   car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
                 },
                 owner_id: castToObjectId('abbacacaabbacacaabbacaca'),

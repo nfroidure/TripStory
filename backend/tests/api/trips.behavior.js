@@ -107,7 +107,6 @@ describe('Trips endpoints', () => {
         friends_ids: [],
         title: 'Lol',
         description: 'Lol',
-        hash: 'lol',
         car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
       },
       created: {
@@ -193,7 +192,6 @@ describe('Trips endpoints', () => {
               car_id: 'b17eb17eb17eb17eb17eb17e',
               description: 'Lol',
               friends_ids: [],
-              hash: 'lol',
               title: 'Lol',
             },
             owner_id: 'abbacacaabbacacaabbacaca',
@@ -219,7 +217,6 @@ describe('Trips endpoints', () => {
               car_id: 'b17eb17eb17eb17eb17eb17e',
               description: 'Lol',
               friends_ids: [],
-              hash: 'lol',
               title: 'Lol',
             },
             owner_id: 'abbacacaabbacacaabbacaca',
@@ -327,7 +324,6 @@ describe('Trips endpoints', () => {
             car_id: 'b17eb17eb17eb17eb17eb17e',
             description: 'Kikooooolol',
             friends_ids: [],
-            hash: 'kikooooolol',
             title: 'Kikooooolol',
           },
         })
@@ -356,7 +352,6 @@ describe('Trips endpoints', () => {
               trip: {
                 friends_ids: [],
                 description: 'Kikooooolol',
-                hash: 'kikooooolol',
                 title: 'Kikooooolol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
@@ -394,15 +389,16 @@ describe('Trips endpoints', () => {
           car_id: 'b17eb17eb17eb17eb17eb17e',
           description: 'Lol',
           friends_ids: [],
-          hash: 'lol',
           title: 'Lol',
         },
       })
       .expect(201)
       .end((err, res) => {
         if(err) {
-          return done(err);
+          done(err);
+          return;
         }
+        assert(res.body);
         assert.deepEqual(context.bus.trigger.args, [[{
           exchange: 'A_TRIP_CREATED',
           contents: {
@@ -424,7 +420,6 @@ describe('Trips endpoints', () => {
               friends_ids: [],
               title: 'Lol',
               description: 'Lol',
-              hash: 'lol',
               car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             },
             created: {
@@ -462,7 +457,6 @@ describe('Trips endpoints', () => {
             car_id: 'b17eb17eb17eb17eb17eb17e',
             description: 'Lol',
             friends_ids: [],
-            hash: 'lol',
             title: 'Lol',
           },
           owner_id: 'abbacacaabbacacaabbacaca',

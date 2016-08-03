@@ -14,9 +14,14 @@ const eventsSchema = {
     trip_id: schemaUtils.mongoId(),
     type: {
       type: 'string',
-      enum: ['xee-geo'],
+      enum: [
+        'trip-start', 'trip-stop',
+        'twitter-status',
+        'facebook-status', 'facebook-photo', 'facebook-link',
+        'xee-geo',
+      ],
     },
-    geo: schemaUtils.mongoId(),
+    geo: schemaUtils.geo(),
     address: {
       type: 'string',
     },

@@ -107,7 +107,6 @@ describe('Events endpoints', () => {
         friends_ids: [],
         title: 'Lol',
         description: 'Lol',
-        hash: 'lol',
         car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
       },
       created: {
@@ -137,7 +136,6 @@ describe('Events endpoints', () => {
         friends_ids: [],
         title: 'Lol',
         description: 'Lol',
-        hash: 'lol',
         car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
       },
       created: {
@@ -360,7 +358,6 @@ describe('Events endpoints', () => {
               trip: {
                 friends_ids: [],
                 description: 'Lol',
-                hash: 'lol',
                 title: 'Lol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
@@ -438,7 +435,6 @@ describe('Events endpoints', () => {
               friends_ids: [],
               title: 'Lol',
               description: 'Lol',
-              hash: 'lol',
               car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             },
             created: {

@@ -1,6 +1,7 @@
 'use strict';
 
 const YHTTPError = require('yhttperror');
+const Ajv = require('ajv');
 
 const routesUtils = {
   setupRoutesFromMetadata,
@@ -45,6 +46,42 @@ function _checkResponse(data, req, res, next) {
       return fn.call(res, status);
     };
   })(res.status);
+  res.send = ((fn) => {
+    if(
+      !Object.keys(data.successResponses)
+        .map(key => data.successResponses[key])
+        .some(successResponse => successResponse.schema)
+    ) {
+      return fn;
+    }
+    res.send = fn;
+    return (payload) => {
+      let ajv;
+
+      if('string' === typeof payload) {
+        return fn.call(res, payload);
+      }
+      ajv = new Ajv();
+      res.send = fn;
+
+      Object.keys(data.successResponses)
+      .filter(key => parseInt(key, 10) === res.statusCode)
+      .forEach((key) => {
+        const successResponse = data.successResponses[key];
+
+        if('entry' === successResponse.type) {
+          if(!ajv.validate(successResponse.schema, payload.contents)) {
+            console.log(
+              'payload.contents', payload,
+              'ajv.errors', ajv.errors
+            );
+            throw new YHTTPError(500, 'E_PAYLOAD_MALFORMED', ajv.errors, payload);
+          }
+        }
+      });
+      return fn.call(res, payload);
+    };
+  })(res.send);
   next();
 }
 

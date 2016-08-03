@@ -108,8 +108,6 @@ const eventsMetadata = {
       successResponses: {
         410: {
           description: 'The event does not exist.',
-          type: 'entry',
-          schema: eventsSchema,
         },
       },
       errorResponses: {

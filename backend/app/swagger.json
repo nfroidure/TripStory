@@ -747,6 +747,10 @@
                             "enum": [
                               "xee"
                             ]
+                          },
+                          "xeeId": {
+                            "description": "Car issuer id",
+                            "type": "number"
                           }
                         }
                       }
@@ -847,6 +851,10 @@
                             "enum": [
                               "xee"
                             ]
+                          },
+                          "xeeId": {
+                            "description": "Car issuer id",
+                            "type": "number"
                           }
                         }
                       }
@@ -946,6 +954,10 @@
                       "enum": [
                         "xee"
                       ]
+                    },
+                    "xeeId": {
+                      "description": "Car issuer id",
+                      "type": "number"
                     }
                   }
                 }
@@ -1061,6 +1073,10 @@
                       "enum": [
                         "xee"
                       ]
+                    },
+                    "xeeId": {
+                      "description": "Car issuer id",
+                      "type": "number"
                     }
                   }
                 }
@@ -1137,15 +1153,38 @@
                           "type": {
                             "type": "string",
                             "enum": [
+                              "trip-start",
+                              "trip-stop",
+                              "twitter-status",
+                              "facebook-status",
+                              "facebook-photo",
+                              "facebook-link",
                               "xee-geo"
                             ]
                           },
                           "geo": {
-                            "description": "",
-                            "type": "string",
-                            "pattern": "^([0-9a-f]{24})$",
-                            "minLength": 24,
-                            "maxLength": 24
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 3,
+                            "additionalItems": false,
+                            "items": [
+                              {
+                                "type": "number",
+                                "minimum": -90,
+                                "maximum": 90,
+                                "default": 0
+                              },
+                              {
+                                "type": "number",
+                                "minimum": -180,
+                                "maximum": 180,
+                                "default": 0
+                              },
+                              {
+                                "type": "number",
+                                "default": 0
+                              }
+                            ]
                           },
                           "address": {
                             "type": "string"
@@ -1237,15 +1276,38 @@
                           "type": {
                             "type": "string",
                             "enum": [
+                              "trip-start",
+                              "trip-stop",
+                              "twitter-status",
+                              "facebook-status",
+                              "facebook-photo",
+                              "facebook-link",
                               "xee-geo"
                             ]
                           },
                           "geo": {
-                            "description": "",
-                            "type": "string",
-                            "pattern": "^([0-9a-f]{24})$",
-                            "minLength": 24,
-                            "maxLength": 24
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 3,
+                            "additionalItems": false,
+                            "items": [
+                              {
+                                "type": "number",
+                                "minimum": -90,
+                                "maximum": 90,
+                                "default": 0
+                              },
+                              {
+                                "type": "number",
+                                "minimum": -180,
+                                "maximum": 180,
+                                "default": 0
+                              },
+                              {
+                                "type": "number",
+                                "default": 0
+                              }
+                            ]
                           },
                           "address": {
                             "type": "string"
@@ -1336,15 +1398,38 @@
                     "type": {
                       "type": "string",
                       "enum": [
+                        "trip-start",
+                        "trip-stop",
+                        "twitter-status",
+                        "facebook-status",
+                        "facebook-photo",
+                        "facebook-link",
                         "xee-geo"
                       ]
                     },
                     "geo": {
-                      "description": "",
-                      "type": "string",
-                      "pattern": "^([0-9a-f]{24})$",
-                      "minLength": 24,
-                      "maxLength": 24
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 3,
+                      "additionalItems": false,
+                      "items": [
+                        {
+                          "type": "number",
+                          "minimum": -90,
+                          "maximum": 90,
+                          "default": 0
+                        },
+                        {
+                          "type": "number",
+                          "minimum": -180,
+                          "maximum": 180,
+                          "default": 0
+                        },
+                        {
+                          "type": "number",
+                          "default": 0
+                        }
+                      ]
                     },
                     "address": {
                       "type": "string"
@@ -1479,51 +1564,7 @@
             }
           },
           "410": {
-            "description": "The event does not exist.",
-            "schema": {
-              "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "contents"
-              ],
-              "properties": {
-                "contents": {
-                  "$schema": "http://json-schema.org/draft-04/schema#",
-                  "title": "eventsMetadata",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "trip_id"
-                  ],
-                  "properties": {
-                    "trip_id": {
-                      "description": "",
-                      "type": "string",
-                      "pattern": "^([0-9a-f]{24})$",
-                      "minLength": 24,
-                      "maxLength": 24
-                    },
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "xee-geo"
-                      ]
-                    },
-                    "geo": {
-                      "description": "",
-                      "type": "string",
-                      "pattern": "^([0-9a-f]{24})$",
-                      "minLength": 24,
-                      "maxLength": 24
-                    },
-                    "address": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "The event does not exist."
           },
           "500": {
             "description": "When shit hit the fan.",
@@ -1634,15 +1675,38 @@
                     "type": {
                       "type": "string",
                       "enum": [
+                        "trip-start",
+                        "trip-stop",
+                        "twitter-status",
+                        "facebook-status",
+                        "facebook-photo",
+                        "facebook-link",
                         "xee-geo"
                       ]
                     },
                     "geo": {
-                      "description": "",
-                      "type": "string",
-                      "pattern": "^([0-9a-f]{24})$",
-                      "minLength": 24,
-                      "maxLength": 24
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 3,
+                      "additionalItems": false,
+                      "items": [
+                        {
+                          "type": "number",
+                          "minimum": -90,
+                          "maximum": 90,
+                          "default": 0
+                        },
+                        {
+                          "type": "number",
+                          "minimum": -180,
+                          "maximum": 180,
+                          "default": 0
+                        },
+                        {
+                          "type": "number",
+                          "default": 0
+                        }
+                      ]
                     },
                     "address": {
                       "type": "string"
@@ -2552,39 +2616,7 @@
             }
           },
           "410": {
-            "description": "The trip does not exist.",
-            "schema": {
-              "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "contents"
-              ],
-              "properties": {
-                "contents": {
-                  "$schema": "http://json-schema.org/draft-04/schema#",
-                  "title": "User",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "name",
-                    "email"
-                  ],
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string",
-                      "format": "email"
-                    },
-                    "birth_date": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "The user does not exist."
           },
           "500": {
             "description": "When shit hit the fan.",

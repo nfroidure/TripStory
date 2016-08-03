@@ -25,6 +25,11 @@ const carsSchema = {
       type: 'string',
       enum: ['xee'],
     },
+    // TODO: store as a string
+    xeeId: {
+      description: 'Car issuer id',
+      type: 'number',
+    },
   },
 };
 

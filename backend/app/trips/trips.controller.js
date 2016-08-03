@@ -84,6 +84,13 @@ function initTripsController(context) {
       }),
     ])
     .spread((result) => {
+      let payload = {
+        _id: result.value._id,
+        contents: result.value.trip,
+        created: result.value.created,
+        owner_id: result.value.owner_id,
+      };
+
       context.bus.trigger({
         exchange: result.lastErrorObject.updatedExisting ?
           'A_TRIP_UPDATED' :
@@ -94,7 +101,7 @@ function initTripsController(context) {
             .concat(castToObjectId(req.params.user_id)),
         },
       });
-      res.status(201).send(tripsTransforms.fromCollection(result.value));
+      res.status(201).send(tripsTransforms.fromCollection(payload));
     }).catch(next);
   }
 
