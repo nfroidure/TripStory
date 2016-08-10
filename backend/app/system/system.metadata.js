@@ -38,7 +38,12 @@ const systemsMetadata = {
       controllers: ['triggerEvent'],
       summary: 'Trigger an event in the bus',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['System', 'Events'],
       successResponses: {
         201: {

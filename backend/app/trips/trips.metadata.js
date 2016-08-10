@@ -75,7 +75,12 @@ const tripsMetadata = {
       controllers: ['put'],
       summary: 'Create/edit a user\'s trip',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['Trips'],
       successResponses: {
         201: {

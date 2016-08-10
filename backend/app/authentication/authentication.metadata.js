@@ -61,7 +61,12 @@ const authenticationMetadata = {
       controllers: ['postToken'],
       summary: 'Create a JSON Web Token',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['Auth'],
       successResponses: {
         200: {
@@ -83,7 +88,12 @@ const authenticationMetadata = {
       controllers: ['login'],
       summary: 'Login with sessions',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['Auth'],
       successResponses: {
         200: {
@@ -109,7 +119,12 @@ const authenticationMetadata = {
       controllers: ['signup'],
       summary: 'Signup',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['Auth'],
       successResponses: {
         201: {

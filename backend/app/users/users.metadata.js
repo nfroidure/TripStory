@@ -53,7 +53,12 @@ const usersMetadata = {
       controllers: ['put'],
       summary: 'Create/edit a user',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['User'],
       successResponses: {
         201: {
@@ -144,7 +149,12 @@ const usersMetadata = {
       controllers: ['inviteFriend'],
       summary: 'Invite a user\'s friend',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['User'],
       successResponses: {
         200: {

@@ -74,7 +74,12 @@ const eventsMetadata = {
       controllers: ['put'],
       summary: 'Create/edit a user\'s event',
       description: '',
-      parameters: [],
+      parameters: [
+        {
+          name: 'body',
+          in: 'body',
+        }
+      ],
       tags: ['Events'],
       successResponses: {
         201: {
