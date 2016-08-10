@@ -18,6 +18,7 @@ function initDocsController(context) {
   const docsController = {
     redirect: docsControllerRedirect,
     get: docsControllerGet,
+    getConfiguration: docsControllerGetConfiguration,
   };
 
   return docsController;
@@ -69,6 +70,19 @@ function initDocsController(context) {
 
       res.status(200).json(api);
     }).catch(next);
+  }
+
+  function docsControllerGetConfiguration(req, res, next) {
+    Promise.resolve()
+      .then(() => {
+        res.status(200).json({
+          url: `${context.base}${metadataUtils.apiPrefix}${(
+            req.user ? `users/${req.user._id.toString()}/`: ''
+          )}docs`,
+        });
+      })
+      .catch(next)
+    ;
   }
 
 }

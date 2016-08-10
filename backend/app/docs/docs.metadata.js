@@ -42,6 +42,26 @@ const docsMetadata = {
       },
     },
   },
+  [metadataUtils.apiPrefix + 'docs/configuration']: {
+    GET: {
+      controllers: ['getConfiguration'],
+      summary: 'Get the public API configuration',
+      description: '',
+      parameters: [],
+      tags: ['Docs', 'System'],
+      successResponses: {
+        200: {
+          type: 'raw',
+        },
+      },
+      errorResponses: {
+        500: {
+          codes: ['E_UNEXPECTED'],
+          description: 'When shit hit the fan.',
+        },
+      },
+    },
+  },
   [metadataUtils.apiPrefix + 'users/:user_id/docs']: {
     GET: {
       controllers: ['get'],
