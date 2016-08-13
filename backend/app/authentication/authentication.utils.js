@@ -21,6 +21,11 @@ const authenticationUtils = {
   checkStateObjectAndPassport,
   redirectToApp: authenticationUtilsRedirectToApp,
   redirectToProfile: authenticationUtilsRedirectToProfile,
+  REACCESS_CONFIG: {
+    rightsProps: ['_rights'],
+    valuesProps: ['user'],
+    accessErrorMessage: 'E_UNAUTHORIZED',
+  },
 };
 
 module.exports = authenticationUtils;

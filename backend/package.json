@@ -23,6 +23,7 @@
     "connect-mongo": "^0.8.2",
     "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
+    "express-reaccess": "^2.0.0",
     "express-session": "^1.12.1",
     "http-auth-utils": "0.0.2",
     "json-web-token": "^2.0.3",
@@ -45,6 +46,7 @@
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",
     "sf-token": "^1.0.0",
+    "swagger-ui": "^2.1.4",
     "transform-per-suffixes": "^1.0.0",
     "twitter": "^1.2.5",
     "winston": "^2.2.0",
@@ -55,14 +57,12 @@
   "devDependencies": {
     "eslint": "^2.12.0",
     "eslint-config-simplifield": "^3.0.0",
-    "express-reaccess": "^1.0.1",
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",
     "mockery": "^1.4.0",
     "nock": "^6.0.1",
     "sinon": "^1.17.2",
-    "supertest": "^1.1.0",
-    "swagger-ui": "^2.1.4"
+    "supertest": "^1.1.0"
   }
 }

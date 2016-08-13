@@ -57,11 +57,7 @@ function initAuthenticationRoutes(context) {
     req._rights = req._rights.concat(req.user.rights);
     next();
   });
-  context.app.use(reaccess({
-    rightsProps: ['_rights'],
-    valuesProps: ['user'],
-    accessErrorMessage: 'E_UNAUTHORIZED',
-  }));
+  context.app.use(reaccess(authenticationUtils.REACCESS_CONFIG));
 
   routesUtils.setupRoutesFromMetadata(
     context, authenticationController, authenticationMetadata

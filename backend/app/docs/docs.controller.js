@@ -2,6 +2,7 @@
 
 const extend = require('extend');
 const project = require('../../package.json');
+const reaccess = require('express-reaccess');
 const authenticationMetadata = require('../authentication/authentication.metadata');
 const oauthMetadata = require('../authentication/oauth.metadata');
 const carsMetadata = require('../cars/cars.metadata');
@@ -11,6 +12,7 @@ const tripsMetadata = require('../trips/trips.metadata');
 const usersMetadata = require('../users/users.metadata');
 const docsMetadata = require('../docs/docs.metadata');
 const metadataUtils = require('../utils/metadata');
+const REACCESS_CONFIG = require('../authentication/authentication.utils').REACCESS_CONFIG;
 
 module.exports = initDocsController;
 
@@ -25,7 +27,7 @@ function initDocsController(context) {
 
   function docsControllerRedirect(req, res) {
     res.redirect(
-      301,
+      302,
       context.base + '/swagger/' +
       '?url=' + context.base + metadataUtils.apiPrefix + (
         req.user ? 'users/' + req.user._id.toString() + '/' : ''
@@ -35,7 +37,10 @@ function initDocsController(context) {
 
   function docsControllerGet(req, res, next) {
     Promise.resolve().then(() => {
+      const rights = reaccess.getRightsFromReq(REACCESS_CONFIG.rightsProps, req);
+      const values = reaccess.getValuesFromReq(REACCESS_CONFIG.valuesProps, req);
       const api = {};
+      let paths = {};
 
       api.swagger = '2.0';
       api.info = {
@@ -43,7 +48,6 @@ function initDocsController(context) {
         description: project.description,
         version: project.version,
       };
-      api.paths = {};
       api.securityDefinitions = {
         basic: {
           type: 'basic',
@@ -59,14 +63,39 @@ function initDocsController(context) {
         },
       };
 
-      api.paths = _buildPathsFromMetadata(authenticationMetadata);
-      api.paths = extend(api.paths, _buildPathsFromMetadata(oauthMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(carsMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(eventsMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(systemMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(tripsMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(usersMetadata));
-      api.paths = extend(api.paths, _buildPathsFromMetadata(docsMetadata));
+      paths = {};
+      paths = extend(paths, _buildPathsFromMetadata(authenticationMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(oauthMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(carsMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(eventsMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(systemMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(tripsMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(usersMetadata));
+      paths = extend(paths, _buildPathsFromMetadata(docsMetadata));
+
+      if(req.params.user_id) {
+        api.paths = Object.keys(paths)
+        .reduce((filteredPaths, path) => {
+          // This is an ugly way to fill templated values, best would be
+          // to do a match between patterns but way complexer :/
+          let finalPath = path.replace('{user_id}', req.user._id.toString());
+          let methods = Object.keys(paths[path])
+            .reduce((filteredMethods, method) => {
+              if(reaccess.test(rights, values, method, finalPath)) {
+                filteredMethods[method] = paths[path][method];
+              }
+              return filteredMethods;
+            }, {});
+
+          if(Object.keys(methods).length) {
+            filteredPaths[finalPath] = methods;
+          }
+
+          return filteredPaths;
+        }, {});
+      } else {
+        api.paths = paths;
+      }
 
       res.status(200).json(api);
     }).catch(next);
@@ -97,6 +126,7 @@ function _buildPathsFromMetadata(metadata) {
       paths[swaggerPath] = paths[swaggerPath] || {};
       paths[swaggerPath][method.toLowerCase()] = definition;
 
+      definition.originalPath = path;
       definition.summary = data.summary;
       definition.parameters = parameters.concat(data.parameters);
       definition.tags = data.tags;
