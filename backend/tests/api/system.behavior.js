@@ -7,6 +7,7 @@ const MongoClient = require('mongodb').MongoClient;
 const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -14,16 +15,17 @@ describe('System endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.SESSION_SECRET = 'none';
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),
       info: sinon.spy(),
     };
+    context.passport = passport;
     MongoClient.connect('mongodb://localhost:27017/tripstory_test')
       .then(db => {
         context.db = db;

@@ -1,18 +1,20 @@
 {
-  "name": "x-backend",
+  "name": "TripStory",
   "version": "1.0.0",
-  "description": "Our backend!",
+  "description": "TripStory API",
   "main": "index.js",
   "scripts": {
     "cli": "env NPM_RUN_CLI=1",
     "test": "mocha tests/**/*.behavior.js tests/**/*.specs.js",
     "lint": "eslint app/*.js workers/*.js app/**/*.js workers/**/*.js",
-    "cover": "istanbul cover --report html _mocha -- tests/**/*.behavior.js tests/**/*.specs.js -R spec -t 5000"
+    "cover": "istanbul cover --report html _mocha -- tests/**/*.behavior.js tests/**/*.specs.js -R spec -t 5000",
+    "swagger:build": "node scripts/build-swagger.js > ./app/swagger.json"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@jbpionnier/api-analytics-client": "^0.1.17",
+    "ajv": "^4.2.0",
     "bcrypt": "^0.8.5",
     "bluebird": "^3.0.5",
     "body-parser": "^1.14.1",
@@ -21,6 +23,7 @@
     "connect-mongo": "^0.8.2",
     "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
+    "express-reaccess": "^2.0.0",
     "express-session": "^1.12.1",
     "http-auth-utils": "0.0.2",
     "json-web-token": "^2.0.3",
@@ -43,6 +46,7 @@
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",
     "sf-token": "^1.0.0",
+    "swagger-ui": "^2.1.4",
     "transform-per-suffixes": "^1.0.0",
     "twitter": "^1.2.5",
     "winston": "^2.2.0",
@@ -53,7 +57,6 @@
   "devDependencies": {
     "eslint": "^2.12.0",
     "eslint-config-simplifield": "^3.0.0",
-    "express-reaccess": "^1.0.1",
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",

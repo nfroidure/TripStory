@@ -8,6 +8,7 @@ const Promise = require('bluebird');
 const nock = require('nock');
 const Twitter = require('twitter');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 const fs = require('fs');
 const path = require('path');
 
@@ -17,9 +18,11 @@ describe('Twitter jobs', () => {
   let context;
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
     context.time = sinon.stub().returns(1664);
-    context.env = {};
+    context.passport = passport;
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),
@@ -320,7 +323,6 @@ describe('Twitter jobs', () => {
             friends_ids: [],
             title: 'Lol',
             description: 'Lol',
-            hash: 'lol',
             car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
           },
           created: {
@@ -368,7 +370,6 @@ describe('Twitter jobs', () => {
                 friends_ids: [],
                 title: 'Lol',
                 description: 'Lol',
-                hash: 'lol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
@@ -420,7 +421,6 @@ describe('Twitter jobs', () => {
             friends_ids: [],
             title: 'Lol',
             description: 'Lol',
-            hash: 'lol',
             car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
           },
           created: {
@@ -476,7 +476,6 @@ describe('Twitter jobs', () => {
                 friends_ids: [],
                 title: 'Lol',
                 description: 'Lol',
-                hash: 'lol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),

@@ -8,6 +8,7 @@ const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -15,12 +16,13 @@ describe('Cars endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.SESSION_SECRET = 'none';
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

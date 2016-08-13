@@ -24,16 +24,21 @@ function initSystemController(context) {
   }
 
   function systemControllerCatchErrors(err, req, res, next) { // eslint-disable-line
+    let payload;
+
     // Cast reaccess errors to YHTTPError ones
     if('E_UNAUTHORIZED' === err.message) {
       err = YHTTPError.wrap(err, req.user ? 403 : 401, 'E_UNAUTHORIZED', req._rights);
     }
-
     context.logger.error(err.code, err.stack, err.params);
-    res.status(err.status || err.httpCode || 500).send({
+    payload = {
       code: err.code || 'E_UNEXPECTED',
-      stack: err.stack,
-    });
+      params: err.params,
+    };
+    if('development' === context.env.NODE_ENV) {
+      payload.stack = err.stack;
+    }
+    res.status(err.status || err.httpCode || 500).send(payload);
   }
 
 }

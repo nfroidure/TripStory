@@ -8,6 +8,7 @@ const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -15,7 +16,11 @@ describe('Authentication endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
+    context.env.SESSION_SECRET = 'none';
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
     context.tokens = {
       createToken: sinon.stub().returns({
         fake: 'token',
@@ -23,10 +28,7 @@ describe('Authentication endpoints', () => {
       checkToken: sinon.stub().returns(true),
     };
     context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
-    };
+    context.passport = passport;
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),

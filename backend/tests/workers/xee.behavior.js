@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 const nock = require('nock');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const xeeJobs = require('../../workers/xee/xee.jobs.js');
 
@@ -13,9 +14,11 @@ describe('Xee jobs', () => {
   let context;
 
   before(done => {
-    context = {};
+    context = {
+      env: { NODE_ENV: 'development' },
+    };
     context.time = sinon.stub().returns(1664);
-    context.env = {};
+    context.passport = passport;
     context.base = 'http://localhost/';
     context.logger = {
       error: sinon.spy(),
@@ -319,7 +322,6 @@ describe('Xee jobs', () => {
             friends_ids: [],
             title: 'Lol',
             description: 'Lol',
-            hash: 'lol',
             car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
           },
           created: {
@@ -370,7 +372,6 @@ describe('Xee jobs', () => {
                 friends_ids: [],
                 title: 'Lol',
                 description: 'Lol',
-                hash: 'lol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
               owner_id: castToObjectId('abbacacaabbacacaabbacaca'),
@@ -430,7 +431,6 @@ describe('Xee jobs', () => {
                   friends_ids: [],
                   title: 'Lol',
                   description: 'Lol',
-                  hash: 'lol',
                   car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
                 },
                 owner_id: castToObjectId('abbacacaabbacacaabbacaca'),

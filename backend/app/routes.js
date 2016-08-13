@@ -9,10 +9,12 @@ const path = require('path');
 const initCors = require('./system/cors.middleware');
 const initAgentVersionChecker = require('./system/version.middleware');
 const initAuthenticationRoutes = require('./authentication/authentication.routes');
+const initOAuthRoutes = require('./authentication/oauth.routes');
 const initTripsRoutes = require('./trips/trips.routes');
 const initEventsRoutes = require('./events/events.routes');
 const initUsersRoutes = require('./users/users.routes');
 const initCarsRoutes = require('./cars/cars.routes');
+const initDocRoutes = require('./docs/docs.routes');
 const initSystemRoutes = require('./system/system.routes');
 
 module.exports = initRoutes;
@@ -27,6 +29,8 @@ function initRoutes(context) {
   if(context.env.AGENTS) {
     context.app.use(initAgentVersionChecker(context));
   }
+  context.app.use('/swagger', express.static(`${__dirname}/../public`));
+  context.app.use('/swagger', express.static(`${__dirname}/../node_modules/swagger-ui/dist`));
   if(context.env.STATIC_PATH) {
     context.app.use(express.static(path.join(
       process.cwd(),
@@ -57,10 +61,12 @@ function initRoutes(context) {
 
   // API
   initAuthenticationRoutes(context);
+  initOAuthRoutes(context);
   initUsersRoutes(context);
   initTripsRoutes(context);
   initEventsRoutes(context);
   initCarsRoutes(context);
-  initSystemRoutes(context);
+  initDocRoutes(context);
+  initSystemRoutes(context); // Must be the last (contains the catch all middleware)
 
 }

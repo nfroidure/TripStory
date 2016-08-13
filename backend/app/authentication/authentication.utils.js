@@ -21,6 +21,11 @@ const authenticationUtils = {
   checkStateObjectAndPassport,
   redirectToApp: authenticationUtilsRedirectToApp,
   redirectToProfile: authenticationUtilsRedirectToProfile,
+  REACCESS_CONFIG: {
+    rightsProps: ['_rights'],
+    valuesProps: ['user'],
+    accessErrorMessage: 'E_UNAUTHORIZED',
+  },
 };
 
 module.exports = authenticationUtils;
@@ -72,6 +77,14 @@ function authenticationUtilsCreateDefaultRights() {
   }, {
     // Basic authentication
     path: '/api/v0/me',
+    methods: reaccess.READ_MASK,
+  }, {
+    // Swagger
+    path: '/(api/v0/|)docs$',
+    methods: reaccess.READ_MASK,
+  }, {
+    // Swagger configuration
+    path: '/(api/v0/|)docs/configuration$',
     methods: reaccess.READ_MASK,
   }, {
     // Ping

@@ -8,6 +8,7 @@ const castToObjectId = require('mongodb').ObjectId;
 const sinon = require('sinon');
 const assert = require('assert');
 const initObjectIdStub = require('objectid-stub');
+const passport = require('passport');
 
 const initRoutes = require('../../app/routes');
 
@@ -15,12 +16,13 @@ describe('Trips endpoints', () => {
   let context;
 
   before(done => {
-    context = {};
-    context.time = sinon.stub().returns(1664);
-    context.env = {
-      SESSION_SECRET: 'none',
-      mobile_path: path.join(__dirname, '..', '..', '..', 'mobile', 'www'),
+    context = {
+      env: { NODE_ENV: 'development' },
     };
+    context.env.SESSION_SECRET = 'none';
+    context.env.STATIC_PATH = path.join(__dirname, '..', '..', '..', 'mobile', 'www');
+    context.time = sinon.stub().returns(1664);
+    context.passport = passport;
     context.logger = {
       error: sinon.spy(),
       debug: sinon.spy(),
@@ -105,7 +107,6 @@ describe('Trips endpoints', () => {
         friends_ids: [],
         title: 'Lol',
         description: 'Lol',
-        hash: 'lol',
         car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
       },
       created: {
@@ -149,7 +150,7 @@ describe('Trips endpoints', () => {
           '/api/v0/users/abbacacaabbacacaabbacaca/trips/b17eb17eb17eb17eb17eb17e'
         )
         .auth('popol@moon.u', 'test')
-        .expect(404)
+        .expect(410)
         .end((err, res) => {
           if(err) {
             return done(err);
@@ -191,7 +192,6 @@ describe('Trips endpoints', () => {
               car_id: 'b17eb17eb17eb17eb17eb17e',
               description: 'Lol',
               friends_ids: [],
-              hash: 'lol',
               title: 'Lol',
             },
             owner_id: 'abbacacaabbacacaabbacaca',
@@ -217,7 +217,6 @@ describe('Trips endpoints', () => {
               car_id: 'b17eb17eb17eb17eb17eb17e',
               description: 'Lol',
               friends_ids: [],
-              hash: 'lol',
               title: 'Lol',
             },
             owner_id: 'abbacacaabbacacaabbacaca',
@@ -325,7 +324,6 @@ describe('Trips endpoints', () => {
             car_id: 'b17eb17eb17eb17eb17eb17e',
             description: 'Kikooooolol',
             friends_ids: [],
-            hash: 'kikooooolol',
             title: 'Kikooooolol',
           },
         })
@@ -354,7 +352,6 @@ describe('Trips endpoints', () => {
               trip: {
                 friends_ids: [],
                 description: 'Kikooooolol',
-                hash: 'kikooooolol',
                 title: 'Kikooooolol',
                 car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
               },
@@ -392,15 +389,16 @@ describe('Trips endpoints', () => {
           car_id: 'b17eb17eb17eb17eb17eb17e',
           description: 'Lol',
           friends_ids: [],
-          hash: 'lol',
           title: 'Lol',
         },
       })
       .expect(201)
       .end((err, res) => {
         if(err) {
-          return done(err);
+          done(err);
+          return;
         }
+        assert(res.body);
         assert.deepEqual(context.bus.trigger.args, [[{
           exchange: 'A_TRIP_CREATED',
           contents: {
@@ -422,7 +420,6 @@ describe('Trips endpoints', () => {
               friends_ids: [],
               title: 'Lol',
               description: 'Lol',
-              hash: 'lol',
               car_id: castToObjectId('b17eb17eb17eb17eb17eb17e'),
             },
             created: {
@@ -460,7 +457,6 @@ describe('Trips endpoints', () => {
             car_id: 'b17eb17eb17eb17eb17eb17e',
             description: 'Lol',
             friends_ids: [],
-            hash: 'lol',
             title: 'Lol',
           },
           owner_id: 'abbacacaabbacacaabbacaca',

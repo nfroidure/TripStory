@@ -8,6 +8,7 @@ if(process.env.API_ANALYTICS_KEY) { // eslint-disable-line
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 var express = require('express');
+var passport = require('passport');
 var initRoutes = require('./app/routes');
 var Promise = require('bluebird');
 var winston = require('winston');
@@ -64,6 +65,7 @@ Promise.all([
   // Services
   context.time = Date.now.bind(Date);
   context.db = db;
+  context.passport = passport;
   // Emulate a message queueing system
   context.bus = {
     consume: function busConsume(callback) {
