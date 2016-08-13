@@ -3,7 +3,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const BasicStrategy = require('passport-http').BasicStrategy;
 const JwtBearerStrategy = require('passport-http-jwt-bearer');
-const YError = require('yerror');
 const castToObjectId = require('mongodb').ObjectId;
 const authenticationUtils = require('./authentication.utils');
 const Promise = require('bluebird');
@@ -130,13 +129,13 @@ function initAuthenticationStrategies(context) {
     try {
       findQuery._id = castToObjectId(token.sub);
     } catch (err) {
-      done(YError.wrap(err, 'E_BAD_USER_ID', token.sub));
+      done(YHTTPError.wrap(err, 400, 'E_BAD_USER_ID', token.sub));
       return;
     }
 
     context.db.collection('users').findOne(findQuery, (err, user) => {
       if(err) {
-        done(err);
+        done(YHTTPError.wrap(err, 500));
         return;
       }
       if(!user) {
