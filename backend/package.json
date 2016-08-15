@@ -46,7 +46,7 @@
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",
     "sf-token": "^1.0.0",
-    "swagger-ui": "^2.1.4",
+    "swagger-ui": "2.1.4",
     "transform-per-suffixes": "^1.0.0",
     "twitter": "^1.2.5",
     "winston": "^2.2.0",
