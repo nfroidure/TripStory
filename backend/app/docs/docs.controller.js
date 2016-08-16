@@ -28,10 +28,7 @@ function initDocsController(context) {
   function docsControllerRedirect(req, res) {
     res.redirect(
       302,
-      context.base + '/swagger/' +
-      '?url=' + context.base + metadataUtils.apiPrefix + (
-        req.user ? 'users/' + req.user._id.toString() + '/' : ''
-      ) + 'docs'
+      context.base + '/swagger/'
     );
   }
 
